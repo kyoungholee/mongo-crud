@@ -1,7 +1,7 @@
 
 import Navbar from "../../components/Navbar";
 import "./globals.css";
-import { Inter } from "next/font/google";
+import { Bonbon, Inter } from "next/font/google";
 import { ReactNode } from "react";
 
 //이런 식으 문제가 해결되고 ~, 왜  ReactNode 값을 바로 넣게 되면 에러가 발생하지?
@@ -20,14 +20,14 @@ function RootLayout ({ children } : {
   children: React.ReactNode
 }) {
   return (
-    <div className={inter.className}>
-      <div className="max-w-3xl mx-auto p-4">
-        <Navbar />
-        <div className="mt-8">{children}</div>
-        <div>   개발 중 ~~ </div>
-      </div>
-    </div>
+    <html>
+      <body>
+        <div className="max-w-3xl mx-auto p-4">
+          <Navbar />
+            <div className="mt-8">{children}</div>
+        </div>
+      </body>
+    </html>
   );
 }
-
 export default RootLayout;

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 export default function RemoveBtn({ id } : any) {
   const router = useRouter();
@@ -13,7 +13,7 @@ export default function RemoveBtn({ id } : any) {
       });
 
       if (res.ok) {
-        // router.refresh();
+        router.refresh();
       }
     }
   };
