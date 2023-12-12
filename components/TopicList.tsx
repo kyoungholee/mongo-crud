@@ -3,7 +3,7 @@
 import Link from "next/link";
 import RemoveBtn from "./RemoveBtn";
 import { useEffect, useState } from "react"; // 추가
-// import { HiPencilAlt } from "react-icons/hi";
+import { HiPencilAlt } from "react-icons/hi";
 
 interface Topic {
   _id: string;
@@ -49,16 +49,17 @@ export default function TopicsList() {
       {topics.map((t: Topic) => (
         <div
           key={t._id}
-          className="p-4 border border-slate-300 my-3 flex justify-between gap-5 items-start"
+          className="flex items-start justify-between gap-5 p-4 my-3 border border-slate-300"
         >
           <div>
-            <h2 className="font-bold text-2xl">{t.title}</h2>
+            <h2 className="text-2xl font-bold">{t.title}</h2>
             <div>{t.description}</div>
           </div>
 
           <div className="flex gap-2">
             <RemoveBtn id={t._id} />
             <Link href={`/editTopic/${t._id}`}>
+            <HiPencilAlt size={24} />
             </Link>
           </div>
         </div>
