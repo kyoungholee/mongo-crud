@@ -8,6 +8,7 @@ export default function RemoveBtn({ id } : any) {
   const removeTopic = async () => {
     const confirmed = confirm("Are you sure?");
 
+    //게시판 삭제 하는 구문 
     if (confirmed) {
       const res = await fetch(`http://localhost:3000/api/topics?id=${id}`, {
         method: "DELETE",

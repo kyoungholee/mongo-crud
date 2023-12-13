@@ -1,4 +1,4 @@
-import EditTopicForm from "../../../../components/EditTopicForm";
+import EditTopicForm from "../../../../boards/EditTopicForm";
 
 interface Iparams {
     params : string;

@@ -1,5 +1,5 @@
 
-import Navbar from "../../components/Navbar";
+import Navbar from "../../boards/Navbar";
 import "./globals.css";
 import { Bonbon, Inter } from "next/font/google";
 import { ReactNode } from "react";
