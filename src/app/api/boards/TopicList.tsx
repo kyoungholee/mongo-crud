@@ -17,6 +17,7 @@ export default function TopicsList() {
 
     useEffect(() => {
         const fetchData = async () => {
+          //리스트를 조회하는 게시판을 보여주는 컴포넌트
           try {
             const res = await fetch("http://localhost:3000/api/topics", {
               cache: "no-store",
