@@ -1,6 +1,7 @@
 import express, { NextFunction, Request, Response } from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { Secret, SignOptions } from 'jsonwebtoken';
 import errorGenerator from "../../../errors/errorGenerator";
 import gravatar from 'gravatar';
 import { check, validationResult } from "express-validator";
@@ -10,11 +11,13 @@ import { nextTick } from "process";
 import * as dotenv from "dotenv";
 
 
-const signUp = async (req: Request, res: Response, next: NextFunction) => {
+export const SignUp = async (req: Request, res: Response, next: NextFunction) => {
     check("name", "Name is required").not().isEmpty();
     check("email", "Please include a valid email").isEmail();
     check("password", "Please enter a password with 6 or more characters").isLength({ min: 6 });
     const { name, email, password } : IUserInputDTO = req.body;
+
+    const YOUR_SECRET_KEY : any = process.env.SECRET_KEY;
     try{
         const errors = validationResult(req.body);
         if(!errors.isEmpty()){
@@ -42,7 +45,7 @@ const signUp = async (req: Request, res: Response, next: NextFunction) => {
         };
         jwt.sign(
             payload, // payload into jwt.sign method
-            process.env.SECRET_KEY, // secret key value
+            YOUR_SECRET_KEY, // secret key value
             { expiresIn: "30m" }, // token expiration time
             (err, token) => {
                 if (err) throw err;
@@ -57,7 +60,3 @@ const signUp = async (req: Request, res: Response, next: NextFunction) => {
     }
 };
 
-// export default {
-//     signUp,
-//     logIn
-// }
