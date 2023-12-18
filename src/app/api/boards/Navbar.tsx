@@ -8,7 +8,7 @@ export default function Navbar() {
       <Link className="font-bold text-white" href={"/"}>
         GTCoding.
       </Link>
-        <Link className="p-2 bg-white" href={"/addTopic"}>
+        <Link className="p-2 bg-white" href={"/components/addTopic"}>
           Add Topic
         </Link>
     </div>
