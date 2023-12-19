@@ -16,9 +16,9 @@ export interface ErrorWithStatusCode extends Error {
 
 const errorGenerator = ({ msg='', statusCode=500}: { msg?: string, statusCode: number }): void => {
     //인자로 들어오는 메세지와 상태 코드를 매핑
-    const err: ErrorWithStatusCode = new Error(msg || DEFAULT_HTTP_STATUS_MESSAGES[statusCode]);
-    err.statusCode = statusCode;
-    throw err;
+    // const err: ErrorWithStatusCode = new Error(msg || DEFAULT_HTTP_STATUS_MESSAGES[statusCode]);
+    // err.statusCode = statusCode;
+    // throw err;
 }
 
 export default errorGenerator;

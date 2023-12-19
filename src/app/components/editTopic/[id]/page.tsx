@@ -1,4 +1,4 @@
-import EditTopicForm from "../../../app/api/boards/EditTopicForm";
+import EditTopicForm from "../../../api/boards/EditTopicForm";
 
 interface Iparams {
     params : string;

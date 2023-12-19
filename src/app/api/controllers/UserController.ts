@@ -1,8 +1,7 @@
 import express, { NextFunction, Request, Response } from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { Secret, SignOptions } from 'jsonwebtoken';
-import errorGenerator from "../../../errors/errorGenerator";
+import errorGenerator from "../../errors/errorGenerator";
 import gravatar from 'gravatar';
 import { check, validationResult } from "express-validator";
 import { IUserInputDTO } from "../../../../server/interfaces/IUser"
@@ -11,7 +10,7 @@ import { nextTick } from "process";
 import * as dotenv from "dotenv";
 
 
-export const SignUp = async (req: Request, res: Response, next: NextFunction) => {
+export const RegisterJWT = async (req: Request, res: Response, next: NextFunction) => {
     check("name", "Name is required").not().isEmpty();
     check("email", "Please include a valid email").isEmail();
     check("password", "Please enter a password with 6 or more characters").isLength({ min: 6 });
@@ -59,4 +58,3 @@ export const SignUp = async (req: Request, res: Response, next: NextFunction) =>
         next(err);
     }
 };
-
