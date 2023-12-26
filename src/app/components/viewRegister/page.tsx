@@ -7,14 +7,12 @@ const ViewRegister: React.FC = () => {
   const [signform, setSignform] = useState({
     id: '',
     password: '',
-    checkpassword: '',
     email: '',
   });
 
   const [errors, setErrors] = useState({
     id: '',
     password: '',
-    checkpassword: '',
     email: '',
   });
 
@@ -24,7 +22,6 @@ const ViewRegister: React.FC = () => {
     const newErrors = {
       id: signform.id ? '' : '아이디를 입력하세요.',
       password: signform.password ? '' : '비밀번호를 입력하세요.',
-      checkpassword: signform.checkpassword === signform.password ? '' : '비밀번호가 일치하지 않습니다.',
       email: isValidEmail(signform.email) ? '' : '유효한 이메일을 입력하세요.',
     };
 
@@ -50,7 +47,7 @@ const ViewRegister: React.FC = () => {
 
     //회원가입이 완료 된 후 몽고 db로 데이터를 보낸디. 
     try{
-      const res = await fetch("http://localhost:3000/api/controllers", {
+      const res = await fetch("http://localhost:3000/api/signup", {
         method : "POST",
         headers: {
           "Content-Type" : "application/json",
@@ -102,7 +99,7 @@ const ViewRegister: React.FC = () => {
               className="w-full p-2 mt-1 border rounded-md"
               placeholder="비밀번호 입력하세요."
             />
-            <label htmlFor="passwordcheck" className="block text-sm font-medium text-gray-700">
+            {/* <label htmlFor="passwordcheck" className="block text-sm font-medium text-gray-700">
               비밀번호 확인
             </label>
             <input
@@ -113,7 +110,7 @@ const ViewRegister: React.FC = () => {
               onChange={e => setSignform({...signform, checkpassword: e.target.value})}
               className="w-full p-2 mt-1 border rounded-md"
               placeholder="비밀번호 한번 더 입력하세요."
-            />
+            /> */}
             <label htmlFor="email" className="block text-sm font-medium text-gray-700">
               이메일
             </label>

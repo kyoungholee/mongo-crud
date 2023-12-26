@@ -1,9 +1,10 @@
 export interface IUser{
-    name: string;
-    email: string;
+    id: string;
     password: string;
-    avatar: string;
-    date: Date;
+    checkpassword : string;
+    email: string;
+    // avatar: string;
+    // date: Date;
 }
 
 export interface IUserInputDTO {
