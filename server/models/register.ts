@@ -12,13 +12,6 @@ const RegisterSchema = new Schema({
     password : {
         type: String,
     },
-    avatar : {
-        type: String,
-    },
-    date : {
-        type: Date,
-        default: Date.now,
-    },
 
 });
 
