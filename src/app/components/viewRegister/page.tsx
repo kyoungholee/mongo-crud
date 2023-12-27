@@ -5,13 +5,13 @@ import React, { useState } from 'react';
 
 const ViewRegister: React.FC = () => {
   const [signform, setSignform] = useState({
-    id: '',
+    name: '',
     password: '',
     email: '',
   });
 
   const [errors, setErrors] = useState({
-    id: '',
+    name: '',
     password: '',
     email: '',
   });
@@ -20,9 +20,9 @@ const ViewRegister: React.FC = () => {
 
   const validateForm = () => {
     const newErrors = {
-      id: signform.id ? '' : '아이디를 입력하세요.',
-      password: signform.password ? '' : '비밀번호를 입력하세요.',
+      name: signform.name ? '' : '이름을 입력하세요.',
       email: isValidEmail(signform.email) ? '' : '유효한 이메일을 입력하세요.',
+      password: signform.password ? '' : '비밀번호를 입력하세요.',
     };
 
     setErrors(newErrors);
@@ -52,7 +52,7 @@ const ViewRegister: React.FC = () => {
         headers: {
           "Content-Type" : "application/json",
         },
-        body: JSON.stringify({signform}),
+        body: JSON.stringify(signform),
       });
       // 여기에 서버로 데이터를 보내는 로직을 추가하세요.
 
@@ -76,18 +76,30 @@ const ViewRegister: React.FC = () => {
         <form onSubmit={SignupHandler}>
           <div className="mb-4">
             <label htmlFor="username" className="block text-sm font-medium text-gray-700">
-              아이디
+              이름
             </label>
             <input
               type="text"
               id="username"
-              value={signform.id}
+              value={signform.name}
               name="username"
-              onChange={e => setSignform({...signform, id : e.target.value})}
+              onChange={e => setSignform({...signform, name : e.target.value})}
               className="w-full p-2 mt-1 border rounded-md"
-              placeholder="아이디 입력하세요."
+              placeholder="이름이 뭐니~?"
             />
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+              이메일
+            </label>
+            <input
+              type="text"
+              id="email"
+              value={signform.email}
+              onChange={e => setSignform({...signform, email: e.target.value})}
+              name="email"
+              className="w-full p-2 mt-1 border rounded-md"
+              placeholder="이메일 입력하세요."
+            />
+                  <label htmlFor="password" className="block text-sm font-medium text-gray-700">
               비밀번호
             </label>
             <input
@@ -111,18 +123,6 @@ const ViewRegister: React.FC = () => {
               className="w-full p-2 mt-1 border rounded-md"
               placeholder="비밀번호 한번 더 입력하세요."
             /> */}
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-              이메일
-            </label>
-            <input
-              type="text"
-              id="email"
-              value={signform.email}
-              onChange={e => setSignform({...signform, email: e.target.value})}
-              name="email"
-              className="w-full p-2 mt-1 border rounded-md"
-              placeholder="이메일 입력하세요."
-            />
           </div>
           <div className="mb-6">
             <button
