@@ -2,6 +2,7 @@ import mongoose, {Schema} from "mongoose";
 import {IUser} from "../interfaces/IUser";
 
 const RegisterSchema = new Schema({
+   
     name : {
         type: String,
     },
