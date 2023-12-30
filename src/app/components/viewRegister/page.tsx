@@ -1,5 +1,6 @@
 "use client"
 
+import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 
@@ -45,26 +46,26 @@ const ViewRegister: React.FC = () => {
       return;
     }
 
-    //회원가입이 완료 된 후 몽고 db로 데이터를 보낸디. 
-    try{
-      const res = await fetch("http://localhost:3000/api/signup", {
-        method : "POST",
+    try {
+      const response = await axios.post("http://localhost:3000/api/signup", 
+      signform, {
         headers: {
-          "Content-Type" : "application/json",
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(signform),
       });
-      // 여기에 서버로 데이터를 보내는 로직을 추가하세요.
 
-      if(res.ok) {
+      console.log("해당 값", response);
+    
+      // 여기에 서버로 데이터를 보내는 로직을 추가하세요.
+    
+      if (response.status === 201) {
         alert('회원가입을 환영합니다.');
         router.push('/');
       } else {
-        throw new Error("api를 확인 해보세요");
+        throw new Error("API를 확인하세요");
       }
-      
-    } catch (e) {
-      console.log(e);
+    } catch (error) {
+      console.error(error);
     }
 
   };
