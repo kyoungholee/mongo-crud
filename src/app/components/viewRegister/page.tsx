@@ -59,6 +59,15 @@ const ViewRegister: React.FC = () => {
       // 여기에 서버로 데이터를 보내는 로직을 추가하세요.
     
       if (response.status === 201) {
+
+          const { token } = response.data;
+
+          console.log(token);
+        
+          // Set the cookie using document.cookie
+          document.cookie = `user44=${token}; path=/; max-age=${60 * 60 * 24 * 7}`;
+        
+        
         alert('회원가입을 환영합니다.');
         router.push('/');
       } else {
@@ -112,18 +121,6 @@ const ViewRegister: React.FC = () => {
               className="w-full p-2 mt-1 border rounded-md"
               placeholder="비밀번호 입력하세요."
             />
-            {/* <label htmlFor="passwordcheck" className="block text-sm font-medium text-gray-700">
-              비밀번호 확인
-            </label>
-            <input
-              type="password"
-              id="passwordcheck"
-              name="passwordcheck"
-              value={signform.checkpassword}
-              onChange={e => setSignform({...signform, checkpassword: e.target.value})}
-              className="w-full p-2 mt-1 border rounded-md"
-              placeholder="비밀번호 한번 더 입력하세요."
-            /> */}
           </div>
           <div className="mb-6">
             <button
