@@ -8,9 +8,9 @@ const connectMongoDB = async (): Promise<void> => {
 
     // @ts-ignore
     const options = {
-      useUnifiedTopology: true,
+      // useUnifiedTopology: true,
       serverSelectionTimeoutMS: 20000, // 20 seconds timeout for server selection
-  socketTimeoutMS: 60000, // 60 seco// 다른 옵션들...
+    socketTimeoutMS: 60000, // 60 seco// 다른 옵션들...
     };
 
     // @ts-ignore
