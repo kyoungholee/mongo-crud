@@ -1,6 +1,8 @@
 'use client'
 
 
+import axios from 'axios';
+import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 
 const Login = () => {
@@ -9,14 +11,35 @@ const Login = () => {
     password: '',
   });
 
+  const router = useRouter();
+
   const handleChange = (e : any) => {
     const { name, value } = e.target;
     setLoginForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e : any) => {
+  const handleSubmit =  async(e : React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // TODO: 로그인 처리 로직 추가
+
+    try {
+      const loginResponse = await axios.post("/api/login",
+        loginForm, {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+      });
+
+      console.log(loginResponse);
+
+
+      alert("로그인 축하드립니다.");
+      router.push('/');
+      //로그인이 완료가 되면 로그인 페이지를 보여줘야 함
+
+    }catch(errors) {
+      console.error("로그인 api 문제 확인 해보소~");
+    }
     console.log('로그인 폼 데이터:', loginForm);
   };
 
