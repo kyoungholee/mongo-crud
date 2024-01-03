@@ -8,6 +8,10 @@ export default function Navbar() {
       <Link className="font-bold text-white" href={"/"}>
         GTCoding.
       </Link>
+
+      <Link className="p-3 bg-slate-600" href={'/components/login'}>
+        로그인
+      </Link>
       <Link className="p-3 bg-slate-600" href={'/components/viewRegister'}>
         회원가입
       </Link>
