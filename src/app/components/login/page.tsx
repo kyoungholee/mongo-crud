@@ -33,10 +33,12 @@ const Login = () => {
 
       // 서버에서 받은 토큰을 저장하고 사용자에게 메시지 표시
       const { token } = loginResponse.data;
-      console.log(token);
 
-      // 여기에서 토큰을 안전하게 저장 (쿠키 또는 로컬 스토리지 활용)
-
+          console.log(token);
+        
+          // Set the cookie using document.cookie
+          document.cookie = `user44=${token}; path=/; max-age=${60 * 60 * 24 * 7}`;
+        
       alert("로그인 축하드립니다.");
       router.push('/');
 

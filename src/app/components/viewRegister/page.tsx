@@ -48,7 +48,10 @@ const ViewRegister: React.FC = () => {
 
     try {
       const response = await axios.post("http://localhost:3000/api/signup", 
+      //페이로드
       signform, {
+
+        //헤더 값
         headers: {
           'Content-Type': 'application/json',
         },
@@ -60,12 +63,12 @@ const ViewRegister: React.FC = () => {
     
       if (response.status === 201) {
 
-          const { token } = response.data;
+          // const { token } = response.data;
 
-          console.log(token);
+          // console.log(token);
         
-          // Set the cookie using document.cookie
-          document.cookie = `user44=${token}; path=/; max-age=${60 * 60 * 24 * 7}`;
+          // // Set the cookie using document.cookie
+          // document.cookie = `user44=${token}; path=/; max-age=${60 * 60 * 24 * 7}`;
         
         
         alert('회원가입을 환영합니다.');
