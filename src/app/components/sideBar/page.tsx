@@ -2,7 +2,7 @@ import React from 'react'
 
 export default function SideBar() {
   return (
-    <div className='flex gap-6 mr-4'>
+    <div className='flex items-center gap-6 mr-4'>
         <div> 돈의 뉴스</div>
         <div> 가계부</div>
         <div> 게시판</div>

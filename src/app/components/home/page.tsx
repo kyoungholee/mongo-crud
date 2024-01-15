@@ -6,19 +6,30 @@ import logo from '/public/moneylogo.png'
 export default function HomePage() {
   return (
         <>
-        <header className='flex justify-between bg-sky-400'>
-            <div className='flex '>
+        <header className='flex justify-between py-4 bg-white'>
+            <div className='flex items-center gap-4'>
             <Image src={logo}  alt='로고' className='w-20 h-10'/>
             Money 관리법
             </div>
             <SideBar/>
         </header> 
         <main>
-            <section></section>
-            <section></section>
-            <section></section>
-            <section></section>
-            <section></section>
+            <section className='py-10 mb-4'>돈좀 모으고 싶다하는 사람들만 주목하세요!!</section>
+            <section className='mb-4'>건강한 경제력을 키우는 돈 관리 프로젝트</section>
+
+            <section className='mb-4'>돈이란 무엇인가?</section>
+
+            <section className='mb-4'>가계부, 돈을 관리하는 방법</section>
+
+            <section className='mb-4'>월급으로 1억 모으는 방법</section>
+
+            <section className='mb-4'>주식,코인, 부동산에 대한 정보</section>
+
+            <section className='mb-4'>안전자산(예금, 적금)</section>
+
+
+            <section className='mb-4'>1억을 모으면 그 다음은....</section>
+
         </main>
         </>
 
