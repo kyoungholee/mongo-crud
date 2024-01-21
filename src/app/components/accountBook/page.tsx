@@ -12,6 +12,13 @@ interface Transaction {
 const categories = [
   '외식비', '생활품', '교육비/문화', '교통비', '통신비', '청약 돈', '미용', '의료비'
 ];
+const savings = [
+  '저축(은행적금)','저축(결혼자금)', '저축(아파트 청약)', '저축(주식투자)'
+  ];
+  const addMoney = [
+  '수입(월급)','수입(투자로 번돈)','수입(부업)',
+  ]
+
 
 const BudgetTracker: React.FC = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -45,9 +52,10 @@ const BudgetTracker: React.FC = () => {
 
       {/* 거래 입력 폼 */}
       <form onSubmit={handleSubmit} className="mb-4">
-        <div className="grid grid-cols-2 gap-4">
-          <div className="mb-4">
-            <label htmlFor="category" className="block text-sm font-medium text-gray-600">카테고리</label>
+        <div className="flex justify-center gap-6">
+          <div className="mb-4 ">
+
+            <label htmlFor="category" className="block text-lg font-bold text-gray-600">내역 카테고리</label>
             <select
               id="category"
               name="category"
@@ -55,14 +63,14 @@ const BudgetTracker: React.FC = () => {
               onChange={handleChange}
               className="form-input"
             >
-              <option value="" disabled>Select a category</option>
+              <option value="" disabled className='h-100'>상세보기</option>
               {categories.map(category => (
                 <option key={category} value={category}>{category}</option>
               ))}
             </select>
           </div>
           <div className="mb-4">
-            <label htmlFor="amount" className="block text-sm font-medium text-gray-600">금액</label>
+            <label htmlFor="amount" className="block text-lg font-bold text-gray-600">금액</label>
             <input
               type="number"
               id="amount"
@@ -74,25 +82,29 @@ const BudgetTracker: React.FC = () => {
           </div>
         </div>
         <div className="mb-4">
-          <label htmlFor="description" className="block text-sm font-medium text-gray-600">설명</label>
+          <label htmlFor="description" className="block mb-2 text-lg font-bold text-gray-600">수입, 지출 내역을 자세히 적어주세요.</label>
           <textarea
             id="description"
             name="description"
             rows={3}
             value={inputData.description}
             onChange={handleChange}
-            className="form-textarea"
+            className="w-full form-textarea"
           />
         </div>
-        <button type="submit" className="form-button">저장</button>
+        <div className='flex justify-end gap-6'>
+          <button type="submit" className="p-2 rounded form-button bg-sky-500">저장</button>
+          <button type="submit" className="p-2 bg-red-500 rounded form-button">취소</button>
+        </div>
+
       </form>
 
       {/* 거래 목록 */}
-      <h2 className="mb-2 text-2xl font-bold">거래 목록</h2>
+      <h2 className="mb-2 text-2xl font-bold">1달간 입금 ⸰ 출금 내역</h2>
       <table className="w-full mb-8 border border-gray-300">
         <thead>
           <tr className="bg-gray-200">
-            <th className="px-4 py-2 border-b">카테고리</th>
+            <th className="px-4 py-2 border-b">내역 카테고리</th>
             <th className="px-4 py-2 border-b">금액</th>
             <th className="px-4 py-2 border-b">설명</th>
           </tr>
@@ -109,7 +121,7 @@ const BudgetTracker: React.FC = () => {
       </table>
 
       {/* 카테고리별 합계 표 */}
-      <h2 className="mb-2 text-2xl font-bold">카테고리별 합계</h2>
+      <h2 className="mb-2 text-2xl font-bold">지출</h2>
       <table className="w-full mb-8 border border-gray-300">
         <thead>
           <tr className="bg-gray-200">
@@ -122,6 +134,43 @@ const BudgetTracker: React.FC = () => {
             <tr key={category}>
               <td className="px-4 py-2 border-b">{category}</td>
               <td className="px-4 py-2 border-b">{calculateTotal(category)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+
+      <h2 className="mb-2 text-2xl font-bold">수입</h2>
+      <table className="w-full mb-8 border border-gray-300">
+        <thead>
+          <tr className="bg-gray-200">
+            <th className="px-4 py-2 border-b">카테고리</th>
+            <th className="px-4 py-2 border-b">합계</th>
+          </tr>
+        </thead>
+        <tbody>
+          {addMoney.map(add => (
+            <tr key={add}>
+              <td className="px-4 py-2 border-b">{add}</td>
+              <td className="px-4 py-2 border-b">{calculateTotal(add)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+        <h2 className="mb-2 text-2xl font-bold">저축</h2>
+      <table className="w-full mb-8 border border-gray-300">
+        <thead>
+          <tr className="bg-gray-200">
+            <th className="px-4 py-2 border-b">카테고리</th>
+            <th className="px-4 py-2 border-b">합계</th>
+          </tr>
+        </thead>
+        <tbody>
+          {savings.map(save => (
+            <tr key={save}>
+              <td className="px-4 py-2 border-b">{save}</td>
+              <td className="px-4 py-2 border-b">{calculateTotal(save)}</td>
             </tr>
           ))}
         </tbody>
