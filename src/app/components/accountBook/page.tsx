@@ -12,7 +12,6 @@ interface Transaction {
 const countlist = [
   '외식비', '생활품', '교육비/문화', '교통비', '통신비', '청약 돈', '미용', '의료비','저축(은행적금)','저축(결혼자금)', '저축(아파트 청약)', '저축(주식투자)',
   '수입(월급)','수입(투자로 번돈)','수입(부업)',
-
 ]
 
 const categories = [
@@ -20,30 +19,44 @@ const categories = [
 ];
 const savings = [
   '저축(은행적금)','저축(결혼자금)', '저축(아파트 청약)', '저축(주식투자)'
-  ];
+];
   const income = [
   '수입(월급)','수입(투자로 번돈)','수입(부업)',
-  ]
-
-
+]
 const BudgetTracker: React.FC = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [inputData, setInputData] = useState({
     category: '',
     amount: '',
-    description: ''
+    description: '',
+    addMoney: 0,
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setInputData(prevData => ({ ...prevData, [name]: value }));
+
+    // 수정: addMoney의 경우 숫자로 누적하도록 처리
+    if (name === 'addMoney') {
+      setInputData((prevData) => ({
+        ...prevData,
+        addMoney: parseFloat(value), // Change parseInt to parseFloat
+      }));
+    } else {
+      setInputData((prevData) => ({ ...prevData, [name]: value }));
+    }
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const newTransaction: Transaction = { ...inputData, id: Date.now() };
-    setTransactions(prevTransactions => [newTransaction, ...prevTransactions]);
-    setInputData({ category: '', amount: '', description: '' });
+    
+    setTransactions((prevTransactions) => [newTransaction, ...prevTransactions]);
+
+    // 총 수입액에 누적
+    setInputData((prevData) => ({
+      ...prevData,
+      addMoney: prevData.addMoney + parseFloat(inputData.amount),
+    }));
   };
 
   const calculateTotal = (category: string) => {
@@ -54,42 +67,86 @@ const BudgetTracker: React.FC = () => {
 
   return (
     <div className="container mx-auto my-8">
-      <h1 className="mb-4 text-3xl font-bold">가계부</h1>
+      <h1 className="mb-10 text-3xl font-bold">가계부</h1>
 
       {/* 거래 입력 폼 */}
       <form onSubmit={handleSubmit} className="mb-4">
-        <div className="flex justify-center gap-6">
+        <div className="">
           <div className="mb-4 ">
-          {/* <div className="container mx-auto mt-8">
-            <label htmlFor="datepicker" className="block text-gray-700">Choose a date:</label>
-            <input type="text" id="datepicker" className="p-2 mt-1 border rounded-md" placeholder="Select a date" />
-          </div> */}
 
-            <label htmlFor="category" className="block text-lg font-bold text-gray-600">내역 카테고리</label>
-            <select
-              id="category"
-              name="category"
-              value={inputData.category}
-              onChange={handleChange}
-              className="h-8 form-input"
-            >
-              <option value="" disabled>상세보기</option>
-              {countlist.map(category => (
-                <option key={category} value={category}>{category}</option>
-              ))}
-            </select>
+            <div className='flex justify-between'>
+              <div className='flex flex-col'>
+                <label htmlFor="addMoney" className="block mb-2 text-lg font-bold text-center text-gray-600">이달 총 수입</label>
+                  <input
+                    type="text"
+                    id="addMoney"
+                    value={`${inputData.addMoney} 원`}
+                    name="addMoney"
+                    onChange={handleChange}
+                    className="h-12 form-input"
+                  />
+              </div>
+              <div className='flex flex-col'>
+                <label htmlFor="allExpense" className="block mb-2 text-lg font-bold text-center text-gray-600">이달 총 지출</label>
+                  <input
+                    type="text"
+                    id="allExpense"
+                    name="allExpense"
+                    onChange={handleChange}
+                    className="h-12 form-input"
+                  />
+              </div>
+
+              <div className='flex flex-col'>
+              <label htmlFor="allSave" className="block mb-2 text-lg font-bold text-center text-gray-600">이달 총 저축</label>
+                <input
+                  type="text"
+                  id="allSave"
+                  name="allSave"
+                  onChange={handleChange}
+                  className="h-12 form-input"
+                />
+              </div>
+
+              <div className='flex flex-col'>
+              <label htmlFor="remainPay" className="block mb-2 text-lg font-bold text-center text-gray-600">이달 남은 돈</label>
+                <input
+                  type="text"
+                  id="remainPay"
+                  name="remainPay"
+                  onChange={handleChange}
+                  className="h-12 form-input"
+                />
+              </div>
+            </div>
+            
+            <div className="flex justify-end gap-4 mb-4 mt-14">
+              <label htmlFor="category" className="block text-lg font-bold text-gray-600">내역 카테고리</label>
+              <select
+                id="category"
+                name="category"
+                value={inputData.category}
+                onChange={handleChange}
+                className="h-8 form-input"
+              >
+                <option value="" disabled>상세보기</option>
+                {countlist.map(category => (
+                  <option key={category} value={category}>{category}</option>
+                ))}
+              </select>
+
+              <label htmlFor="amount" className="block text-lg font-bold text-gray-600">금액</label>
+              <input
+                type="number"
+                id="amount"
+                name="amount"
+                value={inputData.amount}
+                onChange={handleChange}
+                className="h-8 form-input"
+              />
+            </div>
           </div>
-          <div className="mb-4">
-            <label htmlFor="amount" className="block text-lg font-bold text-gray-600">금액</label>
-            <input
-              type="number"
-              id="amount"
-              name="amount"
-              value={inputData.amount}
-              onChange={handleChange}
-              className="h-8 form-input"
-            />
-          </div>
+        
         </div>
         <div className="mb-4">
           <label htmlFor="description" className="block mb-2 text-lg font-bold text-gray-600">수입, 지출 내역을 자세히 적어주세요.</label>
