@@ -1,5 +1,6 @@
 'use client'
 
+import axios from 'axios';
 import React, { useState } from 'react';
 
 interface Transaction {
@@ -46,17 +47,32 @@ const BudgetTracker: React.FC = () => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const newTransaction: Transaction = { ...inputData, id: Date.now() };
-    
-    setTransactions((prevTransactions) => [newTransaction, ...prevTransactions]);
 
-    // 총 수입액에 누적
-    setInputData((prevData) => ({
-      ...prevData,
-      addMoney: prevData.addMoney + parseFloat(inputData.amount),
-    }));
+    try{
+
+      const newTransaction: Transaction = { ...inputData, id: Date.now() };
+    
+      setTransactions((prevTransactions) => [newTransaction, ...prevTransactions]);
+  
+      // 총 수입액에 누적
+      setInputData((prevData) => ({
+        ...prevData,
+        addMoney: prevData.addMoney + parseFloat(inputData.amount),
+      }));
+      const recordDataResponse = await axios.post('http://localhost:3000/api/houseKeeping', inputData, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+
+      console.log("api 데이터", recordDataResponse);
+
+    }catch(err) {
+      console.error("api 확인 해보세요")
+    }
+   
   };
 
   const calculateTotal = (category: string) => {
