@@ -1,6 +1,5 @@
-'use client'
 
-import axios from 'axios';
+'use client'
 import React, { useState } from 'react';
 
 interface Transaction {
@@ -8,72 +7,89 @@ interface Transaction {
   category: string;
   amount: string;
   description: string;
+  name: string;
 }
 
-const countlist = [
-  '외식비', '생활품', '교육비/문화', '교통비', '통신비', '청약 돈', '미용', '의료비','저축(은행적금)','저축(결혼자금)', '저축(아파트 청약)', '저축(주식투자)',
-  '수입(월급)','수입(투자로 번돈)','수입(부업)',
+interface TotalCalculate {
+  allIncome: number;
+  allExpense: number;
+  addMoney: number;
+}
+
+const countListPlus = [
+  {
+    id : 0,
+    category: 'allExpense',
+    name: '외식비',
+  },
+  {
+    id : 1,
+    category: 'savings',
+    name: '저축(은행적금)',
+  },
+  {
+    id : 2,
+    category: 'Incoming',
+    name: '수입(월급)',
+  },
 ]
 
-const categories = [
-  '외식비', '생활품', '교육비/문화', '교통비', '통신비', '청약 돈', '미용', '의료비',
-];
-const savings = [
-  '저축(은행적금)','저축(결혼자금)', '저축(아파트 청약)', '저축(주식투자)'
-];
-  const income = [
-  '수입(월급)','수입(투자로 번돈)','수입(부업)',
-]
+const onlyExpense = countListPlus.filter((item) => item.category === 'allExpense');
+const onlySave = countListPlus.filter((item) => item.category === 'savings');
+const onlyIncome = countListPlus.filter((item) => item.category === 'Incoming');
+
+
 const BudgetTracker: React.FC = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [inputData, setInputData] = useState({
     category: '',
     amount: '',
     description: '',
+    name: '',
+  });
+  const [totalCalculate, setTotalCalculate] = useState<TotalCalculate>({
+    allIncome: 0,
+    allExpense: 0,
     addMoney: 0,
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-
-    // 수정: addMoney의 경우 숫자로 누적하도록 처리
-    if (name === 'addMoney') {
-      setInputData((prevData) => ({
-        ...prevData,
-        addMoney: parseFloat(value), // Change parseInt to parseFloat
-      }));
-    } else {
+    
       setInputData((prevData) => ({ ...prevData, [name]: value }));
-    }
   };
 
-  const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    try{
-
+  
+    try {
       const newTransaction: Transaction = { ...inputData, id: Date.now() };
-    
+  
       setTransactions((prevTransactions) => [newTransaction, ...prevTransactions]);
   
-      // 총 수입액에 누적
-      setInputData((prevData) => ({
-        ...prevData,
-        addMoney: prevData.addMoney + parseFloat(inputData.amount),
-      }));
-      const recordDataResponse = await axios.post('http://localhost:3000/api/houseKeeping', inputData, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
-
-      console.log("api 데이터", recordDataResponse);
-
-    }catch(err) {
-      console.error("api 확인 해보세요")
+      setTotalCalculate((prevData) => {
+        const amount = parseInt(inputData.amount) || 0;
+        const updatedData = { ...prevData };
+  
+        if (inputData.category === 'Incoming') {
+          // "수입"을 클릭한 경우에만 allIncome을 업데이트
+          updatedData.allIncome += amount;
+        } else if(inputData.category === 'allExpense') {
+          // 그 외의 경우에는 allExpense을 업데이트
+          updatedData.allExpense += amount;
+        }
+  
+        return updatedData;
+      });
+  
+      // 입력값 초기화
+      setInputData({ category: '', amount: '', description: '', name:"" });
+    } catch (err) {
+      console.error("API 확인 해보세요");
     }
-   
   };
+  
+  
 
   const calculateTotal = (category: string) => {
     return transactions.reduce((total, transaction) => {
@@ -93,63 +109,45 @@ const BudgetTracker: React.FC = () => {
             <div className='flex justify-between'>
               <div className='flex flex-col'>
                 <label htmlFor="addMoney" className="block mb-2 text-lg font-bold text-center text-gray-600">이달 총 수입</label>
-                  <input
+                  <span className='h-12'>{`${totalCalculate.allIncome}`}</span>
+                  {/* <input
                     type="text"
                     id="addMoney"
                     value={`${inputData.addMoney} 원`}
                     name="addMoney"
                     onChange={handleChange}
-                    className="h-12 form-input"
-                  />
+                  /> */}
               </div>
               <div className='flex flex-col'>
                 <label htmlFor="allExpense" className="block mb-2 text-lg font-bold text-center text-gray-600">이달 총 지출</label>
-                  <input
-                    type="text"
-                    id="allExpense"
-                    name="allExpense"
-                    onChange={handleChange}
-                    className="h-12 form-input"
-                  />
+                <span className='h-12'>{`${totalCalculate.allExpense}`}</span>
               </div>
 
               <div className='flex flex-col'>
               <label htmlFor="allSave" className="block mb-2 text-lg font-bold text-center text-gray-600">이달 총 저축</label>
-                <input
-                  type="text"
-                  id="allSave"
-                  name="allSave"
-                  onChange={handleChange}
-                  className="h-12 form-input"
-                />
+               
               </div>
 
               <div className='flex flex-col'>
               <label htmlFor="remainPay" className="block mb-2 text-lg font-bold text-center text-gray-600">이달 남은 돈</label>
-                <input
-                  type="text"
-                  id="remainPay"
-                  name="remainPay"
-                  onChange={handleChange}
-                  className="h-12 form-input"
-                />
+              
               </div>
             </div>
             
             <div className="flex justify-end gap-4 mb-4 mt-14">
               <label htmlFor="category" className="block text-lg font-bold text-gray-600">내역 카테고리</label>
-              <select
-                id="category"
-                name="category"
-                value={inputData.category}
-                onChange={handleChange}
-                className="h-8 form-input"
-              >
-                <option value="" disabled>상세보기</option>
-                {countlist.map(category => (
-                  <option key={category} value={category}>{category}</option>
-                ))}
-              </select>
+                <select
+                  id="category"
+                  name="category"
+                  value={inputData.category}
+                  onChange={handleChange}
+                  className="h-8 form-input"
+                >
+                  <option value="" disabled>상세보기</option>
+                  {countListPlus.map(category => (
+                    <option key={category.id} value={category.category}>{category.name}</option>
+                  ))}
+                </select>
 
               <label htmlFor="amount" className="block text-lg font-bold text-gray-600">금액</label>
               <input
@@ -188,16 +186,18 @@ const BudgetTracker: React.FC = () => {
         <thead>
           <tr className="bg-gray-200">
             <th className="px-4 py-2 text-center border-b">내역 카테고리</th>
-            <th className="px-4 py-2 text-center border-b">금액</th>
             <th className="px-4 py-2 text-center border-b">설명</th>
+            <th className="px-4 py-2 text-center border-b">금액</th>
+
           </tr>
         </thead>
         <tbody>
           {transactions.map(transaction => (
             <tr key={transaction.id}>
               <td className="px-4 py-2 text-center border-b">{transaction.category}</td>
-              <td className="px-4 py-2 text-center border-b">{transaction.amount}원</td>
               <td className="px-4 py-2 text-center border-b">{transaction.description}</td>
+              <td className="px-4 py-2 text-center border-b">{transaction.amount}원</td>
+
             </tr>
           ))}
         </tbody>
@@ -213,10 +213,10 @@ const BudgetTracker: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {categories.map(category => (
-            <tr key={category}>
-              <td className="px-4 py-2 text-center border-b">{category}</td>
-              <td className="px-4 py-2 text-center border-b">{calculateTotal(category)}원</td>
+          {onlyExpense.map(category => (
+            <tr key={category.id}>
+              <td className="px-4 py-2 text-center border-b">{category.name}</td>
+              <td className="px-4 py-2 text-center border-b">{calculateTotal(category.category)}원</td>
             </tr>
           ))}
         </tbody>
@@ -232,10 +232,10 @@ const BudgetTracker: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {income.map(income => (
-            <tr key={income}>
-              <td className="px-4 py-2 text-center border-b">{income}</td>
-              <td className="px-4 py-2 text-center border-b">{calculateTotal(income)}원</td>
+          {onlyIncome.map(income => (
+            <tr key={income.id}>
+              <td className="px-4 py-2 text-center border-b">{income.name}</td>
+              <td className="px-4 py-2 text-center border-b">{calculateTotal(income.category)}원</td>
             </tr>
           ))}
         </tbody>
@@ -250,10 +250,10 @@ const BudgetTracker: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {savings.map(save => (
-            <tr key={save}>
-              <td className="px-4 py-2 text-center border-b">{save}</td>
-              <td className="px-4 py-2 text-center border-b">{calculateTotal(save)}원</td>
+          {onlySave.map(save => (
+            <tr key={save.id}>
+              <td className="px-4 py-2 text-center border-b">{save.name}</td>
+              <td className="px-4 py-2 text-center border-b">{calculateTotal(save.category)}원</td>
             </tr>
           ))}
         </tbody>
