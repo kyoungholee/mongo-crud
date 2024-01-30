@@ -10,34 +10,41 @@ interface Transaction {
   name: string;
 }
 
+//각 계산 총합의 ts를 설정
 interface TotalCalculate {
   allIncome: number;
-  allExpense: number;
-  addMoney: number;
+  foodExpense: number;
+  communicationExpense: number;
+  saving:number;
+  remainingMoney: number;
 }
 
 const countListPlus = [
   {
-    id : 0,
-    category: 'allExpense',
+    id: 0,
+    category: 'foodExpense', // 'allExpense' 대신에 'foodExpense'로 수정
     name: '외식비',
   },
   {
-    id : 1,
+    id: 1,
+    category: 'communicationExpense', // 'allExpense' 대신에 'communicationExpense'로 수정
+    name: '통신비',
+  },
+  {
+    id: 2,
     category: 'savings',
     name: '저축(은행적금)',
   },
   {
-    id : 2,
+    id: 3,
     category: 'Incoming',
     name: '수입(월급)',
   },
-]
+];
 
-const onlyExpense = countListPlus.filter((item) => item.category === 'allExpense');
+const onlyExpense = countListPlus.filter((item) => item.category === 'foodExpense' || item.category === 'communicationExpense');
 const onlySave = countListPlus.filter((item) => item.category === 'savings');
 const onlyIncome = countListPlus.filter((item) => item.category === 'Incoming');
-
 
 const BudgetTracker: React.FC = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -49,8 +56,10 @@ const BudgetTracker: React.FC = () => {
   });
   const [totalCalculate, setTotalCalculate] = useState<TotalCalculate>({
     allIncome: 0,
-    allExpense: 0,
-    addMoney: 0,
+    foodExpense: 0,
+    communicationExpense:0,
+    remainingMoney: 0,
+    saving: 0,
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -71,13 +80,22 @@ const BudgetTracker: React.FC = () => {
         const amount = parseInt(inputData.amount) || 0;
         const updatedData = { ...prevData };
   
+        // updatedData.remainingMoney = updatedData.allIncome - updatedData.allExpense - updatedData.saving
+
         if (inputData.category === 'Incoming') {
           // "수입"을 클릭한 경우에만 allIncome을 업데이트
           updatedData.allIncome += amount;
-        } else if(inputData.category === 'allExpense') {
-          // 그 외의 경우에는 allExpense을 업데이트
-          updatedData.allExpense += amount;
+        } else if(inputData.category === 'foodExpense') {
+          // 외식비를 클릭한 경우에만 foodExpense을 업데이트
+          updatedData.foodExpense += amount;
+        } else if(inputData.category === 'communicationExpense') {
+          // 통신비를 클릭한 경우에만 communicationExpense을 업데이트
+          updatedData.communicationExpense += amount;
+        } else if(inputData.category === 'savings') {
+          // 저축을 클릭한 경우에만 savings을 업데이트
+          updatedData.saving += amount;
         }
+        //저절로 계산이 되야함!!!
   
         return updatedData;
       });
@@ -97,6 +115,14 @@ const BudgetTracker: React.FC = () => {
     }, 0);
   };
 
+  
+const calculateTotalExpense = () => {
+  const totalExpense = onlyExpense.reduce((total, category) => {
+    return total + calculateTotal(category.category);
+  }, 0);
+  return totalExpense;
+};
+
   return (
     <div className="container mx-auto my-8">
       <h1 className="mb-10 text-3xl font-bold">가계부</h1>
@@ -109,7 +135,7 @@ const BudgetTracker: React.FC = () => {
             <div className='flex justify-between'>
               <div className='flex flex-col'>
                 <label htmlFor="addMoney" className="block mb-2 text-lg font-bold text-center text-gray-600">이달 총 수입</label>
-                  <span className='h-12'>{`${totalCalculate.allIncome}`}</span>
+                  <span className='h-12 pt-2 text-center border-2 border-solid border-sky-500'>{`${totalCalculate.allIncome}`}원</span>
                   {/* <input
                     type="text"
                     id="addMoney"
@@ -120,16 +146,18 @@ const BudgetTracker: React.FC = () => {
               </div>
               <div className='flex flex-col'>
                 <label htmlFor="allExpense" className="block mb-2 text-lg font-bold text-center text-gray-600">이달 총 지출</label>
-                <span className='h-12'>{`${totalCalculate.allExpense}`}</span>
+                <span className='h-12 pt-2 text-center border-2 border-solid border-sky-500'>{`${calculateTotalExpense()}`}원</span>
               </div>
 
               <div className='flex flex-col'>
               <label htmlFor="allSave" className="block mb-2 text-lg font-bold text-center text-gray-600">이달 총 저축</label>
+              <span className='h-12 pt-2 text-center border-2 border-solid border-sky-500'>{`${totalCalculate.saving}`}원</span>
                
               </div>
 
               <div className='flex flex-col'>
               <label htmlFor="remainPay" className="block mb-2 text-lg font-bold text-center text-gray-600">이달 남은 돈</label>
+              <span className='h-12 pt-2 text-center border-2 border-solid border-sky-500 '>{`${totalCalculate.remainingMoney}`}원</span>
               
               </div>
             </div>
@@ -141,7 +169,7 @@ const BudgetTracker: React.FC = () => {
                   name="category"
                   value={inputData.category}
                   onChange={handleChange}
-                  className="h-8 form-input"
+                  className="h-8 border-2 border-solid border-sky-500 form-input"
                 >
                   <option value="" disabled>상세보기</option>
                   {countListPlus.map(category => (
@@ -156,7 +184,7 @@ const BudgetTracker: React.FC = () => {
                 name="amount"
                 value={inputData.amount}
                 onChange={handleChange}
-                className="h-8 form-input"
+                className="h-8 border-2 border-solid form-input border-sky-500"
               />
             </div>
           </div>
@@ -170,7 +198,7 @@ const BudgetTracker: React.FC = () => {
             rows={3}
             value={inputData.description}
             onChange={handleChange}
-            className="w-full form-textarea"
+            className="w-full border-2 border-solid border-sky-500 form-textarea"
           />
         </div>
         <div className='flex justify-end gap-6'>
