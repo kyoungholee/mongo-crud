@@ -19,6 +19,7 @@ interface TotalCalculate {
   remainingMoney: number;
 }
 
+//db에서 데이터를 가져오지 않고 json형태로 구현
 const countListPlus = [
   {
     id: 0,
@@ -46,14 +47,18 @@ const onlyExpense = countListPlus.filter((item) => item.category === 'foodExpens
 const onlySave = countListPlus.filter((item) => item.category === 'savings');
 const onlyIncome = countListPlus.filter((item) => item.category === 'Incoming');
 
-const BudgetTracker: React.FC = () => {
+const RecordMoneyFn: React.FC = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+
+  //
   const [inputData, setInputData] = useState({
     category: '',
     amount: '',
     description: '',
     name: '',
   });
+  
+  //총 지출, 수입, 저축에 대한 값을 가져오기 위한 state값
   const [totalCalculate, setTotalCalculate] = useState<TotalCalculate>({
     allIncome: 0,
     foodExpense: 0,
@@ -65,6 +70,7 @@ const BudgetTracker: React.FC = () => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     
+    // 이전 값을 가져온 뒤,  선택한 카테고리와 입력한 가격 , 상세내용의 데이터를 저장한다.
       setInputData((prevData) => ({ ...prevData, [name]: value }));
   };
 
@@ -77,11 +83,11 @@ const BudgetTracker: React.FC = () => {
       setTransactions((prevTransactions) => [newTransaction, ...prevTransactions]);
   
       setTotalCalculate((prevData) => {
-        const amount = parseInt(inputData.amount) || 0;
+        const amount = parseInt(inputData.amount) || 0;      
         const updatedData = { ...prevData };
-  
-        // updatedData.remainingMoney = updatedData.allIncome - updatedData.allExpense - updatedData.saving
 
+          // updatedData.remainingMoney = updatedData.allIncome - updatedData.allExpense - updatedData.saving
+          
         if (inputData.category === 'Incoming') {
           // "수입"을 클릭한 경우에만 allIncome을 업데이트
           updatedData.allIncome += amount;
@@ -94,20 +100,17 @@ const BudgetTracker: React.FC = () => {
         } else if(inputData.category === 'savings') {
           // 저축을 클릭한 경우에만 savings을 업데이트
           updatedData.saving += amount;
-        }
-        //저절로 계산이 되야함!!!
-  
+        }  
+
         return updatedData;
       });
   
-      // 입력값 초기화
+      // 데이터 입력 후 초기화
       setInputData({ category: '', amount: '', description: '', name:"" });
     } catch (err) {
       console.error("API 확인 해보세요");
     }
   };
-  
-  
 
   const calculateTotal = (category: string) => {
     return transactions.reduce((total, transaction) => {
@@ -115,13 +118,19 @@ const BudgetTracker: React.FC = () => {
     }, 0);
   };
 
+  const calculateTotalIncome = () => {
+    const totalIncome = onlyIncome.reduce((total, category) => {
+      return total + calculateTotal(category.category);
+    }, 0);
+    return totalIncome;
+  };
   
-const calculateTotalExpense = () => {
-  const totalExpense = onlyExpense.reduce((total, category) => {
-    return total + calculateTotal(category.category);
-  }, 0);
-  return totalExpense;
-};
+  const calculateTotalExpense = () => {
+    const totalExpense = onlyExpense.reduce((total, category) => {
+      return total + calculateTotal(category.category);
+    }, 0);
+    return totalExpense;
+  };
 
   return (
     <div className="container mx-auto my-8">
@@ -135,14 +144,7 @@ const calculateTotalExpense = () => {
             <div className='flex justify-between'>
               <div className='flex flex-col'>
                 <label htmlFor="addMoney" className="block mb-2 text-lg font-bold text-center text-gray-600">이달 총 수입</label>
-                  <span className='h-12 pt-2 text-center border-2 border-solid border-sky-500'>{`${totalCalculate.allIncome}`}원</span>
-                  {/* <input
-                    type="text"
-                    id="addMoney"
-                    value={`${inputData.addMoney} 원`}
-                    name="addMoney"
-                    onChange={handleChange}
-                  /> */}
+                  <span className='h-12 pt-2 text-center border-2 border-solid border-sky-500'>{`${calculateTotalIncome()}`}원</span>
               </div>
               <div className='flex flex-col'>
                 <label htmlFor="allExpense" className="block mb-2 text-lg font-bold text-center text-gray-600">이달 총 지출</label>
@@ -291,4 +293,4 @@ const calculateTotalExpense = () => {
 };
 
 
-export default BudgetTracker;
+export default RecordMoneyFn;
