@@ -1,5 +1,5 @@
 export interface IRecord {
     category : string;
-    price : string;
+    amount : string;
     explanation: string;
 }

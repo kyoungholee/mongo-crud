@@ -6,7 +6,7 @@ const RecordMoneySchema = new Schema({
     category : {
         type : String
     },
-    price : {
+    amount : {
         type : String
     },
     explanation : {
