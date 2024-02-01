@@ -4,14 +4,15 @@ import { IRecord } from "../interfaces/IRecord";
 
 const RecordMoneySchema = new Schema({
     category : {
-        type : String
+        type : String,
     },
     amount : {
-        type : String
+        type : String,
     },
-    explanation : {
-        type : String
+    description : {
+        type : String,
     },
+ 
 })
 
 export default mongoose.model<IRecord & mongoose.Document>("RecordMoney", RecordMoneySchema);
