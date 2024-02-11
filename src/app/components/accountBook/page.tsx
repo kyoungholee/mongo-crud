@@ -1,5 +1,6 @@
 
 'use client'
+import axios from 'axios';
 import React, { useState } from 'react';
 
 interface Transaction {
@@ -7,7 +8,7 @@ interface Transaction {
   category: string;
   amount: string;
   description: string;
-  name: string;
+  // name: string;
 }
 
 //각 계산 총합의 ts를 설정
@@ -55,7 +56,6 @@ const RecordMoneyFn: React.FC = () => {
     category: '',
     amount: '',
     description: '',
-    name: '',
   });
   
   //총 지출, 수입, 저축에 대한 값을 가져오기 위한 state값
@@ -81,7 +81,17 @@ const RecordMoneyFn: React.FC = () => {
       const newTransaction: Transaction = { ...inputData, id: Date.now() };
   
       setTransactions((prevTransactions) => [newTransaction, ...prevTransactions]);
-  
+
+      console.log("저장 데이터 444", newTransaction);
+
+      const keepingData = await axios.post("http://localhost:3000/api/houseKeeping",newTransaction, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+
+      console.log("해당 가계부 데이터", keepingData);
+
       setTotalCalculate((prevData) => {
         const amount = parseInt(inputData.amount) || 0;      
         const updatedData = { ...prevData };
@@ -106,7 +116,7 @@ const RecordMoneyFn: React.FC = () => {
       });
   
       // 데이터 입력 후 초기화
-      setInputData({ category: '', amount: '', description: '', name:"" });
+      setInputData({ category: '', amount: '', description: ''});
     } catch (err) {
       console.error("API 확인 해보세요");
     }
