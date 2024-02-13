@@ -15,4 +15,4 @@ const RecordMoneySchema = new Schema({
  
 })
 
-export default mongoose.model<IRecord & mongoose.Document>("RecordMoney", RecordMoneySchema);
+export default mongoose.model<IRecord & mongoose.Document>("RecordMoneies", RecordMoneySchema);
