@@ -13,13 +13,12 @@ export async function POST(req: any, res: Response) {
 
   console.log("name", username, password)
 
-await connectMongoDB();
+  await connectMongoDB();
 
 
   const userExist = await Register.findOne({ name: username });
   
   console.log("userExist",userExist)
-
 
   console.log("존재하는 이름이니??", userExist);
   if (!userExist) {
