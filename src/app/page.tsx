@@ -1,10 +1,10 @@
 import TopicsList from "./api/boards/TopicList";
-import HomePage from "./components/home/page";
+import Login from "./components/login/page";
 
 export default function Home() {
   return (
     <>
-     <HomePage />
+     <Login />
     </>
 
   ) 
