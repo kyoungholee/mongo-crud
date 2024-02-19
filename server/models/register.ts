@@ -3,6 +3,7 @@ import mongoose, {Schema} from "mongoose";
 const RegisterSchema = new Schema({
     name: {
         type: String,
+        index : true,
     },
     email: {
         type: String,
@@ -13,6 +14,7 @@ const RegisterSchema = new Schema({
         type: String,
     },
 });
+
 
 // IUser 인터페이스를 먼저 정의
 export interface IUser {

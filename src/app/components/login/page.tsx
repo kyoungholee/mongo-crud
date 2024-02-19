@@ -1,6 +1,7 @@
 'use client'
 
 import axios from 'axios';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 
@@ -32,15 +33,15 @@ const Login = () => {
       });
 
       // 서버에서 받은 토큰을 저장하고 사용자에게 메시지 표시
-      const { token } = loginResponse.data;
+      // const { token } = loginResponse.data;
 
-          console.log(token);
+      //     console.log(token);
         
-          // Set the cookie using document.cookie
-          document.cookie = `user44=${token}; path=/; max-age=${60 * 60 * 24 * 7}`;
+      //     // Set the cookie using document.cookie
+      //     document.cookie = `user44=${token}; path=/; max-age=${60 * 60 * 24 * 7}`;
         
       alert("로그인 축하드립니다.");
-      router.push('/');
+      router.push('/components/home');
 
     } catch (error) {
       console.error("로그인 실패:");
@@ -86,13 +87,19 @@ const Login = () => {
             </div>
           </div>
 
+          <p className='m-4 text-sm text-center'>계정이 없으신가요?
+            <Link className='p-3 font-bold' href={'/components/viewRegister'}>회원가입</Link>
+          </p>
+
           <div className={`mt-6`}>
             <button
               type="submit"
               className={`group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-800 transition duration-150 ease-in-out`}
               disabled={loading} // 로딩 중에는 버튼 비활성화
             >
-              {loading ? '로딩 중...' : '로그인'}
+              {loading ? 
+            <Link href={'/components/home'}></Link>
+              : '로그인'}
             </button>
           </div>
         </form>
