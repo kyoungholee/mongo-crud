@@ -62,14 +62,6 @@ const ViewRegister: React.FC = () => {
       // 여기에 서버로 데이터를 보내는 로직을 추가하세요.
     
       if (response.status === 201) {
-
-          // const { token } = response.data;
-
-          // console.log(token);
-        
-          // // Set the cookie using document.cookie
-          // document.cookie = `user44=${token}; path=/; max-age=${60 * 60 * 24 * 7}`;
-        
         
         alert('회원가입을 환영합니다.');
         router.push('/');
