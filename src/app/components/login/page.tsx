@@ -38,8 +38,8 @@ const Login = () => {
           console.log(token);
         
           // Set the cookie using document.cookie
-          document.cookie = `user44=${token}; path=/components/home; max-age=${60 * 60 * 24 * 7}`;
-        
+          document.cookie = `${loginForm.username}=${token}; path=/components/home; max-age=${60 * 60 * 24 * 7}`;
+          localStorage.setItem(`${loginForm.username}`, "환영합니다.");
       alert("로그인 축하드립니다.");
       router.push('/components/home');
 
