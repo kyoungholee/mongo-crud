@@ -33,18 +33,18 @@ const Login = () => {
       });
 
       // 서버에서 받은 토큰을 저장하고 사용자에게 메시지 표시
-      const { token } = loginResponse.data;
+          const { token } = loginResponse.data;
 
-          console.log(token);
         
           // Set the cookie using document.cookie
-          document.cookie = `${loginForm.username}=${token}; path=/components/home; max-age=${60 * 60 * 24 * 7}`;
-          localStorage.setItem(`${loginForm.username}`, "환영합니다.");
+          document.cookie = `token=${token}; path=/; max-age=${60 * 60 * 24 * 7}`;
+          document.cookie = `userId= ${loginForm.username}; path=/; max-age=${60 * 60 * 24 * 7}`;
+          
       alert("로그인 축하드립니다.");
       router.push('/components/home');
 
     } catch (error) {
-      console.error("로그인 실패:");
+      alert("잘못된 정보입니다.");
     } finally {
       setLoading(false); // 로딩 종료
     }
