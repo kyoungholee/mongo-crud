@@ -3,22 +3,34 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { setCookie, getCookie } from 'cookies-next';
+import Cookie from 'js-cookie';
 
 
-export default function SideBar() {
+export default function SideBar(){
 
   const router = useRouter();
 
-  const [username, setUsername] = useState<string[]>([]);
+  const [username, setUsername] = useState('');
 
   useEffect(() => {
-    const keys = Object.keys(localStorage);
-    if(keys.length > 0) {
-      setUsername(keys);
+    async function fetchUserData() {
+      try {
+        const userCookieValue = await getCookie('userId');
+        if (userCookieValue) {
+          setUsername(userCookieValue);
+        }
+      } catch (err) {
+        console.error('Error fetching user data:', err);
+      }
     }
-  },[]);
+  
+    fetchUserData();
+  }, []);
 
-  console.log("로그인 계정", username);
+  const handleLogout = () => {
+    Cookie.remove('userId');
+    Cookie.remove('token');
+  }
 
   return (
     <>
@@ -34,9 +46,9 @@ export default function SideBar() {
         { username ? ( 
         <div className='flex items-center gap-6'>
         <div>환영합니다. {username} 님</div>
-        <Link href="/logout">
-            로그아웃
-          </Link>
+        <Link href="/" onClick={handleLogout}>
+          로그아웃
+        </Link>
         </div>
         ) :(
           <div>
