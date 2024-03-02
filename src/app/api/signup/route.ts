@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt";
-import express, { NextFunction, Request, Response } from "express";
+import express, { Response } from "express";
 import jwt from "jsonwebtoken";
 import { check, validationResult } from "express-validator";
 import * as dotenv from "dotenv";
@@ -22,32 +22,32 @@ export async function POST(req: any, res: Response) {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    const payload = {
-      user: {
-        email: email,
-      },
-    };
+    // const payload = {
+    //   user: {
+    //     email: email,
+    //   },
+    // };
 
-    // jwt.sign을 Promise로 감싸고, 비동기적으로 처리
-    const token = await new Promise<string>((resolve, reject) => {
-      jwt.sign(
-        payload,
-        YOUR_SECRET_KEY,
-        { expiresIn: "30m" },
-        (err, token) => {
-          if (err) {
-            console.error("토큰 생성 에러:", err);
-            reject(err);
-          } else {
-            console.log("생성된 토큰:", token);
-            if(token) {
-                resolve(token);
+    // // jwt.sign을 Promise로 감싸고, 비동기적으로 처리
+    // const token = await new Promise<string>((resolve, reject) => {
+    //   jwt.sign(
+    //     payload,
+    //     YOUR_SECRET_KEY,
+    //     { expiresIn: "30m" },
+    //     (err, token) => {
+    //       if (err) {
+    //         console.error("토큰 생성 에러:", err);
+    //         reject(err);
+    //       } else {
+    //         console.log("생성된 토큰:", token);
+    //         if(token) {
+    //             resolve(token);
 
-            }
-          }
-        }
-      );
-    });
+    //         }
+    //       }
+    //     }
+    //   );
+    // });
 
     // 토큰을 응답에 추가하여 클라이언트로 전송
     await connectMongoDB();
@@ -55,7 +55,7 @@ export async function POST(req: any, res: Response) {
 
     // 응답에 토큰과 메시지를 함께 전송
     return NextResponse.json(
-      { message: "회원가입 축하합니다.", token },
+      { message: "회원가입 축하합니다." },
       { status: 201 }
     );
   } catch (err) {
