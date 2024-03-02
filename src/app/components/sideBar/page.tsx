@@ -36,7 +36,7 @@ export default function SideBar(){
     <>
         <div className='flex items-center gap-6 mr-4'>
         {/* <div> 돈의 뉴스</div> */}
-        <Link className="p-3" href={'/components/accountBook'}>
+        <Link className="p-3" href={`/components/accountBook/${getCookie('userId')}`}>
         가계부
         </Link>
         <div> 게시판</div>
