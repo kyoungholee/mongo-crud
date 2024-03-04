@@ -1,6 +1,8 @@
 
 'use client'
 import axios from 'axios';
+import { getCookie } from 'cookies-next';
+import { useRouter, useParams } from 'next/navigation';
 import React, { useState } from 'react';
 
 interface Transaction {
@@ -48,15 +50,20 @@ const onlyExpense = countListPlus.filter((item) => item.category === 'foodExpens
 const onlySave = countListPlus.filter((item) => item.category === 'savings');
 const onlyIncome = countListPlus.filter((item) => item.category === 'Incoming');
 
+//쿠키 값
+const userIdCookie = getCookie('userId');
+
 const RecordMoneyFn: React.FC = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
 
-  //
   const [inputData, setInputData] = useState({
     category: '',
     amount: '',
     description: '',
+    userid : userIdCookie,
   });
+
+  const [getInputData, setgetInputData] = useState<string>("");
   
   //총 지출, 수입, 저축에 대한 값을 가져오기 위한 state값
   const [totalCalculate, setTotalCalculate] = useState<TotalCalculate>({
@@ -66,6 +73,19 @@ const RecordMoneyFn: React.FC = () => {
     remainingMoney: 0,
     saving: 0,
   });
+
+  const router = useParams();
+
+  console.log("router ", router.accountuserId);
+
+//   const getMoneyData = axios.get('http://localhost:3000/api/getHouseKeeping', {
+//     params: {
+//       userId: router.accountuserId
+//   }
+// })
+
+// console.log("해당 가입 이름", router.accountuserId);
+// console.log("getMoneyData", getMoneyData);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -82,15 +102,8 @@ const RecordMoneyFn: React.FC = () => {
   
       setTransactions((prevTransactions) => [newTransaction, ...prevTransactions]);
 
-      console.log("저장 데이터 444", newTransaction);
 
-      const keepingData = await axios.post("http://localhost:3000/api/houseKeeping",newTransaction, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
-
-      console.log("해당 가계부 데이터", keepingData);
+     
 
       setTotalCalculate((prevData) => {
         const amount = parseInt(inputData.amount) || 0;      
@@ -114,9 +127,19 @@ const RecordMoneyFn: React.FC = () => {
 
         return updatedData;
       });
+
+      const keepingData = await axios.post("http://localhost:3000/api/houseKeeping", inputData , {
+        headers: {
+          'Content-Type': 'application/json',
+          'Cookie': `userId=${userIdCookie}`,
+          'input': `${inputData}`,
+        },
+      })
+
+      console.log("해당 가계부 데이터", keepingData);
   
       // 데이터 입력 후 초기화
-      setInputData({ category: '', amount: '', description: ''});
+      setInputData({ category: '', amount: '', description: '', userid: userIdCookie});
     } catch (err) {
       console.error("API 확인 해보세요");
     }
@@ -145,6 +168,7 @@ const RecordMoneyFn: React.FC = () => {
   return (
     <div className="container mx-auto my-8">
       <h1 className="mb-10 text-3xl font-bold">가계부</h1>
+       {/* <p>Post: {router.query.accountuserId}</p> */}
 
       {/* 거래 입력 폼 */}
       <form onSubmit={handleSubmit} className="mb-4">
