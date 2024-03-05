@@ -131,8 +131,7 @@ const RecordMoneyFn: React.FC = () => {
       const keepingData = await axios.post("http://localhost:3000/api/houseKeeping", inputData , {
         headers: {
           'Content-Type': 'application/json',
-          'Cookie': `userId=${userIdCookie}`,
-          'input': `${inputData}`,
+          // 'Cookie': `userId=${userIdCookie}`,
         },
       })
 

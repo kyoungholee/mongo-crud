@@ -18,6 +18,6 @@ const RecordMoneySchema = new Schema({
 });
 
 // 동적으로 모델 생성
-const RecordModel = mongoose.model<IRecord & mongoose.Document>("savemoney", RecordMoneySchema);
+const RecordModel = mongoose.model<IRecord & mongoose.Document>("savemoneydata", RecordMoneySchema);
 
 export default RecordModel;
