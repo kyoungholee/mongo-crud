@@ -3,7 +3,7 @@
 import axios from 'axios';
 import { getCookie } from 'cookies-next';
 import { useRouter, useParams } from 'next/navigation';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 interface Transaction {
   id: number;
@@ -75,17 +75,20 @@ const RecordMoneyFn: React.FC = () => {
   });
 
   const router = useParams();
+  const id = router.accountuserId;
 
-  console.log("router ", router.accountuserId);
+    const getMoneyData = async () => {
+      try {
+        const getResponse = await axios.get(`http://localhost:3000/api/getHouseKeeping/${id}`);
 
-//   const getMoneyData = axios.get('http://localhost:3000/api/getHouseKeeping', {
-//     params: {
-//       userId: router.accountuserId
-//   }
-// })
+        console.log("getData", getResponse.data);
+      }
+  catch(err) {
+        console.error("api 확인해주세요.")
+      }
+    }
+    console.log("해당 가입 이름", id ,getMoneyData());
 
-// console.log("해당 가입 이름", router.accountuserId);
-// console.log("getMoneyData", getMoneyData);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
