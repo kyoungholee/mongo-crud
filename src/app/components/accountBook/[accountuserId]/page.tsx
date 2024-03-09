@@ -62,9 +62,10 @@ const RecordMoneyFn: React.FC = () => {
     description: '',
     userid : userIdCookie,
   });
-
-  const [getInputData, setgetInputData] = useState<string>("");
   
+  const [getdbData, setGetdbData] = useState("");
+
+
   //총 지출, 수입, 저축에 대한 값을 가져오기 위한 state값
   const [totalCalculate, setTotalCalculate] = useState<TotalCalculate>({
     allIncome: 0,
@@ -82,6 +83,8 @@ const RecordMoneyFn: React.FC = () => {
         const getResponse = await axios.get(`http://localhost:3000/api/getHouseKeeping/${id}`);
 
         console.log("getData", getResponse.data);
+
+        setGetdbData(getResponse.data);
       }
   catch(err) {
         console.error("api 확인해주세요.")
