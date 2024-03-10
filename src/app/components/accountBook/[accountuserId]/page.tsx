@@ -63,7 +63,13 @@ const RecordMoneyFn: React.FC = () => {
     userid : userIdCookie,
   });
   
-  const [getdbData, setGetdbData] = useState("");
+  const [getdbData, setGetdbData] = useState([
+    {   category: '',
+        amount: '',
+        description: '',
+        index : 1,
+    }
+  ]);
 
 
   //총 지출, 수입, 저축에 대한 값을 가져오기 위한 state값
@@ -77,7 +83,8 @@ const RecordMoneyFn: React.FC = () => {
 
   const router = useParams();
   const id = router.accountuserId;
-
+  
+  useEffect(() => {
     const getMoneyData = async () => {
       try {
         const getResponse = await axios.get(`http://localhost:3000/api/getHouseKeeping/${id}`);
@@ -91,6 +98,7 @@ const RecordMoneyFn: React.FC = () => {
       }
     }
     console.log("해당 가입 이름", id ,getMoneyData());
+  },[id])
 
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -261,14 +269,17 @@ const RecordMoneyFn: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {transactions.map(transaction => (
-            <tr key={transaction.id}>
-              <td className="px-4 py-2 text-center border-b">{transaction.category}</td>
+          {getdbData.map(transaction=> (
+            <tr key={transaction.index}>
+              <td className="px-4 py-2 text-center border-b">{transaction.amount}</td>
               <td className="px-4 py-2 text-center border-b">{transaction.description}</td>
               <td className="px-4 py-2 text-center border-b">{transaction.amount}원</td>
 
             </tr>
           ))}
+         
+
+        
         </tbody>
       </table>
 
