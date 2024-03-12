@@ -67,7 +67,6 @@ const RecordMoneyFn: React.FC = () => {
     {   category: '',
         amount: '',
         description: '',
-        index : 1,
     }
   ]);
 
@@ -83,6 +82,8 @@ const RecordMoneyFn: React.FC = () => {
 
   const router = useParams();
   const id = router.accountuserId;
+
+  let datalengrh = 0;
   
   useEffect(() => {
     const getMoneyData = async () => {
@@ -164,12 +165,23 @@ const RecordMoneyFn: React.FC = () => {
     }, 0);
   };
 
-  const calculateTotalIncome = () => {
+  
+  const calculateTotalIncome = (amountdbData: number) => { 
+    // onlyIncome 배열의 요소들을 합산
     const totalIncome = onlyIncome.reduce((total, category) => {
       return total + calculateTotal(category.category);
-    }, 0);
+    }, 0) + amountdbData;
+  
     return totalIncome;
   };
+  
+  // 각 item의 amount 값을 숫자로 변환하여 calculateTotalIncome 함수에 전달하고, 반환값을 문자열이 아닌 숫자로 변환하여 반환
+  const totalIncomeForEachItem = getdbData.map(item => calculateTotalIncome(Number(item.amount)));
+  
+  // 총합 계산
+  const totalAmountdbData = totalIncomeForEachItem.reduce((total, amount) => total + amount, 0);
+  
+  
   
   const calculateTotalExpense = () => {
     const totalExpense = onlyExpense.reduce((total, category) => {
@@ -187,11 +199,13 @@ const RecordMoneyFn: React.FC = () => {
       <form onSubmit={handleSubmit} className="mb-4">
         <div className="">
           <div className="mb-4 ">
-
             <div className='flex justify-between'>
               <div className='flex flex-col'>
                 <label htmlFor="addMoney" className="block mb-2 text-lg font-bold text-center text-gray-600">이달 총 수입</label>
-                  <span className='h-12 pt-2 text-center border-2 border-solid border-sky-500'>{`${calculateTotalIncome()}`}원</span>
+                  <span className='h-12 px-4 pt-2 text-center border-2 border-solid border-sky-500'>{
+                  totalAmountdbData
+                  }원
+                  </span>
               </div>
               <div className='flex flex-col'>
                 <label htmlFor="allExpense" className="block mb-2 text-lg font-bold text-center text-gray-600">이달 총 지출</label>
@@ -269,18 +283,15 @@ const RecordMoneyFn: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {getdbData.map(transaction=> (
-            <tr key={transaction.index}>
-              <td className="px-4 py-2 text-center border-b">{transaction.amount}</td>
-              <td className="px-4 py-2 text-center border-b">{transaction.description}</td>
-              <td className="px-4 py-2 text-center border-b">{transaction.amount}원</td>
+    {getdbData.map((transaction, index) => (
+        <tr key={index}>
+            <td className="px-4 py-2 text-center border-b">{transaction.category}</td>
+            <td className="px-4 py-2 text-center border-b">{transaction.description}</td>
+            <td className="px-4 py-2 text-center border-b">{transaction.amount}원</td>
+        </tr>
+    ))}
+</tbody>
 
-            </tr>
-          ))}
-         
-
-        
-        </tbody>
       </table>
 
       {/* 카테고리별 합계 표 */}
