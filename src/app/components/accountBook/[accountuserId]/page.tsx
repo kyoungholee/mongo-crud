@@ -27,22 +27,32 @@ const countListPlus = [
   {
     id: 0,
     category: 'foodExpense', // 'allExpense' 대신에 'foodExpense'로 수정
-    name: '외식비',
+    name: 'foodExpense',
   },
   {
     id: 1,
-    category: 'communicationExpense', // 'allExpense' 대신에 'communicationExpense'로 수정
-    name: '통신비',
+    category: 'cellphoneBill', // 'allExpense' 대신에 'communicationExpense'로 수정
+    name: 'cellPhoneBill',
   },
   {
     id: 2,
-    category: 'savings',
-    name: '저축(은행적금)',
+    category: 'monthlyRent', // 'allExpense' 대신에 'communicationExpense'로 수정
+    name: 'houseMonthlyRent',
   },
   {
     id: 3,
+    category: 'bankRoanPay', // 'allExpense' 대신에 'communicationExpense'로 수정
+    name: 'bankRoanPay',
+  },
+  {
+    id: 4,
+    category: 'savings',
+    name: 'savings',
+  },
+  {
+    id: 5,
     category: 'Incoming',
-    name: '수입(월급)',
+    name: 'Incoming',
   },
 ];
 
@@ -82,24 +92,6 @@ const RecordMoneyFn: React.FC = () => {
 
   const router = useParams();
   const id = router.accountuserId;
-
-  let datalengrh = 0;
-  
-  useEffect(() => {
-    const getMoneyData = async () => {
-      try {
-        const getResponse = await axios.get(`http://localhost:3000/api/getHouseKeeping/${id}`);
-
-        console.log("getData", getResponse.data);
-
-        setGetdbData(getResponse.data);
-      }
-  catch(err) {
-        console.error("api 확인해주세요.")
-      }
-    }
-    console.log("해당 가입 이름", id ,getMoneyData());
-  },[id])
 
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -150,14 +142,33 @@ const RecordMoneyFn: React.FC = () => {
         },
       })
 
-      console.log("해당 가계부 데이터", keepingData);
-  
+         // 서버에서 새로운 데이터 가져오기
+    const getResponse = await axios.get(`http://localhost:3000/api/getHouseKeeping/${id}`);
+    setGetdbData(getResponse.data);
+      
       // 데이터 입력 후 초기화
       setInputData({ category: '', amount: '', description: '', userid: userIdCookie});
     } catch (err) {
       console.error("API 확인 해보세요");
     }
   };
+
+    
+  useEffect(() => {
+    const getMoneyData = async () => {
+      try {
+        const getResponse = await axios.get(`http://localhost:3000/api/getHouseKeeping/${id}`);
+
+        console.log("getData", getResponse.data);
+
+        setGetdbData(getResponse.data);
+      }
+  catch(err) {
+        console.error("api 확인해주세요.")
+      }
+    }
+    console.log("해당 가입 이름", id ,getMoneyData());
+  },[id])
 
   const calculateTotal = (category: string) => {
     return transactions.reduce((total, transaction) => {
@@ -166,29 +177,92 @@ const RecordMoneyFn: React.FC = () => {
   };
 
   
-  const calculateTotalIncome = (amountdbData: number) => { 
-    // onlyIncome 배열의 요소들을 합산
-    const totalIncome = onlyIncome.reduce((total, category) => {
-      return total + calculateTotal(category.category);
-    }, 0) + amountdbData;
+  // const calculateTotalIncome = (amountdbData: number) => { 
+  //   // onlyIncome 배열의 요소들을 합산
+  //   const totalIncome = onlyIncome.reduce((total, category) => {
+  //     return total + calculateTotal(category.category);
+  //   }, 0) + amountdbData;
   
-    return totalIncome;
-  };
+  //   return totalIncome;
+  // };
+
+  // const calculateTotalConsume = (consumedbData: number) => {
+  //   const totalExpense = onlyExpense.reduce((total, category) => {
+  //     return total + calculateTotal(category.category);
+  //   }, 0) + consumedbData
+    
+  //   return totalExpense;
+  // }
+
+
   
-  // 각 item의 amount 값을 숫자로 변환하여 calculateTotalIncome 함수에 전달하고, 반환값을 문자열이 아닌 숫자로 변환하여 반환
-  const totalIncomeForEachItem = getdbData.map(item => calculateTotalIncome(Number(item.amount)));
+  // // 각 item의 amount 값을 숫자로 변환하여 calculateTotalIncome 함수에 전달하고, 반환값을 문자열이 아닌 숫자로 변환하여 반환
+  // const totalIncomeForEachItem = getdbData.map(item => {
+  //   if(item.category === "Incoming") {
+  //      return calculateTotalIncome(Number(item.amount))
+  //   }
+  // });
+
+  // const totalExpenseForEachItem = getdbData.map(item => {
+  //   if(item.category === 'foodExpense') {
+  //     return calculateTotalConsume(Number(item.amount))
+  //   }
+  // });
+
   
-  // 총합 계산
-  const totalAmountdbData = totalIncomeForEachItem.reduce((total, amount) => total + amount, 0);
   
-  
-  
-  const calculateTotalExpense = () => {
-    const totalExpense = onlyExpense.reduce((total, category) => {
-      return total + calculateTotal(category.category);
-    }, 0);
-    return totalExpense;
-  };
+  // // 총합 계산
+  // const totalAmountdbData = totalIncomeForEachItem.reduce((total: number, amount: number | undefined) => {
+  //   if(amount === undefined) {
+  //     return total;
+  //   }
+  //   return total + amount;
+  // }, 0);
+
+  // const totalConsumedbData = totalExpenseForEachItem.reduce((total: number, consume: number | undefined) => {
+  //   if(consume === undefined) {
+  //     return total;
+  //   }
+  //   return total + consume;
+  // }, 0);
+
+// 카테고리별 총 금액을 계산하는 함수
+const calculateTotalByCategory = (category: string, transactions: Transaction[]) => {
+  return transactions
+    .filter(transaction => transaction.category === category)
+    .reduce((total, transaction) => total + parseFloat(transaction.amount), 0);
+};
+
+// 수입 총액 계산
+// const totalIncome = onlyIncome.reduce((total, category) => {
+//   return total + calculateTotalByCategory(category.category, transactions);
+// }, 0);
+
+// // 지출 총액 계산
+// const totalExpense = onlyExpense.reduce((total, category) => {
+//   return total + calculateTotalByCategory(category.category, transactions);
+// }, 0);
+
+// 각 항목의 수입 및 지출을 계산하여 배열로 반환
+const totalIncomeForEachItem = getdbData
+  .filter(item => item.category === "Incoming")
+  .map(item => calculateTotalByCategory(item.category, transactions) + parseFloat(item.amount));
+
+const totalExpenseForEachItem = getdbData
+  .filter(item => item.category === "foodExpense")
+  .map(item => calculateTotalByCategory(item.category, transactions) + parseFloat(item.amount));
+
+  const totalSaveForEachItem = getdbData
+  .filter(item => item.category === "savings")
+  .map(item => calculateTotalByCategory(item.category, transactions) + parseFloat(item.amount));
+
+
+
+// 총합 계산
+const totalAmountdbData = totalIncomeForEachItem.reduce((total, amount) => total + amount, 0);
+const totalConsumedbData = totalExpenseForEachItem.reduce((total, consume) => total + consume, 0);
+const totalSavedbData = totalSaveForEachItem.reduce((total, consume) => total + consume, 0);
+
 
   return (
     <div className="container mx-auto my-8">
@@ -209,12 +283,14 @@ const RecordMoneyFn: React.FC = () => {
               </div>
               <div className='flex flex-col'>
                 <label htmlFor="allExpense" className="block mb-2 text-lg font-bold text-center text-gray-600">이달 총 지출</label>
-                <span className='h-12 pt-2 text-center border-2 border-solid border-sky-500'>{`${calculateTotalExpense()}`}원</span>
+                <span className='h-12 px-4 pt-2 text-center border-2 border-solid border-sky-500'>{
+                  totalConsumedbData
+                }원</span>
               </div>
 
               <div className='flex flex-col'>
               <label htmlFor="allSave" className="block mb-2 text-lg font-bold text-center text-gray-600">이달 총 저축</label>
-              <span className='h-12 pt-2 text-center border-2 border-solid border-sky-500'>{`${totalCalculate.saving}`}원</span>
+              <span className='h-12 pt-2 text-center border-2 border-solid border-sky-500'>{totalSavedbData}원</span>
                
               </div>
 
@@ -332,7 +408,7 @@ const RecordMoneyFn: React.FC = () => {
         </tbody>
       </table>
 
-        <h2 className="mb-2 text-2xl font-bold">저축</h2>
+        <h2 className="mb-2 text-2xl font-bold">저축 & 투자</h2>
       <table className="w-full mb-8 border border-gray-300">
         <thead>
           <tr className="bg-gray-200">
