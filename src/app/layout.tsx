@@ -1,5 +1,6 @@
 
 import Navbar from "./api/boards/Navbar";
+import SideBar from "./components/sideBar/page";
 import "./globals.css";
 import { Bonbon, Inter } from "next/font/google";
 import { ReactNode } from "react";
@@ -22,9 +23,15 @@ function RootLayout ({ children } : {
   return (
     <html>
       <body>
-        <div className="px-40 mx-auto ">
-            <div>{children}</div>
-        </div>
+          <header className='flex justify-between px-40 py-4 bg-white'>
+                <div className='flex items-center gap-4'>
+                ALIVE-MONEY
+                </div>
+                <SideBar/>
+          </header> 
+            <div className="px-40 mx-auto ">
+                <div>{children}</div>
+            </div>
       </body>
     </html>
   );
