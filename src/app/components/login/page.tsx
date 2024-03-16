@@ -51,10 +51,11 @@ const Login = () => {
   };
 
   return (
-    <div className={`min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8`}>
+    
+    <div className={`min-h-screen bg-main flex items-center bg-cover bg-no-repeat justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 opacity-70`}>
       <div className={`max-w-md w-full`}>
         <div>
-          <h2 className={`text-center text-3xl leading-9 font-extrabold text-gray-900`}>로그인</h2>
+          <h2 className={`text-center text-3xl leading-9 font-black text-black`}>로그인</h2>
         </div>
         <form className={`mt-8`} onSubmit={handleSubmit}>
           <div className={`rounded-md shadow-sm`}>
@@ -64,7 +65,7 @@ const Login = () => {
                 name="username"
                 type="text"
                 required
-                className={`form-input py-3 px-4 block w-full leading-5 rounded-none transition duration-150 ease-in-out sm:text-sm sm:leading-5`}
+                className={`form-input py-3 px-4 block w-full leading-5 rounded-none border-2 border-black transition duration-150 ease-in-out sm:text-sm sm:leading-5`}
                 placeholder="아이디"
                 value={loginForm.username}
                 onChange={handleChange}
@@ -79,7 +80,7 @@ const Login = () => {
                 name="password"
                 type="password"
                 required
-                className={`form-input py-3 px-4 block w-full leading-5 rounded-none transition duration-150 ease-in-out sm:text-sm sm:leading-5`}
+                className={`form-input py-3 px-4 block w-full leading-5 rounded-none border-2 border-black transition duration-150 ease-in-out sm:text-sm sm:leading-5`}
                 placeholder="비밀번호"
                 value={loginForm.password}
                 onChange={handleChange}
@@ -87,8 +88,8 @@ const Login = () => {
             </div>
           </div>
 
-          <p className='m-4 text-sm text-center'>계정이 없으신가요?
-            <Link className='p-3 font-bold' href={'/components/viewRegister'}>회원가입</Link>
+          <p className='m-4 text-sm font-bold text-center text-black'>계정이 없으신가요?
+            <Link className='p-3 font-bold text-black' href={'/components/viewRegister'}>회원가입</Link>
           </p>
 
           <div className={`mt-6`}>

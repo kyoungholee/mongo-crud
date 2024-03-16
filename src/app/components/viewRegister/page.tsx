@@ -75,13 +75,13 @@ const ViewRegister: React.FC = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+    <div className="flex items-center justify-center min-h-screen bg-gray-100 bg-cover bg-signup opacity-70">
       <div className="w-full max-w-md p-8 bg-white rounded shadow-md">
         <h1 className="mb-6 text-2xl font-semibold">회원가입</h1>
         <form onSubmit={SignupHandler}>
           <div className="mb-4">
             <label htmlFor="username" className="block text-sm font-medium text-gray-700">
-              이름
+              아이디
             </label>
             <input
               type="text"
@@ -89,8 +89,8 @@ const ViewRegister: React.FC = () => {
               value={signform.name}
               name="username"
               onChange={e => setSignform({...signform, name : e.target.value})}
-              className="w-full p-2 mt-1 border rounded-md"
-              placeholder="이름이 뭐니~?"
+              className="w-full p-2 mt-1 mb-4 border rounded-md"
+              placeholder="아이디를 입력해주세요."
             />
             <label htmlFor="email" className="block text-sm font-medium text-gray-700">
               이메일
@@ -101,7 +101,7 @@ const ViewRegister: React.FC = () => {
               value={signform.email}
               onChange={e => setSignform({...signform, email: e.target.value})}
               name="email"
-              className="w-full p-2 mt-1 border rounded-md"
+              className="w-full p-2 mt-1 mb-4 border rounded-md"
               placeholder="이메일 입력하세요."
             />
                   <label htmlFor="password" className="block text-sm font-medium text-gray-700">
@@ -113,7 +113,7 @@ const ViewRegister: React.FC = () => {
               name="password"
               value={signform.password}
               onChange={e => setSignform({...signform, password: e.target.value})}
-              className="w-full p-2 mt-1 border rounded-md"
+              className="w-full p-2 mt-1 mb-2 border rounded-md"
               placeholder="비밀번호 입력하세요."
             />
           </div>
