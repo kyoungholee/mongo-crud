@@ -4,6 +4,7 @@ import axios from 'axios';
 import { getCookie } from 'cookies-next';
 import { useRouter, useParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
+import { categoryList } from 'utils/categorydata';
 
 interface Transaction {
   id: number;
@@ -16,49 +17,15 @@ interface Transaction {
 //각 계산 총합의 ts를 설정
 interface TotalCalculate {
   allIncome: number;
-  foodExpense: number;
+  expenditure: number;
   communicationExpense: number;
   saving:number;
   remainingMoney: number;
 }
 
-//db에서 데이터를 가져오지 않고 json형태로 구현
-const countListPlus = [
-  {
-    id: 0,
-    category: 'foodExpense', // 'allExpense' 대신에 'foodExpense'로 수정
-    name: 'foodExpense',
-  },
-  {
-    id: 1,
-    category: 'cellphoneBill', // 'allExpense' 대신에 'communicationExpense'로 수정
-    name: 'cellPhoneBill',
-  },
-  {
-    id: 2,
-    category: 'monthlyRent', // 'allExpense' 대신에 'communicationExpense'로 수정
-    name: 'houseMonthlyRent',
-  },
-  {
-    id: 3,
-    category: 'bankRoanPay', // 'allExpense' 대신에 'communicationExpense'로 수정
-    name: 'bankRoanPay',
-  },
-  {
-    id: 4,
-    category: 'savings',
-    name: 'savings',
-  },
-  {
-    id: 5,
-    category: 'Incoming',
-    name: 'Incoming',
-  },
-];
-
-const onlyExpense = countListPlus.filter((item) => item.category === 'foodExpense' || item.category === 'communicationExpense');
-const onlySave = countListPlus.filter((item) => item.category === 'savings');
-const onlyIncome = countListPlus.filter((item) => item.category === 'Incoming');
+// const onlyExpense = countListPlus.filter((item) => item.category === 'expenditure' || item.category === 'communicationExpense');
+// const onlySave = countListPlus.filter((item) => item.category === 'savings');
+// const onlyIncome = countListPlus.filter((item) => item.category === 'Incoming');
 
 //쿠키 값
 const userIdCookie = getCookie('userId');
@@ -80,11 +47,31 @@ const RecordMoneyFn: React.FC = () => {
     }
   ]);
 
+  const [getdbExpense, setGetdbExpense] = useState([
+    {   category: '',
+        amount: '',
+        description: '',
+    }
+  ]);
+
+  const [getdbIncome, setGetdbIncome] = useState([
+    {   category: '',
+        amount: '',
+        description: '',
+    }
+  ]);
+  
+  const [getdbSave, setGetdbSave] = useState([
+    {   category: '',
+        amount: '',
+        description: '',
+    }
+  ]);
 
   //총 지출, 수입, 저축에 대한 값을 가져오기 위한 state값
   const [totalCalculate, setTotalCalculate] = useState<TotalCalculate>({
     allIncome: 0,
-    foodExpense: 0,
+    expenditure: 0,
     communicationExpense:0,
     remainingMoney: 0,
     saving: 0,
@@ -121,9 +108,9 @@ const RecordMoneyFn: React.FC = () => {
         if (inputData.category === 'Incoming') {
           // "수입"을 클릭한 경우에만 allIncome을 업데이트
           updatedData.allIncome += amount;
-        } else if(inputData.category === 'foodExpense') {
-          // 외식비를 클릭한 경우에만 foodExpense을 업데이트
-          updatedData.foodExpense += amount;
+        } else if(inputData.category === 'expenditure') {
+          // 외식비를 클릭한 경우에만 expenditure을 업데이트
+          updatedData.expenditure += amount;
         } else if(inputData.category === 'communicationExpense') {
           // 통신비를 클릭한 경우에만 communicationExpense을 업데이트
           updatedData.communicationExpense += amount;
@@ -144,8 +131,26 @@ const RecordMoneyFn: React.FC = () => {
 
          // 서버에서 새로운 데이터 가져오기
     const getResponse = await axios.get(`http://localhost:3000/api/getHouseKeeping/${id}`);
+
+    const getdbExpenseData = getResponse.data.filter((item: { category: string }) => item.category === 'expenditure');
+        console.log("getdbExpenseData", getdbExpenseData);
+        setGetdbExpense(getdbExpenseData);
+
+    const getdbIncomeData = getResponse.data.filter((item: { category: string }) => item.category === 'Incoming');
+    console.log("getdbExpenseData", getdbIncomeData);
+    setGetdbIncome(getdbIncomeData);
+
+
+    const getdbSaveData = getResponse.data.filter((item: { category: string }) => item.category === 'savings');
+    console.log("getdbExpenseData", getdbIncomeData);
+    setGetdbSave(getdbSaveData);
+
+        
+
+
     setGetdbData(getResponse.data);
-      
+
+  
       // 데이터 입력 후 초기화
       setInputData({ category: '', amount: '', description: '', userid: userIdCookie});
     } catch (err) {
@@ -153,22 +158,38 @@ const RecordMoneyFn: React.FC = () => {
     }
   };
 
-    
   useEffect(() => {
     const getMoneyData = async () => {
       try {
         const getResponse = await axios.get(`http://localhost:3000/api/getHouseKeeping/${id}`);
-
         console.log("getData", getResponse.data);
+  
+        // 카테고리가 'expenditure'인 데이터만 필터링하여 getdbExpense에 설정
+        const getdbExpenseData = getResponse.data.filter((item: { category: string }) => item.category === 'expenditure');
+        console.log("getdbExpenseData", getdbExpenseData);
+        setGetdbExpense(getdbExpenseData);
 
+        const getdbIncomeData = getResponse.data.filter((item: { category: string }) => item.category === 'Incoming');
+        console.log("getdbExpenseData", getdbIncomeData);
+        setGetdbIncome(getdbIncomeData);
+
+        const getdbSaveData = getResponse.data.filter((item: { category: string }) => item.category === 'savings');
+        console.log("getdbExpenseData", getdbIncomeData);
+        setGetdbSave(getdbSaveData);
+
+  
+  
+        // 전체 데이터 설정
         setGetdbData(getResponse.data);
-      }
-  catch(err) {
+      } catch (err) {
         console.error("api 확인해주세요.")
       }
-    }
-    console.log("해당 가입 이름", id ,getMoneyData());
-  },[id])
+    };
+  
+    console.log("해당 가입 이름", id);
+    getMoneyData();
+  }, [id]);
+  
 
   const calculateTotal = (category: string) => {
     return transactions.reduce((total, transaction) => {
@@ -176,6 +197,17 @@ const RecordMoneyFn: React.FC = () => {
     }, 0);
   };
 
+  const expenditureTotalAmount = getdbExpense.reduce((total, category) => {
+    return total + parseFloat(category.amount);
+  }, 0);
+
+  const IncomeTotalAmount = getdbIncome.reduce((total, category) => {
+    return total + parseFloat(category.amount);
+  }, 0);
+
+  const SaveTotalAmount = getdbSave.reduce((total, category) => {
+    return total + parseFloat(category.amount);
+  }, 0);
   
   // const calculateTotalIncome = (amountdbData: number) => { 
   //   // onlyIncome 배열의 요소들을 합산
@@ -204,7 +236,7 @@ const RecordMoneyFn: React.FC = () => {
   // });
 
   // const totalExpenseForEachItem = getdbData.map(item => {
-  //   if(item.category === 'foodExpense') {
+  //   if(item.category === 'expenditure') {
   //     return calculateTotalConsume(Number(item.amount))
   //   }
   // });
@@ -227,11 +259,19 @@ const RecordMoneyFn: React.FC = () => {
   // }, 0);
 
 // 카테고리별 총 금액을 계산하는 함수
-const calculateTotalByCategory = (category: string, transactions: Transaction[]) => {
-  return transactions
-    .filter(transaction => transaction.category === category)
-    .reduce((total, transaction) => total + parseFloat(transaction.amount), 0);
-};
+// const calculateTotalByCategory = (category: string, transactions: Transaction[]) => {
+
+//   console.log("calculateTotalByCategory", category, transactions);
+//   return transactions
+//     .filter(transaction => transaction.category === category)
+
+//     .reduce((total, transaction) => total + parseFloat(transaction.amount), 0);
+
+// };
+
+
+
+
 
 // 수입 총액 계산
 // const totalIncome = onlyIncome.reduce((total, category) => {
@@ -246,27 +286,34 @@ const calculateTotalByCategory = (category: string, transactions: Transaction[])
 // 각 항목의 수입 및 지출을 계산하여 배열로 반환
 const totalIncomeForEachItem = getdbData
   .filter(item => item.category === "Incoming")
-  .map(item => calculateTotalByCategory(item.category, transactions) + parseFloat(item.amount));
+  .map(item =>  parseFloat(item.amount)
+  
+  );
 
 const totalExpenseForEachItem = getdbData
-  .filter(item => item.category === "foodExpense")
-  .map(item => calculateTotalByCategory(item.category, transactions) + parseFloat(item.amount));
+  .filter(item => item.category === "expenditure")
+  .map(item => parseFloat(item.amount));
 
   const totalSaveForEachItem = getdbData
   .filter(item => item.category === "savings")
-  .map(item => calculateTotalByCategory(item.category, transactions) + parseFloat(item.amount));
+  .map(item => parseFloat(item.amount));
 
 
 
 // 총합 계산
 const totalAmountdbData = totalIncomeForEachItem.reduce((total, amount) => total + amount, 0);
 const totalConsumedbData = totalExpenseForEachItem.reduce((total, consume) => total + consume, 0);
-const totalSavedbData = totalSaveForEachItem.reduce((total, consume) => total + consume, 0);
+const totalSavedbData = totalSaveForEachItem.reduce((total, save) => total + save, 0);
+
+
+const remainingMoney = totalAmountdbData - totalConsumedbData - totalSavedbData;
+
 
 
   return (
     <div className="container mx-auto my-8">
       <h1 className="mb-10 text-3xl font-bold">가계부</h1>
+      <h2>한달 가계부 기록 확인하기</h2>
        {/* <p>Post: {router.query.accountuserId}</p> */}
 
       {/* 거래 입력 폼 */}
@@ -290,13 +337,13 @@ const totalSavedbData = totalSaveForEachItem.reduce((total, consume) => total + 
 
               <div className='flex flex-col'>
               <label htmlFor="allSave" className="block mb-2 text-lg font-bold text-center text-gray-600">이달 총 저축</label>
-              <span className='h-12 pt-2 text-center border-2 border-solid border-sky-500'>{totalSavedbData}원</span>
+              <span className='h-12 px-4 pt-2 text-center border-2 border-solid border-sky-500'>{totalSavedbData}원</span>
                
               </div>
 
               <div className='flex flex-col'>
               <label htmlFor="remainPay" className="block mb-2 text-lg font-bold text-center text-gray-600">이달 남은 돈</label>
-              <span className='h-12 pt-2 text-center border-2 border-solid border-sky-500 '>{`${totalCalculate.remainingMoney}`}원</span>
+              <span className='h-12 px-4 pt-2 text-center border-2 border-solid border-sky-500 '>{`${remainingMoney}`}원</span>
               
               </div>
             </div>
@@ -311,7 +358,7 @@ const totalSavedbData = totalSaveForEachItem.reduce((total, consume) => total + 
                   className="h-8 border-2 border-solid border-sky-500 form-input"
                 >
                   <option value="" disabled>상세보기</option>
-                  {countListPlus.map(category => (
+                  {categoryList.map(category => (
                     <option key={category.id} value={category.category}>{category.name}</option>
                   ))}
                 </select>
@@ -352,18 +399,18 @@ const totalSavedbData = totalSaveForEachItem.reduce((total, consume) => total + 
       <table className="w-full mb-8 border border-gray-300">
         <thead>
           <tr className="bg-gray-200">
-            <th className="px-4 py-2 text-center border-b">내역 카테고리</th>
-            <th className="px-4 py-2 text-center border-b">설명</th>
-            <th className="px-4 py-2 text-center border-b">금액</th>
+            <th className="px-6 py-4 text-center border-b">내역 카테고리</th>
+            <th className="px-4 py-4 text-center border-b">설명</th>
+            <th className="px-4 py-4 text-center border-b">금액</th>
 
           </tr>
         </thead>
         <tbody>
     {getdbData.map((transaction, index) => (
         <tr key={index}>
-            <td className="px-4 py-2 text-center border-b">{transaction.category}</td>
-            <td className="px-4 py-2 text-center border-b">{transaction.description}</td>
-            <td className="px-4 py-2 text-center border-b">{transaction.amount}원</td>
+            <td className="px-6 py-4 text-center border-b">{transaction.category}</td>
+            <td className="px-6 py-4 text-center border-b">{transaction.description}</td>
+            <td className="px-6 py-4 text-center border-b">{transaction.amount}원</td>
         </tr>
     ))}
 </tbody>
@@ -375,15 +422,15 @@ const totalSavedbData = totalSaveForEachItem.reduce((total, consume) => total + 
       <table className="w-full mb-8 border border-gray-300">
         <thead>
           <tr className="bg-gray-200">
-            <th className="px-4 py-2 border-b">카테고리</th>
-            <th className="px-4 py-2 border-b">합계</th>
+            <th className="w-2/4 px-4 py-2 border-b">카테고리</th>
+            <th className="w-2/4 px-4 py-2 border-b">합계</th>
           </tr>
         </thead>
         <tbody>
-          {onlyExpense.map(category => (
-            <tr key={category.id}>
-              <td className="px-4 py-2 text-center border-b">{category.name}</td>
-              <td className="px-4 py-2 text-center border-b">{calculateTotal(category.category)}원</td>
+          {getdbExpense.slice(0, 1).map((category,index) => (
+            <tr key={index}>
+              <td className="px-4 py-2 text-center border-b">{category.category}</td>
+              <td className="px-4 py-2 text-center border-b">{expenditureTotalAmount}원</td>
             </tr>
           ))}
         </tbody>
@@ -394,15 +441,15 @@ const totalSavedbData = totalSaveForEachItem.reduce((total, consume) => total + 
       <table className="w-full mb-8 border border-gray-300">
         <thead>
           <tr className="bg-gray-200">
-            <th className="px-4 py-2 border-b">카테고리</th>
-            <th className="px-4 py-2 border-b">합계</th>
+            <th className="w-2/4 px-4 py-2 border-b">카테고리</th>
+            <th className="w-2/4 px-4 py-2 border-b">합계</th>
           </tr>
         </thead>
         <tbody>
-          {onlyIncome.map(income => (
-            <tr key={income.id}>
-              <td className="px-4 py-2 text-center border-b">{income.name}</td>
-              <td className="px-4 py-2 text-center border-b">{calculateTotal(income.category)}원</td>
+        {getdbIncome.slice(0, 1).map((category,index) => (
+            <tr key={index}>
+              <td className="px-4 py-2 text-center border-b">{category.category}</td>
+              <td className="px-4 py-2 text-center border-b">{IncomeTotalAmount}원</td>
             </tr>
           ))}
         </tbody>
@@ -412,15 +459,15 @@ const totalSavedbData = totalSaveForEachItem.reduce((total, consume) => total + 
       <table className="w-full mb-8 border border-gray-300">
         <thead>
           <tr className="bg-gray-200">
-            <th className="px-4 py-2 border-b">카테고리</th>
-            <th className="px-4 py-2 border-b">합계</th>
+            <th className="w-2/4 px-4 py-2 border-b">카테고리</th>
+            <th className="w-2/4 px-4 py-2 border-b">합계</th>
           </tr>
         </thead>
         <tbody>
-          {onlySave.map(save => (
-            <tr key={save.id}>
-              <td className="px-4 py-2 text-center border-b">{save.name}</td>
-              <td className="px-4 py-2 text-center border-b">{calculateTotal(save.category)}원</td>
+        {getdbSave.slice(0, 1).map((category,index) => (
+            <tr key={index}>
+              <td className="px-4 py-2 text-center border-b">{category.category}</td>
+              <td className="px-4 py-2 text-center border-b">{SaveTotalAmount}원</td>
             </tr>
           ))}
         </tbody>
