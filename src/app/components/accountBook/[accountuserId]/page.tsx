@@ -5,6 +5,8 @@ import { getCookie } from 'cookies-next';
 import { useRouter, useParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { categoryList } from 'utils/categorydata';
+import SideBar from '../../sideBar/page';
+import Link from 'next/link';
 
 interface Transaction {
   id: number;
@@ -122,7 +124,7 @@ const RecordMoneyFn: React.FC = () => {
         return updatedData;
       });
 
-      const keepingData = await axios.post("http://localhost:3000/api/houseKeeping", inputData , {
+      const keepingData = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/houseKeeping`, inputData , {
         headers: {
           'Content-Type': 'application/json',
           // 'Cookie': `userId=${userIdCookie}`,
@@ -130,7 +132,7 @@ const RecordMoneyFn: React.FC = () => {
       })
 
          // 서버에서 새로운 데이터 가져오기
-    const getResponse = await axios.get(`http://localhost:3000/api/getHouseKeeping/${id}`);
+    const getResponse = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/getHouseKeeping/${id}`);
 
     const getdbExpenseData = getResponse.data.filter((item: { category: string }) => item.category === 'expenditure');
         console.log("getdbExpenseData", getdbExpenseData);
@@ -161,7 +163,7 @@ const RecordMoneyFn: React.FC = () => {
   useEffect(() => {
     const getMoneyData = async () => {
       try {
-        const getResponse = await axios.get(`http://localhost:3000/api/getHouseKeeping/${id}`);
+        const getResponse = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/getHouseKeeping/${id}`);
         console.log("getData", getResponse.data);
   
         // 카테고리가 'expenditure'인 데이터만 필터링하여 getdbExpense에 설정
@@ -311,168 +313,183 @@ const remainingMoney = totalAmountdbData - totalConsumedbData - totalSavedbData;
 
 
   return (
-    <div className="container mx-auto my-8">
-      <h1 className="mb-10 text-3xl font-bold">가계부</h1>
-      <h2>한달 가계부 기록 확인하기</h2>
-       {/* <p>Post: {router.query.accountuserId}</p> */}
+  <>
+    <header className='flex justify-between px-40 py-4 bg-white'>
+      <div className='flex items-center gap-4'>
+        <Link className="p-3" href={`/components/home`}>
+            ALIVE-MONEY
+        </Link>
+      </div>
+      <SideBar/>
+    </header> 
+  <div className="container p-10 mx-auto my-8 bg-purple-100">
+        <div className='flex justify-between gap-6'>
+          <h1 className="mb-10 text-3xl font-bold">가계부</h1>
+          <h2>한달 가계부 기록 확인하기</h2>
+          <h2>ai에게 질문하기</h2>
+        </div>
+        {/* <p>Post: {router.query.accountuserId}</p> */}
 
-      {/* 거래 입력 폼 */}
-      <form onSubmit={handleSubmit} className="mb-4">
-        <div className="">
-          <div className="mb-4 ">
-            <div className='flex justify-between'>
-              <div className='flex flex-col'>
-                <label htmlFor="addMoney" className="block mb-2 text-lg font-bold text-center text-gray-600">이달 총 수입</label>
+        {/* 거래 입력 폼 */}
+        <form onSubmit={handleSubmit} className="mb-4">
+          <div className="">
+            <div className="mb-4 ">
+              <div className='flex justify-between'>
+                <div className='flex flex-col'>
+                  <label htmlFor="addMoney" className="block mb-2 text-lg font-bold text-center text-gray-600">이달 총 수입</label>
+                    <span className='h-12 px-4 pt-2 text-center border-2 border-solid border-sky-500'>{
+                    totalAmountdbData
+                    }원
+                    </span>
+                </div>
+                <div className='flex flex-col'>
+                  <label htmlFor="allExpense" className="block mb-2 text-lg font-bold text-center text-gray-600">이달 총 지출</label>
                   <span className='h-12 px-4 pt-2 text-center border-2 border-solid border-sky-500'>{
-                  totalAmountdbData
-                  }원
-                  </span>
-              </div>
-              <div className='flex flex-col'>
-                <label htmlFor="allExpense" className="block mb-2 text-lg font-bold text-center text-gray-600">이달 총 지출</label>
-                <span className='h-12 px-4 pt-2 text-center border-2 border-solid border-sky-500'>{
-                  totalConsumedbData
-                }원</span>
-              </div>
+                    totalConsumedbData
+                  }원</span>
+                </div>
 
-              <div className='flex flex-col'>
-              <label htmlFor="allSave" className="block mb-2 text-lg font-bold text-center text-gray-600">이달 총 저축</label>
-              <span className='h-12 px-4 pt-2 text-center border-2 border-solid border-sky-500'>{totalSavedbData}원</span>
-               
-              </div>
+                <div className='flex flex-col'>
+                <label htmlFor="allSave" className="block mb-2 text-lg font-bold text-center text-gray-600">이달 총 저축</label>
+                <span className='h-12 px-4 pt-2 text-center border-2 border-solid border-sky-500'>{totalSavedbData}원</span>
+                
+                </div>
 
-              <div className='flex flex-col'>
-              <label htmlFor="remainPay" className="block mb-2 text-lg font-bold text-center text-gray-600">이달 남은 돈</label>
-              <span className='h-12 px-4 pt-2 text-center border-2 border-solid border-sky-500 '>{`${remainingMoney}`}원</span>
+                <div className='flex flex-col'>
+                <label htmlFor="remainPay" className="block mb-2 text-lg font-bold text-center text-gray-600">이달 남은 돈</label>
+                <span className='h-12 px-4 pt-2 text-center border-2 border-solid border-sky-500 '>{`${remainingMoney}`}원</span>
+                
+                </div>
+              </div>
               
+              <div className="flex justify-end gap-4 mb-4 mt-14">
+                <label htmlFor="category" className="block text-lg font-bold text-gray-600">내역 카테고리</label>
+                  <select
+                    id="category"
+                    name="category"
+                    value={inputData.category}
+                    onChange={handleChange}
+                    className="h-8 border-2 border-solid border-sky-500 form-input"
+                  >
+                    <option value="" disabled>상세보기</option>
+                    {categoryList.map(category => (
+                      <option key={category.id} value={category.category}>{category.name}</option>
+                    ))}
+                  </select>
+
+                <label htmlFor="amount" className="block text-lg font-bold text-gray-600">금액</label>
+                <input
+                  type="number"
+                  id="amount"
+                  name="amount"
+                  value={inputData.amount}
+                  onChange={handleChange}
+                  className="h-8 border-2 border-solid form-input border-sky-500"
+                />
               </div>
             </div>
-            
-            <div className="flex justify-end gap-4 mb-4 mt-14">
-              <label htmlFor="category" className="block text-lg font-bold text-gray-600">내역 카테고리</label>
-                <select
-                  id="category"
-                  name="category"
-                  value={inputData.category}
-                  onChange={handleChange}
-                  className="h-8 border-2 border-solid border-sky-500 form-input"
-                >
-                  <option value="" disabled>상세보기</option>
-                  {categoryList.map(category => (
-                    <option key={category.id} value={category.category}>{category.name}</option>
-                  ))}
-                </select>
-
-              <label htmlFor="amount" className="block text-lg font-bold text-gray-600">금액</label>
-              <input
-                type="number"
-                id="amount"
-                name="amount"
-                value={inputData.amount}
-                onChange={handleChange}
-                className="h-8 border-2 border-solid form-input border-sky-500"
-              />
-            </div>
+          
           </div>
-        
-        </div>
-        <div className="mb-4">
-          <label htmlFor="description" className="block mb-2 text-lg font-bold text-gray-600">수입, 지출 내역을 자세히 적어주세요.</label>
-          <textarea
-            id="description"
-            name="description"
-            rows={3}
-            value={inputData.description}
-            onChange={handleChange}
-            className="w-full border-2 border-solid border-sky-500 form-textarea"
-          />
-        </div>
-        <div className='flex justify-end gap-6'>
-          <button type="submit" className="p-2 rounded form-button bg-sky-500">저장</button>
-          <button type="submit" className="p-2 bg-red-500 rounded form-button">취소</button>
-        </div>
+          <div className="mb-4">
+            <label htmlFor="description" className="block mb-2 text-lg font-bold text-gray-600">수입, 지출 내역을 자세히 적어주세요.</label>
+            <textarea
+              id="description"
+              name="description"
+              rows={3}
+              value={inputData.description}
+              onChange={handleChange}
+              className="w-full border-2 border-solid border-sky-500 form-textarea"
+            />
+          </div>
+          <div className='flex justify-end gap-6'>
+            <button type="submit" className="p-2 rounded form-button bg-sky-500">저장</button>
+            <button type="submit" className="p-2 bg-red-500 rounded form-button">취소</button>
+          </div>
 
-      </form>
+        </form>
 
-      {/* 거래 목록 */}
-      <h2 className="mb-2 text-2xl font-bold">1달간 입금 ⸰ 출금 내역</h2>
-      <table className="w-full mb-8 border border-gray-300">
-        <thead>
-          <tr className="bg-gray-200">
-            <th className="px-6 py-4 text-center border-b">내역 카테고리</th>
-            <th className="px-4 py-4 text-center border-b">설명</th>
-            <th className="px-4 py-4 text-center border-b">금액</th>
+        {/* 거래 목록 */}
+        <h2 className="mb-2 text-2xl font-bold">1달간 입금 ⸰ 출금 내역</h2>
+        <table className="w-full mb-8 border border-gray-300">
+            <thead>
+              <tr className="bg-gray-200">
+                <th className="px-6 py-4 text-center border-b">내역 카테고리</th>
+                <th className="px-4 py-4 text-center border-b">설명</th>
+                <th className="px-4 py-4 text-center border-b">금액</th>
 
-          </tr>
-        </thead>
-        <tbody>
-    {getdbData.map((transaction, index) => (
-        <tr key={index}>
-            <td className="px-6 py-4 text-center border-b">{transaction.category}</td>
-            <td className="px-6 py-4 text-center border-b">{transaction.description}</td>
-            <td className="px-6 py-4 text-center border-b">{transaction.amount}원</td>
-        </tr>
-    ))}
-</tbody>
+              </tr>
+            </thead>
+          <tbody>
+            {getdbData.map((transaction, index) => (
+              <tr key={index}>
+                  <td className="px-6 py-4 text-center border-b">{transaction.category}</td>
+                  <td className="px-6 py-4 text-center border-b">{transaction.description}</td>
+                  <td className="px-6 py-4 text-center border-b">{transaction.amount}원</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
 
-      </table>
-
-      {/* 카테고리별 합계 표 */}
-      <h2 className="mb-2 text-2xl font-bold">지출</h2>
-      <table className="w-full mb-8 border border-gray-300">
-        <thead>
-          <tr className="bg-gray-200">
-            <th className="w-2/4 px-4 py-2 border-b">카테고리</th>
-            <th className="w-2/4 px-4 py-2 border-b">합계</th>
-          </tr>
-        </thead>
-        <tbody>
-          {getdbExpense.slice(0, 1).map((category,index) => (
-            <tr key={index}>
-              <td className="px-4 py-2 text-center border-b">{category.category}</td>
-              <td className="px-4 py-2 text-center border-b">{expenditureTotalAmount}원</td>
+        {/* 카테고리별 합계 표 */}
+        <h2 className="mb-2 text-2xl font-bold">지출</h2>
+        <table className="w-full mb-8 border border-gray-300">
+          <thead>
+            <tr className="bg-gray-200">
+              <th className="w-2/4 px-4 py-2 border-b">카테고리</th>
+              <th className="w-2/4 px-4 py-2 border-b">합계</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {getdbExpense.slice(0, 1).map((category,index) => (
+              <tr key={index}>
+                <td className="px-4 py-2 text-center border-b">{category.category}</td>
+                <td className="px-4 py-2 text-center border-b">{expenditureTotalAmount}원</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
 
 
-      <h2 className="mb-2 text-2xl font-bold">수입</h2>
-      <table className="w-full mb-8 border border-gray-300">
-        <thead>
-          <tr className="bg-gray-200">
-            <th className="w-2/4 px-4 py-2 border-b">카테고리</th>
-            <th className="w-2/4 px-4 py-2 border-b">합계</th>
-          </tr>
-        </thead>
-        <tbody>
-        {getdbIncome.slice(0, 1).map((category,index) => (
-            <tr key={index}>
-              <td className="px-4 py-2 text-center border-b">{category.category}</td>
-              <td className="px-4 py-2 text-center border-b">{IncomeTotalAmount}원</td>
+        <h2 className="mb-2 text-2xl font-bold">수입</h2>
+        <table className="w-full mb-8 border border-gray-300">
+          <thead>
+            <tr className="bg-gray-200">
+              <th className="w-2/4 px-4 py-2 border-b">카테고리</th>
+              <th className="w-2/4 px-4 py-2 border-b">합계</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+          {getdbIncome.slice(0, 1).map((category,index) => (
+              <tr key={index}>
+                <td className="px-4 py-2 text-center border-b">{category.category}</td>
+                <td className="px-4 py-2 text-center border-b">{IncomeTotalAmount}원</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
 
-        <h2 className="mb-2 text-2xl font-bold">저축 & 투자</h2>
-      <table className="w-full mb-8 border border-gray-300">
-        <thead>
-          <tr className="bg-gray-200">
-            <th className="w-2/4 px-4 py-2 border-b">카테고리</th>
-            <th className="w-2/4 px-4 py-2 border-b">합계</th>
-          </tr>
-        </thead>
-        <tbody>
-        {getdbSave.slice(0, 1).map((category,index) => (
-            <tr key={index}>
-              <td className="px-4 py-2 text-center border-b">{category.category}</td>
-              <td className="px-4 py-2 text-center border-b">{SaveTotalAmount}원</td>
+          <h2 className="mb-2 text-2xl font-bold">저축 & 투자</h2>
+        <table className="w-full mb-8 border border-gray-300">
+          <thead>
+            <tr className="bg-gray-200">
+              <th className="w-2/4 px-4 py-2 border-b">카테고리</th>
+              <th className="w-2/4 px-4 py-2 border-b">합계</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+          </thead>
+          <tbody>
+          {getdbSave.slice(0, 1).map((category,index) => (
+              <tr key={index}>
+                <td className="px-4 py-2 text-center border-b">{category.category}</td>
+                <td className="px-4 py-2 text-center border-b">{SaveTotalAmount}원</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+  </div>
+    
+</>
+    
+    
   );
 };
 

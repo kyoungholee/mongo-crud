@@ -23,12 +23,12 @@ function RootLayout ({ children } : {
   return (
     <html>
       <body>
-          <header className='flex justify-between px-40 py-4 bg-white'>
+          {/* <header className='flex justify-between px-40 py-4 bg-white'>
                 <div className='flex items-center gap-4'>
                 ALIVE-MONEY
                 </div>
                 <SideBar/>
-          </header> 
+          </header>  */}
             <div className="px-40 mx-auto ">
                 <div>{children}</div>
             </div>
