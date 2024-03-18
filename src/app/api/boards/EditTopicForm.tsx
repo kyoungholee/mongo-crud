@@ -22,7 +22,7 @@ export default function EditTopicForm({ id, title, description } : iEditForm) {
 
     //업데이트를 할 수 있는 구문
     try {
-      const res = await fetch(`http://localhost:3000/api/topics/${id}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/topics/${id}`, {
         method: "PUT",
         headers: {
           "Content-type": "application/json",

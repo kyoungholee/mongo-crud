@@ -47,7 +47,7 @@ const ViewRegister: React.FC = () => {
     }
 
     try {
-      const response = await axios.post("http://localhost:3000/api/signup", 
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/signup`, 
       //페이로드
       signform, {
 

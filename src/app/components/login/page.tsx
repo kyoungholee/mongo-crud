@@ -26,7 +26,7 @@ const Login = () => {
     try {
       setLoading(true); // 로딩 시작
 
-      const loginResponse = await axios.post("http://localhost:3000/api/login", loginForm, {
+      const loginResponse = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/login`, loginForm, {
         headers: {
           'Content-Type': 'application/json',
         },
