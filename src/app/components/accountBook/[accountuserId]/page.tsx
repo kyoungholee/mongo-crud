@@ -8,6 +8,8 @@ import { categoryList } from 'utils/categorydata';
 import SideBar from '../../sideBar/page';
 import Link from 'next/link';
 
+import Calendar from 'react-calendar';
+
 interface Transaction {
   id: number;
   category: string;
@@ -31,6 +33,10 @@ interface TotalCalculate {
 
 //쿠키 값
 const userIdCookie = getCookie('userId');
+
+const numberWithCommas = (calculateNumber : number | string) => {
+  return calculateNumber.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+};
 
 const RecordMoneyFn: React.FC = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -79,6 +85,12 @@ const RecordMoneyFn: React.FC = () => {
     saving: 0,
   });
 
+  const [date, setDate] = useState<Date | null>(null);
+
+  // 날짜가 변경될 때 실행되는 함수입니다.
+  const handleCalendarDateChange = (value: Date | null) => {
+    setDate(value);
+  }
   const router = useParams();
   const id = router.accountuserId;
 
@@ -301,20 +313,17 @@ const totalExpenseForEachItem = getdbData
   .map(item => parseFloat(item.amount));
 
 
-
 // 총합 계산
-const totalAmountdbData = totalIncomeForEachItem.reduce((total, amount) => total + amount, 0);
-const totalConsumedbData = totalExpenseForEachItem.reduce((total, consume) => total + consume, 0);
-const totalSavedbData = totalSaveForEachItem.reduce((total, save) => total + save, 0);
+const totalAmountdbData = numberWithCommas(totalIncomeForEachItem.reduce((total, amount) => total + amount, 0));
+const totalConsumedbData = numberWithCommas(totalExpenseForEachItem.reduce((total, consume) => total + consume, 0));
+const totalSavedbData = numberWithCommas(totalSaveForEachItem.reduce((total, save) => total + save, 0));
 
-
-const remainingMoney = totalAmountdbData - totalConsumedbData - totalSavedbData;
-
+const remainingMoney = numberWithCommas(parseInt(totalAmountdbData) - (parseInt(totalConsumedbData) + parseInt(totalSavedbData)));
 
 
   return (
   <>
-    <header className='flex justify-between px-40 py-4 bg-white'>
+    <header className='flex justify-between px-40 py-4 bg-sky-50'>
       <div className='flex items-center gap-4'>
         <Link className="p-3" href={`/components/home`}>
             ALIVE-MONEY
@@ -323,10 +332,13 @@ const remainingMoney = totalAmountdbData - totalConsumedbData - totalSavedbData;
       <SideBar/>
     </header> 
   <div className="container p-10 mx-auto my-8 bg-purple-100">
-        <div className='flex justify-between gap-6'>
-          <h1 className="mb-10 text-3xl font-bold">가계부</h1>
-          <h2>한달 가계부 기록 확인하기</h2>
-          <h2>ai에게 질문하기</h2>
+        <div className='flex items-center justify-between gap-6 mb-10'>
+          <h1 className="text-3xl font-bold ">가계부</h1>
+          <div className='p-2 border border-black'>
+          <Link href={`/components/monthlyPrice`}>
+          한달 가계부 기록 확인하기
+        </Link></div>
+          <div className='p-2 border border-black'>ai에게 질문하기</div>
         </div>
         {/* <p>Post: {router.query.accountuserId}</p> */}
 
@@ -363,6 +375,12 @@ const remainingMoney = totalAmountdbData - totalConsumedbData - totalSavedbData;
               </div>
               
               <div className="flex justify-end gap-4 mb-4 mt-14">
+
+                {/* 캘린더 구성 요소 추가 */}
+                  <Calendar
+                    // onChange={handleCalendarDateChange} // 캘린더에서 날짜를 선택할 때마다 날짜를 변경합니다.
+                    value={date} // 캘린더의 선택된 날짜를 state와 동기화합니다.
+                  />
                 <label htmlFor="category" className="block text-lg font-bold text-gray-600">내역 카테고리</label>
                   <select
                     id="category"
@@ -424,7 +442,7 @@ const remainingMoney = totalAmountdbData - totalConsumedbData - totalSavedbData;
               <tr key={index}>
                   <td className="px-6 py-4 text-center border-b">{transaction.category}</td>
                   <td className="px-6 py-4 text-center border-b">{transaction.description}</td>
-                  <td className="px-6 py-4 text-center border-b">{transaction.amount}원</td>
+                  <td className="px-6 py-4 text-center border-b">{numberWithCommas(transaction.amount)}원</td>
               </tr>
             ))}
           </tbody>
@@ -443,7 +461,7 @@ const remainingMoney = totalAmountdbData - totalConsumedbData - totalSavedbData;
             {getdbExpense.slice(0, 1).map((category,index) => (
               <tr key={index}>
                 <td className="px-4 py-2 text-center border-b">{category.category}</td>
-                <td className="px-4 py-2 text-center border-b">{expenditureTotalAmount}원</td>
+                <td className="px-4 py-2 text-center border-b">{numberWithCommas(expenditureTotalAmount)}원</td>
               </tr>
             ))}
           </tbody>
@@ -462,7 +480,7 @@ const remainingMoney = totalAmountdbData - totalConsumedbData - totalSavedbData;
           {getdbIncome.slice(0, 1).map((category,index) => (
               <tr key={index}>
                 <td className="px-4 py-2 text-center border-b">{category.category}</td>
-                <td className="px-4 py-2 text-center border-b">{IncomeTotalAmount}원</td>
+                <td className="px-4 py-2 text-center border-b">{numberWithCommas(IncomeTotalAmount)}원</td>
               </tr>
             ))}
           </tbody>
@@ -480,15 +498,14 @@ const remainingMoney = totalAmountdbData - totalConsumedbData - totalSavedbData;
           {getdbSave.slice(0, 1).map((category,index) => (
               <tr key={index}>
                 <td className="px-4 py-2 text-center border-b">{category.category}</td>
-                <td className="px-4 py-2 text-center border-b">{SaveTotalAmount}원</td>
+                <td className="px-4 py-2 text-center border-b">{numberWithCommas(SaveTotalAmount)}원</td>
               </tr>
             ))}
           </tbody>
         </table>
   </div>
-    
+
 </>
-    
     
   );
 };
