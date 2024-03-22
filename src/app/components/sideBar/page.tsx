@@ -39,25 +39,25 @@ export default function SideBar(){
         <Link className="p-3" href={`/components/accountBook/${getCookie('userId')}`}>
         가계부
         </Link>
-        <div> 게시판</div>
-        {/* <div> 핫한 돈의 속성</div> */}
+        <div> 돈 정보 게시판</div>
+        <div> 투자 성향 찾기</div>
     </div>
-    <div className='flex items-center gap-6' >
+    <div className='flex items-center gap-10'>
         { username ? ( 
         <div className='flex items-center gap-6'>
-        <div>환영합니다. {username} 님</div>
-        <Link href="/" onClick={handleLogout}>
-          로그아웃
-        </Link>
+          <div>환영합니다. {username} 님</div>
+          <Link href="/" onClick={handleLogout}>
+            로그아웃
+          </Link>
         </div>
         ) :(
-          <div>
-          <Link href="/login">
-            로그인
-          </Link>
-          <Link href="/signup">
-            회원가입
-          </Link>
+          <div className='flex items-center gap-10'>
+            <Link href="/login">
+              로그인
+            </Link>
+            <Link href="/signup">
+              회원가입
+            </Link>
         </div>
         )
         }

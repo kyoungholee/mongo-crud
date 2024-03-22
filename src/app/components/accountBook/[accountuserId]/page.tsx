@@ -9,7 +9,7 @@ import SideBar from '../../sideBar/page';
 import Link from 'next/link';
 
 import Calendar from 'react-calendar';
-import moment, {Moment} from "moment";
+
 
 interface Transaction {
   id: number;
@@ -85,17 +85,16 @@ const RecordMoneyFn: React.FC = () => {
     remainingMoney: 0,
     saving: 0,
   });
+  
+  const [showCalendar, setShowCalendar] = useState(false);
+  const [selectedDate, setSelectedDate] = useState();
 
-  const [date401, setDate] = useState<any>(moment());
-
-  // 날짜가 변경될 때 실행되는 함수입니다.
-  const handleCalendarDateChange = (value: any) => {
-
-    if (value) {
-      setDate(value.toDate()); // 캘린더에서 선택한 날짜를 state에 저장
-    }
-    // setDate(value);
-  }
+  const handleDateChange = (date: Date | any) => {
+    setSelectedDate(date);
+    console.log("setSelectedDate", selectedDate);
+    setShowCalendar(false);
+  };
+  
   const router = useParams();
   const id = router.accountuserId;
 
@@ -380,17 +379,6 @@ const remainingMoney = numberWithCommas(parseInt(totalAmountdbData) - (parseInt(
               </div>
               
               <div className="flex justify-end gap-4 mb-4 mt-14">
-
-                {/* 캘린더 구성 요소 추가 */}
-                  <Calendar
-                    onChange ={handleCalendarDateChange} // 캘린더에서 날짜를 선택할 때마다 날짜를 변경합니다.
-                    value = {Moment(date401)} // 캘린더의 선택된 날짜를 state와 동기화합니다.
-                  />
-                   {date401 && (
-                      <span className="text-lg text-gray-600">
-                        선택한 날짜: {moment(date401).format('YYYY-MM-DD')}
-                      </span>
-                    )}
                 <label htmlFor="category" className="block text-lg font-bold text-gray-600">내역 카테고리</label>
                   <select
                     id="category"
@@ -404,6 +392,28 @@ const remainingMoney = numberWithCommas(parseInt(totalAmountdbData) - (parseInt(
                       <option key={category.id} value={category.category}>{category.name}</option>
                     ))}
                   </select>
+
+                  <div className="relative">
+                    <button
+                      onClick={() => setShowCalendar(!showCalendar)}
+                      className="px-4 py-2 text-white bg-blue-500 rounded-md"
+                    >
+                      {selectedDate ? selectedDate : '날짜 선택'}
+                    </button>
+                      {showCalendar && (
+                         <div className="absolute w-64 mt-2 top-full">
+                         <Calendar
+                           onChange={handleDateChange}
+                           value={selectedDate}
+                           className="bg-white border border-gray-300 rounded-md shadow-md"
+                           calendarType="US"
+                           prev2Label={null}
+                           next2Label={null}
+                           tileClassName={({ date }) => (date.getTime() === new Date().getTime() ? 'text-blue-500' : '')}
+                         />
+                       </div>
+                      )}
+                  </div>
 
                 <label htmlFor="amount" className="block text-lg font-bold text-gray-600">금액</label>
                 <input
