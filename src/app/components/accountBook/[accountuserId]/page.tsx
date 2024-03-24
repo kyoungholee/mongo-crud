@@ -7,8 +7,9 @@ import React, { useEffect, useState } from 'react';
 import { categoryList } from 'utils/categorydata';
 import SideBar from '../../sideBar/page';
 import Link from 'next/link';
+import CalendarPage from '../../calendarPage/page';
 
-import Calendar from 'react-calendar';
+
 
 
 interface Transaction {
@@ -86,14 +87,7 @@ const RecordMoneyFn: React.FC = () => {
     saving: 0,
   });
   
-  const [showCalendar, setShowCalendar] = useState(false);
-  const [selectedDate, setSelectedDate] = useState();
 
-  const handleDateChange = (date: Date | any) => {
-    setSelectedDate(date);
-    console.log("setSelectedDate", selectedDate);
-    setShowCalendar(false);
-  };
   
   const router = useParams();
   const id = router.accountuserId;
@@ -324,7 +318,6 @@ const totalSavedbData = numberWithCommas(totalSaveForEachItem.reduce((total, sav
 
 const remainingMoney = numberWithCommas(parseInt(totalAmountdbData) - (parseInt(totalConsumedbData) + parseInt(totalSavedbData)));
 
-
   return (
   <>
     <header className='flex justify-between px-40 py-4 bg-sky-50'>
@@ -366,19 +359,18 @@ const remainingMoney = numberWithCommas(parseInt(totalAmountdbData) - (parseInt(
                 </div>
 
                 <div className='flex flex-col'>
-                <label htmlFor="allSave" className="block mb-2 text-lg font-bold text-center text-gray-600">이달 총 저축</label>
-                <span className='h-12 px-4 pt-2 text-center border-2 border-solid border-sky-500'>{totalSavedbData}원</span>
-                
+                  <label htmlFor="allSave" className="block mb-2 text-lg font-bold text-center text-gray-600">이달 총 저축</label>
+                  <span className='h-12 px-4 pt-2 text-center border-2 border-solid border-sky-500'>{totalSavedbData}원</span>
                 </div>
 
                 <div className='flex flex-col'>
-                <label htmlFor="remainPay" className="block mb-2 text-lg font-bold text-center text-gray-600">이달 남은 돈</label>
-                <span className='h-12 px-4 pt-2 text-center border-2 border-solid border-sky-500 '>{`${remainingMoney}`}원</span>
-                
+                  <label htmlFor="remainPay" className="block mb-2 text-lg font-bold text-center text-gray-600">이달 남은 돈</label>
+                  <span className='h-12 px-4 pt-2 text-center border-2 border-solid border-sky-500 '>{`${remainingMoney}`}원</span>
                 </div>
               </div>
-              
+
               <div className="flex justify-end gap-4 mb-4 mt-14">
+                <CalendarPage />
                 <label htmlFor="category" className="block text-lg font-bold text-gray-600">내역 카테고리</label>
                   <select
                     id="category"
@@ -393,27 +385,7 @@ const remainingMoney = numberWithCommas(parseInt(totalAmountdbData) - (parseInt(
                     ))}
                   </select>
 
-                  <div className="relative">
-                    <button
-                      onClick={() => setShowCalendar(!showCalendar)}
-                      className="px-4 py-2 text-white bg-blue-500 rounded-md"
-                    >
-                      {selectedDate ? selectedDate : '날짜 선택'}
-                    </button>
-                      {showCalendar && (
-                         <div className="absolute w-64 mt-2 top-full">
-                         <Calendar
-                           onChange={handleDateChange}
-                           value={selectedDate}
-                           className="bg-white border border-gray-300 rounded-md shadow-md"
-                           calendarType="US"
-                           prev2Label={null}
-                           next2Label={null}
-                           tileClassName={({ date }) => (date.getTime() === new Date().getTime() ? 'text-blue-500' : '')}
-                         />
-                       </div>
-                      )}
-                  </div>
+                 
 
                 <label htmlFor="amount" className="block text-lg font-bold text-gray-600">금액</label>
                 <input
