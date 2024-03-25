@@ -7,7 +7,7 @@ import React, { useEffect, useState } from 'react';
 import { categoryList } from 'utils/categorydata';
 import SideBar from '../../sideBar/page';
 import Link from 'next/link';
-import CalendarPage from '../../calendarPage/page';
+import { CalendarPage } from '../../calendarPage/page';
 
 
 
@@ -17,6 +17,7 @@ interface Transaction {
   category: string;
   amount: string;
   description: string;
+  createDate: string;
   // name: string;
 }
 
@@ -29,6 +30,9 @@ interface TotalCalculate {
   remainingMoney: number;
 }
 
+// interface RecordMoneyFnProps {
+//   formattedSelectedDate: string;
+// }
 // const onlyExpense = countListPlus.filter((item) => item.category === 'expenditure' || item.category === 'communicationExpense');
 // const onlySave = countListPlus.filter((item) => item.category === 'savings');
 // const onlyIncome = countListPlus.filter((item) => item.category === 'Incoming');
@@ -40,7 +44,8 @@ const numberWithCommas = (calculateNumber : number | string) => {
   return calculateNumber.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 };
 
-const RecordMoneyFn: React.FC = () => {
+const RecordMoneyFn = (formattedSelectedDate: string) => {
+  console.log("formattedSelectedDate404",formattedSelectedDate);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
 
   const [inputData, setInputData] = useState({
@@ -48,12 +53,14 @@ const RecordMoneyFn: React.FC = () => {
     amount: '',
     description: '',
     userid : userIdCookie,
+    createDate: formattedSelectedDate,
   });
   
   const [getdbData, setGetdbData] = useState([
     {   category: '',
         amount: '',
         description: '',
+        // createDate: ''
     }
   ]);
 
@@ -86,7 +93,6 @@ const RecordMoneyFn: React.FC = () => {
     remainingMoney: 0,
     saving: 0,
   });
-  
 
   
   const router = useParams();
@@ -141,6 +147,8 @@ const RecordMoneyFn: React.FC = () => {
         },
       })
 
+      console.log("keepingData", keepingData);
+
          // 서버에서 새로운 데이터 가져오기
     const getResponse = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/getHouseKeeping/${id}`);
 
@@ -164,7 +172,7 @@ const RecordMoneyFn: React.FC = () => {
 
   
       // 데이터 입력 후 초기화
-      setInputData({ category: '', amount: '', description: '', userid: userIdCookie});
+      setInputData({ category: '', amount: '', description: '', userid: userIdCookie, createDate:''});
     } catch (err) {
       console.error("API 확인 해보세요");
     }
@@ -370,7 +378,7 @@ const remainingMoney = numberWithCommas(parseInt(totalAmountdbData) - (parseInt(
               </div>
 
               <div className="flex justify-end gap-4 mb-4 mt-14">
-                <CalendarPage />
+                <CalendarPage formattedSelectedDate = {formattedSelectedDate} />
                 <label htmlFor="category" className="block text-lg font-bold text-gray-600">내역 카테고리</label>
                   <select
                     id="category"

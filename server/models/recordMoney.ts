@@ -21,6 +21,11 @@ if (mongoose.models && mongoose.models.savemoneydata) {
         userid: {
             type: String,
         },
+        createDate: {
+            type: String,
+        },
+
+        
     });
     
     RecordModel = mongoose.model<IRecord & Document>("savemoneydata", RecordMoneySchema);
