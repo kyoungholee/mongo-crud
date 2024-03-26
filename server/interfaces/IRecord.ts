@@ -4,5 +4,7 @@ export interface IRecord {
     amount : string;
     description: string;
     userid:string;
+    createDate: string;
+    // updateDate: string
 
 }

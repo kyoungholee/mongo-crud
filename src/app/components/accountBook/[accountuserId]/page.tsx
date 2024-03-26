@@ -8,6 +8,8 @@ import { categoryList } from 'utils/categorydata';
 import SideBar from '../../sideBar/page';
 import Link from 'next/link';
 import { CalendarPage } from '../../calendarPage/page';
+import Calendar from 'react-calendar';
+import moment from 'moment';
 
 
 
@@ -40,12 +42,12 @@ interface TotalCalculate {
 //쿠키 값
 const userIdCookie = getCookie('userId');
 
+
 const numberWithCommas = (calculateNumber : number | string) => {
   return calculateNumber.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 };
 
-const RecordMoneyFn = (formattedSelectedDate: string) => {
-  console.log("formattedSelectedDate404",formattedSelectedDate);
+const RecordMoneyFn = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
 
   const [inputData, setInputData] = useState({
@@ -53,14 +55,16 @@ const RecordMoneyFn = (formattedSelectedDate: string) => {
     amount: '',
     description: '',
     userid : userIdCookie,
-    createDate: formattedSelectedDate,
+    createDate: "",
   });
+
+
   
   const [getdbData, setGetdbData] = useState([
     {   category: '',
         amount: '',
         description: '',
-        // createDate: ''
+        createDate: ''
     }
   ]);
 
@@ -85,6 +89,10 @@ const RecordMoneyFn = (formattedSelectedDate: string) => {
     }
   ]);
 
+  const [showCalendar, setShowCalendar] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<Date | Date[] | any>();
+  const [selectedRange, setSelectedRange] = useState<Date[]>([]);
+  
   //총 지출, 수입, 저축에 대한 값을 가져오기 위한 state값
   const [totalCalculate, setTotalCalculate] = useState<TotalCalculate>({
     allIncome: 0,
@@ -110,7 +118,19 @@ const RecordMoneyFn = (formattedSelectedDate: string) => {
     e.preventDefault();
   
     try {
-      const newTransaction: Transaction = { ...inputData, id: Date.now() };
+      // const newTransaction: Transaction = { ...inputData, id: Date.now() };
+      const newTransaction: Transaction = { ...inputData, id: Date.now(), createDate: formattedSelectedDate };
+
+      if(newTransaction.amount === '' || newTransaction.category === '' || newTransaction.description === "") {
+        alert("데이터를 정확히 입력하세요.");
+        return;
+      }
+      else if(newTransaction.createDate === "") {
+        alert("Please select a date");
+        return;
+      }
+
+      console.log(newTransaction.createDate);
   
       setTransactions((prevTransactions) => [newTransaction, ...prevTransactions]);
 
@@ -140,7 +160,9 @@ const RecordMoneyFn = (formattedSelectedDate: string) => {
         return updatedData;
       });
 
-      const keepingData = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/houseKeeping`, inputData , {
+
+  
+      const keepingData = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/houseKeeping`, newTransaction , {
         headers: {
           'Content-Type': 'application/json',
           // 'Cookie': `userId=${userIdCookie}`,
@@ -326,6 +348,39 @@ const totalSavedbData = numberWithCommas(totalSaveForEachItem.reduce((total, sav
 
 const remainingMoney = numberWithCommas(parseInt(totalAmountdbData) - (parseInt(totalConsumedbData) + parseInt(totalSavedbData)));
 
+
+
+
+const handleDateChange = (date: Date | any | Date[]) => {
+  setSelectedDate(date);
+  setShowCalendar(false);
+};
+
+const getTileClassName = ({ date }: { date: Date }) => {
+    const dateMilliseconds = date.getTime();
+    const selectedRangeMilliseconds = selectedRange.map((date) => date.getTime());
+  
+    // 선택한 기간 중 첫 날짜부터 마지막 날짜까지 파란색으로 칠해줌
+    if (
+      selectedRangeMilliseconds.length > 1 &&
+      dateMilliseconds >= Math.min(...selectedRangeMilliseconds) &&
+      dateMilliseconds <= Math.max(...selectedRangeMilliseconds)
+    ) {
+      return 'bg-blue-500 text-white';
+    }
+  
+    // 단일 선택한 날짜는 파란색으로 표시
+    if (selectedDate && dateMilliseconds === selectedDate.getTime()) {
+      return 'bg-blue-500 text-white';
+    }
+  
+    return '';
+  };
+
+  const formattedSelectedDate = selectedDate instanceof Date ? moment(selectedDate).format('YYYY-MM-DD') : '';
+
+
+
   return (
   <>
     <header className='flex justify-between px-40 py-4 bg-sky-50'>
@@ -378,7 +433,39 @@ const remainingMoney = numberWithCommas(parseInt(totalAmountdbData) - (parseInt(
               </div>
 
               <div className="flex justify-end gap-4 mb-4 mt-14">
-                <CalendarPage formattedSelectedDate = {formattedSelectedDate} />
+              <div className="relative">
+      <button
+        onClick={() => setShowCalendar(!showCalendar)}
+        className="px-4 py-2 text-white bg-blue-500 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-opacity-50"
+      >
+        {selectedDate ? (Array.isArray(selectedDate) ? '날짜 선택됨' : formattedSelectedDate) : '날짜 선택'}
+      </button>
+      {showCalendar && (
+        <div className="absolute w-64 mt-2 top-full">
+          <Calendar
+            onChange={handleDateChange}
+            value={selectedDate}
+            className="p-4 my-4 text-center border border-gray-300 rounded-md shadow-md bg-slate-100"
+            calendarType="US"
+            formatDay={(locale, date) => moment(date).format('D')}
+            formatYear={(locale, date) => moment(date).format('YYYY')}
+            formatMonthYear={(locale, date) => moment(date).format('YYYY. MM')}
+            showNeighboringMonth={false}
+            next2Label={null}
+            prev2Label={null}
+            minDetail="year"
+            tileClassName={({ date }) =>
+              selectedRange.length > 1 &&
+              date >= selectedRange[0] &&
+              date <= selectedRange[selectedRange.length - 1]
+                ? 'bg-blue-500 text-white'
+                : ''
+            }
+          />
+        </div>
+      )}
+</div>
+
                 <label htmlFor="category" className="block text-lg font-bold text-gray-600">내역 카테고리</label>
                   <select
                     id="category"
@@ -431,6 +518,7 @@ const remainingMoney = numberWithCommas(parseInt(totalAmountdbData) - (parseInt(
         <table className="w-full mb-8 border border-gray-300">
             <thead>
               <tr className="bg-gray-200">
+              <th className="px-6 py-4 text-center border-b">기록 날짜</th>
                 <th className="px-6 py-4 text-center border-b">내역 카테고리</th>
                 <th className="px-4 py-4 text-center border-b">설명</th>
                 <th className="px-4 py-4 text-center border-b">금액</th>
@@ -440,6 +528,7 @@ const remainingMoney = numberWithCommas(parseInt(totalAmountdbData) - (parseInt(
           <tbody>
             {getdbData.map((transaction, index) => (
               <tr key={index}>
+                  <td className="px-6 py-4 text-center border-b">{transaction.createDate}</td>
                   <td className="px-6 py-4 text-center border-b">{transaction.category}</td>
                   <td className="px-6 py-4 text-center border-b">{transaction.description}</td>
                   <td className="px-6 py-4 text-center border-b">{numberWithCommas(transaction.amount)}원</td>

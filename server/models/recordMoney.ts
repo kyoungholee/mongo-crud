@@ -24,6 +24,9 @@ if (mongoose.models && mongoose.models.savemoneydata) {
         createDate: {
             type: String,
         },
+        // updateDate: {
+        //     type: String,
+        // }
 
         
     });

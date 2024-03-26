@@ -27,7 +27,8 @@
     "react": "^18.2.0",
     "react-calendar": "^4.8.0",
     "react-dom": "^18.2.0",
-    "react-icons": "^4.12.0"
+    "react-icons": "^4.12.0",
+    "styled-components": "^6.1.8"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",

@@ -16,7 +16,9 @@ export async function GET(request : Request, { params } : any, res: Response) {
             const responseData = getSaveData.map(data => ({
                 category: data.category,
                 amount: data.amount,
-                description: data.description
+                description: data.description,
+                createDate: data.createDate,
+                // updateDate: data.updateDate,
             }));
 
             return NextResponse.json(responseData, { status : 201}); // 배열로 반환
