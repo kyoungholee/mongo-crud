@@ -7,7 +7,7 @@ import React, { useEffect, useState } from 'react';
 import { categoryList } from 'utils/categorydata';
 import SideBar from '../../sideBar/page';
 import Link from 'next/link';
-import { CalendarPage } from '../../calendarPage/page';
+// import { CalendarPage } from '../../calendarPage/page';
 import Calendar from 'react-calendar';
 import moment from 'moment';
 
@@ -106,6 +106,10 @@ const RecordMoneyFn = () => {
   const router = useParams();
   const id = router.accountuserId;
 
+  const handleDateChange = (date: Date | any | Date[]) => {
+    setSelectedDate(date);
+    setShowCalendar(false);
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -118,17 +122,44 @@ const RecordMoneyFn = () => {
     e.preventDefault();
   
     try {
+
+
+
+
+
+  const getTileClassName = ({ date }: { date: Date }) => {
+    const dateMilliseconds = date.getTime();
+    const selectedRangeMilliseconds = selectedRange.map((date) => date.getTime());
+  
+    // 선택한 기간 중 첫 날짜부터 마지막 날짜까지 파란색으로 칠해줌
+    if (
+      selectedRangeMilliseconds.length > 1 &&
+      dateMilliseconds >= Math.min(...selectedRangeMilliseconds) &&
+      dateMilliseconds <= Math.max(...selectedRangeMilliseconds)
+    ) {
+      return 'bg-blue-500 text-white';
+    }
+  
+    // 단일 선택한 날짜는 파란색으로 표시
+    if (selectedDate && dateMilliseconds === selectedDate.getTime()) {
+      return 'bg-blue-500 text-white';
+    }
+  
+    return '';
+  };
+
       // const newTransaction: Transaction = { ...inputData, id: Date.now() };
       const newTransaction: Transaction = { ...inputData, id: Date.now(), createDate: formattedSelectedDate };
 
-      if(newTransaction.amount === '' || newTransaction.category === '' || newTransaction.description === "") {
-        alert("데이터를 정확히 입력하세요.");
-        return;
-      }
-      else if(newTransaction.createDate === "") {
-        alert("Please select a date");
-        return;
-      }
+      // if(newTransaction.createDate === "") {
+      //   alert("Please select a date");
+      //   return;
+      // }
+      // else if(newTransaction.amount === '' || newTransaction.category === '' || newTransaction.description === "") {
+      //   alert("데이터를 정확히 입력하세요.");
+      //   return;
+      // }
+     
 
       console.log(newTransaction.createDate);
   
@@ -172,6 +203,7 @@ const RecordMoneyFn = () => {
       console.log("keepingData", keepingData);
 
          // 서버에서 새로운 데이터 가져오기
+         //반드시 ReactQuery를 사용해 볼것!!!!!!!!!!!!!!!!!!
     const getResponse = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/getHouseKeeping/${id}`);
 
     const getdbExpenseData = getResponse.data.filter((item: { category: string }) => item.category === 'expenditure');
@@ -187,14 +219,9 @@ const RecordMoneyFn = () => {
     console.log("getdbExpenseData", getdbIncomeData);
     setGetdbSave(getdbSaveData);
 
-        
-
-
     setGetdbData(getResponse.data);
 
-  
-      // 데이터 입력 후 초기화
-      setInputData({ category: '', amount: '', description: '', userid: userIdCookie, createDate:''});
+    setInputData({ category: '', amount: '', description: '', userid: userIdCookie, createDate: ''});
     } catch (err) {
       console.error("API 확인 해보세요");
     }
@@ -349,36 +376,7 @@ const totalSavedbData = numberWithCommas(totalSaveForEachItem.reduce((total, sav
 const remainingMoney = numberWithCommas(parseInt(totalAmountdbData) - (parseInt(totalConsumedbData) + parseInt(totalSavedbData)));
 
 
-
-
-const handleDateChange = (date: Date | any | Date[]) => {
-  setSelectedDate(date);
-  setShowCalendar(false);
-};
-
-const getTileClassName = ({ date }: { date: Date }) => {
-    const dateMilliseconds = date.getTime();
-    const selectedRangeMilliseconds = selectedRange.map((date) => date.getTime());
-  
-    // 선택한 기간 중 첫 날짜부터 마지막 날짜까지 파란색으로 칠해줌
-    if (
-      selectedRangeMilliseconds.length > 1 &&
-      dateMilliseconds >= Math.min(...selectedRangeMilliseconds) &&
-      dateMilliseconds <= Math.max(...selectedRangeMilliseconds)
-    ) {
-      return 'bg-blue-500 text-white';
-    }
-  
-    // 단일 선택한 날짜는 파란색으로 표시
-    if (selectedDate && dateMilliseconds === selectedDate.getTime()) {
-      return 'bg-blue-500 text-white';
-    }
-  
-    return '';
-  };
-
-  const formattedSelectedDate = selectedDate instanceof Date ? moment(selectedDate).format('YYYY-MM-DD') : '';
-
+const formattedSelectedDate = selectedDate instanceof Date ? moment(selectedDate).format('YYYY-MM-DD') : '';
 
 
   return (
@@ -395,9 +393,10 @@ const getTileClassName = ({ date }: { date: Date }) => {
         <div className='flex items-center justify-between gap-6 mb-10'>
           <h1 className="text-3xl font-bold ">가계부</h1>
           <div className='p-2 border border-black'>
-          <Link href={`/components/monthlyPrice`}>
-          한달 가계부 기록 확인하기
-        </Link></div>
+            <Link href={`/components/monthlyPrice/${getCookie('userId')}`}>
+            한달 가계부 기록 확인하기
+            </Link>
+          </div>
           <div className='p-2 border border-black'>ai에게 질문하기</div>
         </div>
         {/* <p>Post: {router.query.accountuserId}</p> */}
