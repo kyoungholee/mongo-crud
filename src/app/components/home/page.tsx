@@ -11,6 +11,7 @@ import saving02 from '/public/saving02.png';
 import growth from '/public/growth.jpg';
 
 import coin from '/public/coin.png';
+import Link from 'next/link';
 
 
 
@@ -18,12 +19,16 @@ import coin from '/public/coin.png';
 export default function HomePage() {
   return (
         <>
-        <header className='flex justify-between px-40 py-4 bg-white'>
-            <div className='flex items-center gap-4'>
-            ALIVE-MONEY
-            </div>
-            <SideBar/>
+
+        <header className='flex justify-between px-40 py-4 bg-sky-50'>
+                <div className='flex items-center gap-4'>
+                <Link className="p-3" href={`/components/home`}>
+                    ALIVE-MONEY
+                </Link>
+                </div>
+                <SideBar/>
         </header> 
+    
         <main>
             <section className='py-4 text-center bg-gray-300 '>돈좀 모으고 싶다하는 사람들만 주목하세요!!</section>
 
