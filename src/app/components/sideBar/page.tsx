@@ -32,11 +32,16 @@ export default function SideBar(){
     Cookie.remove('token');
   }
 
+  const aa =  getCookie('userId');
+  const aa22 =  getCookie('month');
+  
+
   return (
     <>
         <div className='flex items-center gap-6 mr-4'>
         {/* <div> 돈의 뉴스</div> */}
-        <Link className="p-3" href={`/components/accountBook/${getCookie('userId')}`}>
+        <Link className="p-3" href={`/components/accountBook/${aa}/${aa22}`}>
+          
         가계부
         </Link>
         <div> 돈 정보 게시판</div>

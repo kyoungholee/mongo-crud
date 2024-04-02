@@ -9,6 +9,7 @@ import {
   WalletOutlined,
   FundOutlined,
   PieChartOutlined,
+  CheckSquareOutlined
 } from '@ant-design/icons';
 import axios from 'axios';
 import { getCookie } from 'cookies-next';
@@ -45,6 +46,7 @@ export default function MonthlyPriceData() {
     '2': [],
     '3': [],
     '4': [],
+    '5': [],
   });
   const userIdCookie = getCookie('userId'); // 임시로 대체
 
@@ -53,10 +55,16 @@ const [selectedDate, setSelectedDate] = useState<Date | Date[] | any>();
 
 const [selectedRange, setSelectedRange] = useState<Date[]>([]);
 
-const handleDateChange = (date: Date | any | Date[]) => {
-  setSelectedDate(date);
+// const handleDateChange = (date: Date | any | Date[]) => {
+//   setSelectedDate(date);
+//   setShowCalendar(false);
+// };
+
+const handleMonthChange = (value: Date) => {
+  setSelectedDate(value);
   setShowCalendar(false);
 };
+
 
 const getTileClassName = ({ date }: { date: Date }) => {
     const dateMilliseconds = date.getTime();
@@ -108,6 +116,7 @@ const formattedSelectedDate = selectedDate instanceof Date ? moment(selectedDate
       '2': [],
       '3': [],
       '4': [],
+      '5': [],
     };
 
     data.forEach(item => {
@@ -147,50 +156,52 @@ const formattedSelectedDate = selectedDate instanceof Date ? moment(selectedDate
               { key: '1', icon: <PieChartOutlined />, title: '지출' },
               { key: '2', icon: <DollarCircleOutlined />, title: '수입' },
               { key: '3', icon: <WalletOutlined />, title: '저축' },
-              { key: '4', icon: <FundOutlined />, title: '투자' }
+              { key: '4', icon: <FundOutlined />, title: '투자' },
+              { key: '5', icon: <CheckSquareOutlined />, title: '나의 뜸뜸이 결과' }
             ].map(item => (
               <Menu.Item key={item.key} icon={item.icon}>
                 {item.title}
               </Menu.Item>
             ))}
           </Menu>
+          <div className="relative text-center">
+              <button
+                onClick={() => setShowCalendar(!showCalendar)}
+                className="px-6 py-2 text-white bg-blue-500 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-opacity-50"
+              >
+                {selectedDate ? (Array.isArray(selectedDate) ? '날짜 선택됨' : formattedSelectedDate) : '날짜 선택'}
+              </button>
+              {showCalendar && (
+                <div className="absolute w-64 mt-2 top-full">
+                  <Calendar
+                      // onChange={handleDateChange}
+                      value={new Date()} 
+                      onClickMonth={(value: Date) => handleMonthChange(value)}
+                      className="p-4 my-4 text-center border border-gray-300 rounded-md shadow-md bg-slate-100"
+                      calendarType="US"
+                      formatYear={(locale, date) => moment(date).format('YYYY')}
+                      formatMonthYear={(locale, date) => moment(date).format('YYYY. MM')}
+                      showNeighboringMonth={false}
+                      next2Label={null}
+                      prev2Label={null}
+                      minDetail="month" // 월 단위로만 선택 가능하도록 설정
+                      tileClassName={({ date }) =>
+                        selectedRange.length > 1 &&
+                        date >= selectedRange[0] &&
+                        date <= selectedRange[selectedRange.length - 1]
+                          ? 'bg-blue-500 text-white'
+                          : ''
+                      }
+                    />
+                  </div>
+                    )}
+              </div>
         </Sider>
         <Layout className="site-layout">
           <Header className="site-layout-background" style={{ padding: 0 }} />
           <Content style={{ margin: '0 16px' }}>
             <div className="site-layout-background" style={{ padding: 24, minHeight: 360 }}>
-            <div className="relative">
-       <button
-         onClick={() => setShowCalendar(!showCalendar)}
-         className="px-4 py-2 text-white bg-blue-500 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-opacity-50"
-       >
-         {selectedDate ? (Array.isArray(selectedDate) ? '날짜 선택됨' : formattedSelectedDate) : '날짜 선택'}
-      </button>
-      {showCalendar && (
-        <div className="absolute w-64 mt-2 top-full">
-         <Calendar
-            onChange={handleDateChange}
-            value={selectedDate}
-            className="p-4 my-4 text-center border border-gray-300 rounded-md shadow-md bg-slate-100"
-            calendarType="US"
-            formatDay={(locale, date) => moment(date).format('D')}
-            formatYear={(locale, date) => moment(date).format('YYYY')}
-            formatMonthYear={(locale, date) => moment(date).format('YYYY. MM')}
-            showNeighboringMonth={false}
-            next2Label={null}
-            prev2Label={null}
-            minDetail="month" // 월 단위로만 선택 가능하도록 설정
-            tileClassName={({ date }) =>
-              selectedRange.length > 1 &&
-              date >= selectedRange[0] &&
-              date <= selectedRange[selectedRange.length - 1]
-                ? 'bg-blue-500 text-white'
-                : ''
-            }
-          />
-        </div>
-      )}
-</div>
+            
             <Bar
                 data={dataMap[selectedMenuKey]}
                 xField="value"
