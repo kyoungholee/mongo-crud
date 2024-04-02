@@ -33,12 +33,12 @@ const Login = () => {
       });
 
       // 서버에서 받은 토큰을 저장하고 사용자에게 메시지 표시
-          const { token } = loginResponse.data;
+          const { token, formattedDate } = loginResponse.data;
 
-        
           // Set the cookie using document.cookie
           document.cookie = `token=${token}; path=/; max-age=${60 * 60 * 24 * 7}`;
           document.cookie = `userId= ${loginForm.username}; path=/; max-age=${60 * 60 * 24 * 7}`;
+          document.cookie = `month=${formattedDate}; path=/; max-age=${60 * 60 * 24 * 7}`;
           
       alert("로그인 축하드립니다.");
       router.push('/components/home');

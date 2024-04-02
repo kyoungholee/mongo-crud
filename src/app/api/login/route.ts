@@ -36,6 +36,12 @@ export async function POST(req: any, res: Response) {
 
   try {
    
+    const currentDate = new Date();
+    const year = currentDate.getFullYear();
+    const month = String(currentDate.getMonth() + 1).padStart(2, "0");
+    const day = String(currentDate.getDate()).padStart(2, "0");
+    const formattedDate = `${year}-${month}`;
+
     const payload = {
       user: {
         password: password,
@@ -62,15 +68,15 @@ export async function POST(req: any, res: Response) {
         }
       );
     });
-
-
 // 토큰을 쿠키에 설정
+
+console.log(formattedDate)
 
 // 응답에 토큰과 메시지를 함께 전송 ==> 서버에서 확인 할 수 있느 음답값
 
 
 return NextResponse.json(
-  { message: "로그인~~!!~~ 축하합니다.", token},
+  { message: "로그인~~!!~~ 축하합니다.", token ,formattedDate},
   { status: 201 }
 );
   }catch(err) {
