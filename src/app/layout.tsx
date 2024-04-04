@@ -1,4 +1,6 @@
+'use client'
 
+import { RecoilRoot } from "recoil";
 import Navbar from "./api/boards/Navbar";
 import SideBar from "./components/sideBar/page";
 import "./globals.css";
@@ -21,17 +23,21 @@ function RootLayout ({ children } : {
   children: React.ReactNode
 }) {
   return (
+    
     <html>
       <body>
-          {/* <header className='flex justify-between px-40 py-4 bg-white'>
-                <div className='flex items-center gap-4'>
-                ALIVE-MONEY
-                </div>
-                <SideBar/>
-          </header>  */}
-            <div className="px-40 mx-auto ">
-                <div>{children}</div>
-            </div>
+        <RecoilRoot>
+            {/* <header className='flex justify-between px-40 py-4 bg-white'>
+                  <div className='flex items-center gap-4'>
+                  ALIVE-MONEY
+                  </div>
+                  <SideBar/>
+            </header>  */}
+              <div className="px-40 mx-auto ">
+                
+                  <div>{children}</div>
+              </div>
+          </RecoilRoot>
       </body>
     </html>
   );
