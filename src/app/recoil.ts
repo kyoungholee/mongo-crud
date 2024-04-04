@@ -5,4 +5,6 @@ export const selectedDateState = atom({
   default: null,
 });
 
+console.log("selectedDateState", selectedDateState);
+
 export const useSelectedDate = () => useRecoilState(selectedDateState);

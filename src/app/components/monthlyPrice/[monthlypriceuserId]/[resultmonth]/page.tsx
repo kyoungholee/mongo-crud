@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from "next/link"
-import SideBar from "../../sideBar/page"
+import SideBar from "../../../sideBar/page"
 import { Layout, Menu } from 'antd';
 import {
   DollarCircleOutlined,
@@ -19,6 +19,9 @@ import Item from 'antd/es/descriptions/Item';
 
 import Calendar from 'react-calendar';
 import moment from 'moment';
+
+import { useSelectedDate } from '../../../../recoil';
+
 
 
 interface CalendarPageProps {
@@ -55,39 +58,31 @@ const [selectedDate, setSelectedDate] = useState<Date | Date[] | any>();
 
 const [selectedRange, setSelectedRange] = useState<Date[]>([]);
 
-// const handleDateChange = (date: Date | any | Date[]) => {
-//   setSelectedDate(date);
-//   setShowCalendar(false);
-// };
+const [SelectedDaterr, setSelectedDaterr] = useSelectedDate();
+
+const handleDateChange = (date: Date | any | Date[]) => {
+  setSelectedDate(date);
+  setSelectedDaterr(date);
+  setShowCalendar(false);
+};
 
 const handleMonthChange = (value: Date) => {
   setSelectedDate(value);
   setShowCalendar(false);
 };
 
-
-const getTileClassName = ({ date }: { date: Date }) => {
-    const dateMilliseconds = date.getTime();
-    const selectedRangeMilliseconds = selectedRange.map((date) => date.getTime());
-  
-    // 선택한 기간 중 첫 날짜부터 마지막 날짜까지 파란색으로 칠해줌
-    if (
-      selectedRangeMilliseconds.length > 1 &&
-      dateMilliseconds >= Math.min(...selectedRangeMilliseconds) &&
-      dateMilliseconds <= Math.max(...selectedRangeMilliseconds)
-    ) {
-      return 'bg-blue-500 text-white';
-    }
-  
-    // 단일 선택한 날짜는 파란색으로 표시
-    if (selectedDate && dateMilliseconds === selectedDate.getTime()) {
-      return 'bg-blue-500 text-white';
-    }
-  
-    return '';
-  };
-
 const formattedSelectedDate = selectedDate instanceof Date ? moment(selectedDate).format('YYYY-MM') : '';
+
+
+console.log("formattedSelectedDate", formattedSelectedDate);
+
+
+const newDate = SelectedDaterr ? moment(selectedDate).format('YYYY-MM') : getCookie('month');
+
+
+console.log("달력에서 가져온 newDate", newDate);
+
+console.log("SelectedDaterr", SelectedDaterr);
 
 
   const handleMenuClick = (e: { key: string }) => {
@@ -97,7 +92,7 @@ const formattedSelectedDate = selectedDate instanceof Date ? moment(selectedDate
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get<HouseKeepingItem[]>(`${process.env.NEXT_PUBLIC_API_URL}/getHouseKeeping/${userIdCookie}`);
+        const response = await axios.get<HouseKeepingItem[]>(`${process.env.NEXT_PUBLIC_API_URL}/getHouseKeeping/${userIdCookie}/${newDate}`);
         const resultData = response.data;
         console.log("resultData", resultData);
         const formattedData = formatData(resultData);
@@ -108,7 +103,9 @@ const formattedSelectedDate = selectedDate instanceof Date ? moment(selectedDate
     };
 
     fetchData();
-  }, [userIdCookie]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  console.log("newDate, useEffect", newDate);
+  }, [newDate]);
 
   const formatData = (data: HouseKeepingItem[]): { [key: string]: DataItem[] } => {
     const formattedData: { [key: string]: DataItem[] } = {
@@ -174,7 +171,7 @@ const formattedSelectedDate = selectedDate instanceof Date ? moment(selectedDate
               {showCalendar && (
                 <div className="absolute w-64 mt-2 top-full">
                   <Calendar
-                      // onChange={handleDateChange}
+                      onChange={handleDateChange}
                       value={new Date()} 
                       onClickMonth={(value: Date) => handleMonthChange(value)}
                       className="p-4 my-4 text-center border border-gray-300 rounded-md shadow-md bg-slate-100"
