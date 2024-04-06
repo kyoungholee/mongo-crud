@@ -13,6 +13,7 @@ import moment from 'moment';
 import './accountbook.css'; // CSS 파일 import
 
 
+import { useSelectedDate } from '../../../../recoil/DateAtom';
 
 
 
@@ -93,7 +94,7 @@ const RecordMoneyFn = () => {
   ]);
 
   const [showCalendar, setShowCalendar] = useState(false);
-  const [selectedDate, setSelectedDate] = useState<Date | Date[] | any>();
+  let [selectedDate, setSelectedDate] = useState<Date | Date[] | any>();
   const [selectedRange, setSelectedRange] = useState<Date[]>([]);
   
   //총 지출, 수입, 저축에 대한 값을 가져오기 위한 state값
@@ -109,6 +110,8 @@ const RecordMoneyFn = () => {
     id : string;
     month : number
   }
+
+  const [selectedDatere] = useSelectedDate();
 
   
   const router = useParams();
@@ -133,6 +136,7 @@ const RecordMoneyFn = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    setSelectedDate("");
     try {
 
 
@@ -160,7 +164,15 @@ const RecordMoneyFn = () => {
       // const newTransaction: Transaction = { ...inputData, id: Date.now() };
       const newTransaction: Transaction = { ...inputData, id: Date.now(), createDate: formattedSelectedDate };
 
-      if(newTransaction.category == "" || newTransaction.amount == "" || newTransaction.description == "") {
+      //데이터  생성 시 날짜 값 초기화(o),
+      // 예외처리 다시 정리
+
+      if(newTransaction.createDate === "") {
+        setShowCalendar(true);
+        alert("Please select a date");
+        return;
+      }
+      else if(newTransaction.category == "" || newTransaction.amount == "" || newTransaction.description == "") {
         alert("데이터를 정확히 입력하세요.");
         return;
       }
@@ -239,7 +251,7 @@ const RecordMoneyFn = () => {
 
     setGetdbData(getResponse.data);
 
-    setInputData({ category: '', amount: '', description: '', userid: userIdCookie, createDate: formattedSelectedDate});
+    setInputData({ category: '', amount: '', description: '', userid: userIdCookie, createDate: ""});
     } catch (err) {
       console.error("API 확인 해보세요");
     }
@@ -398,11 +410,22 @@ const totalAmountdbData = numberWithCommas(totalIncomeForEachItem.reduce((total,
 const totalConsumedbData = numberWithCommas(totalExpenseForEachItem.reduce((total, consume) => total + consume, 0));
 const totalSavedbData = numberWithCommas(totalSaveForEachItem.reduce((total, save) => total + save, 0));
 
-const remainingMoney = numberWithCommas(parseInt(totalAmountdbData) - (parseInt(totalConsumedbData) + parseInt(totalSavedbData)));
 
+const totalAmountAsNumber = parseInt(totalAmountdbData.replace(/,/g, ""), 10);
+
+console.log("총합 계산기", totalAmountAsNumber, totalConsumedbData, totalSavedbData )
+
+const remainingMoney = numberWithCommas(totalAmountAsNumber -  parseInt(totalSavedbData) - (parseInt(totalConsumedbData)));
+
+
+console.log("총합 계산기22", remainingMoney )
 
 const formattedSelectedDate = selectedDate instanceof Date ? moment(selectedDate).format('YYYY-MM-DD') : '';
 
+
+const newDate = selectedDatere ? moment(selectedDate).format('YYYY-MM') : getCookie('month');
+
+console.log("가계부 데이터", selectedDatere );
 
   return (
   <>
@@ -418,7 +441,7 @@ const formattedSelectedDate = selectedDate instanceof Date ? moment(selectedDate
         <div className='flex items-center justify-between gap-6 mb-10'>
           <h1 className="text-3xl font-bold ">가계부</h1>
           <div className='p-2 border border-black'>
-            <Link href={`/components/monthlyPrice/${getCookie('userId')}`}>
+            <Link href={`/components/monthlyPrice/${getCookie('userId')}/${getCookie('month')}`}>
             한달 가계부 기록 확인하기
             </Link>
           </div>
@@ -462,7 +485,7 @@ const formattedSelectedDate = selectedDate instanceof Date ? moment(selectedDate
         onClick={() => setShowCalendar(!showCalendar)}
         className="px-4 py-2 text-white bg-blue-500 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-opacity-50"
       >
-        {selectedDate ? (Array.isArray(selectedDate) ? '날짜 선택됨' : formattedSelectedDate) :  `${new Date().getFullYear()}-${('0' + (new Date().getMonth() + 1)).slice(-2)}-${('0' + new Date().getDate()).slice(-2)}`}
+        {selectedDate ? (Array.isArray(selectedDate) ? '날짜 선택됨' : formattedSelectedDate) :  "날짜선택"}
       </button>
       {showCalendar && (
         <div className="absolute w-64 mt-2 top-full">
@@ -629,7 +652,6 @@ const formattedSelectedDate = selectedDate instanceof Date ? moment(selectedDate
           </tbody>
         </table>
   </div>
-
 </>
     
   );

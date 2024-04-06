@@ -20,7 +20,7 @@ import Item from 'antd/es/descriptions/Item';
 import Calendar from 'react-calendar';
 import moment from 'moment';
 
-import { useSelectedDate } from '../../../../recoil';
+import { useSelectedDate } from '../../../../recoil/DateAtom';
 
 
 
