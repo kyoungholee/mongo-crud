@@ -19,6 +19,7 @@ import Item from 'antd/es/descriptions/Item';
 
 import Calendar from 'react-calendar';
 import moment from 'moment';
+import './monthlyPrice.css'; // CSS 파일 import
 
 import { useSelectedDate } from '../../../../recoil/DateAtom';
 
@@ -154,7 +155,7 @@ console.log("SelectedDaterr", SelectedDaterr);
               { key: '2', icon: <DollarCircleOutlined />, title: '수입' },
               { key: '3', icon: <WalletOutlined />, title: '저축' },
               { key: '4', icon: <FundOutlined />, title: '투자' },
-              { key: '5', icon: <CheckSquareOutlined />, title: '나의 뜸뜸이 결과' }
+              { key: '5', icon: <CheckSquareOutlined />, title: '나의 씀씀이 결과' }
             ].map(item => (
               <Menu.Item key={item.key} icon={item.icon}>
                 {item.title}
@@ -164,7 +165,7 @@ console.log("SelectedDaterr", SelectedDaterr);
           <div className="relative text-center">
               <button
                 onClick={() => setShowCalendar(!showCalendar)}
-                className="px-6 py-2 text-white bg-blue-500 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-opacity-50"
+                className="px-2 py-2 text-white bg-blue-500 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-opacity-50"
               >
                 {selectedDate ? (Array.isArray(selectedDate) ? '날짜 선택됨' : formattedSelectedDate) : '날짜 선택'}
               </button>
@@ -176,7 +177,6 @@ console.log("SelectedDaterr", SelectedDaterr);
                       onClickMonth={(value: Date) => handleMonthChange(value)}
                       className="p-4 my-4 text-center border border-gray-300 rounded-md shadow-md bg-slate-100"
                       calendarType="US"
-                      formatYear={(locale, date) => moment(date).format('YYYY')}
                       formatMonthYear={(locale, date) => moment(date).format('YYYY. MM')}
                       showNeighboringMonth={false}
                       next2Label={null}
@@ -203,6 +203,7 @@ console.log("SelectedDaterr", SelectedDaterr);
                 data={dataMap[selectedMenuKey]}
                 xField="value"
                 yField="year"
+                horizontal={true} // 그래프 방향을 세로로 변경
               />
             </div>
           </Content>
