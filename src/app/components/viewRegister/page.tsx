@@ -70,12 +70,9 @@ const ViewRegister: React.FC = () => {
       });
 
       console.log("해당 값", response);
-    
-      // 여기에 서버로 데이터를 보내는 로직을 추가하세요.
-    
+
+      //예외처리 코드 다시 로직 추가
       if (response.status === 201) {
-      
-      
         alert('회원가입을 환영합니다.');
         router.push('/');
       }
@@ -86,7 +83,16 @@ const ViewRegister: React.FC = () => {
         alert("다시 작성해주세요.")
       }
     } catch (error) {
-      alert("다시 입력해주세요.")
+      alert("중복된 계정입니다. 다시 입력해주세요.")
+      setSignform({
+        name: '',
+        koreaname: '',
+        password: '',
+        passwordcheck: '',
+        gender:"",
+        email: '',
+        want: "",
+      })
     }
 
   };
