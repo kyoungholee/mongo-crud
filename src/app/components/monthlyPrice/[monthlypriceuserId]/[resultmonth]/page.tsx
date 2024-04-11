@@ -14,7 +14,7 @@ import {
 import axios from 'axios';
 import { getCookie } from 'cookies-next';
 
-import {Line ,Bar} from  '@ant-design/charts'
+import {Line ,Bar, Pie} from  '@ant-design/charts'
 import Item from 'antd/es/descriptions/Item';
 
 import Calendar from 'react-calendar';
@@ -125,14 +125,46 @@ console.log("SelectedDaterr", SelectedDaterr);
       }  
       else if (item.category === 'Investment') {
         formattedData['4'].push({ year: item.createDate, value: parseInt(item.amount) });
-      }else {
+      }
+      else {
         formattedData['1'].push({ value: parseInt(item.amount), year: item.createDate});
       }
     });
 
+    data.forEach(item => {
+  formattedData['5'].push({ value: parseInt(item.amount), year: item.createDate });
+});
+
     console.log("formatData", formatData);
 
     return formattedData;
+  };
+
+  const config = {
+    dataMap,
+    height: 400,
+    xField: 'year',
+    yField: 'value',
+    point: {
+      size: 5,
+      shape: 'diamond | circule',
+    },
+    tooltip: {
+      formatter: (data : any) => {
+        return {
+          name: '',
+          value: any,
+        };
+      },
+      customContent: (name, data) =>
+        `<div>${data?.map((item) => {
+          return `<div class="tooltip-chart" >
+              <span class="tooltip-item-name">${item?.name}</span>
+              <span class="tooltip-item-value">${item?.value}</span>
+            </div>`;
+        })}</div>`,
+      position: 'right | left',
+    },
   };
 
   return (
@@ -192,21 +224,21 @@ console.log("SelectedDaterr", SelectedDaterr);
                     />
                   </div>
                     )}
-              </div>
+            </div>
         </Sider>
         <Layout className="site-layout">
           <Header className="site-layout-background" style={{ padding: 0 }} />
-          <Content style={{ margin: '0 16px' }}>
-            <div className="site-layout-background" style={{ padding: 24, minHeight: 360 }}>
-            
-            <Bar
-                data={dataMap[selectedMenuKey]}
-                xField="value"
-                yField="year"
-                horizontal={true} // 그래프 방향을 세로로 변경
-              />
-            </div>
-          </Content>
+            <Content style={{ margin: '0 16px' }}>
+              <div className="site-layout-background" style={{ padding: 24, minHeight: 360 }}>
+              
+                <Bar
+                  data={dataMap[selectedMenuKey]}
+                  xField="value"
+                  yField="year"
+                  horizontal={true} // 그래프 방향을 세로로 변경
+                />
+              </div>
+            </Content>
           <Footer style={{ textAlign: 'center' }}>돈은 누군지도 묻지 않고, 그 소유자에게 권리를 준다.</Footer>
         </Layout>
       </Layout>
