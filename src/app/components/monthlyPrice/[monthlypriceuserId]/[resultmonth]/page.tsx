@@ -41,6 +41,7 @@ interface HouseKeepingItem {
 interface DataItem {
   year: string;
   value: number;
+  category :string;
 }
 
 export default function MonthlyPriceData() {
@@ -88,6 +89,7 @@ console.log("SelectedDaterr", SelectedDaterr);
 
   const handleMenuClick = (e: { key: string }) => {
     setSelectedMenuKey(e.key);
+    console.log("selectedMenuKey", selectedMenuKey);
   };
 
   useEffect(() => {
@@ -97,6 +99,7 @@ console.log("SelectedDaterr", SelectedDaterr);
         const resultData = response.data;
         console.log("resultData", resultData);
         const formattedData = formatData(resultData);
+        console.log("api 통신에 formattedData" ,formattedData);
         setDataMap(formattedData);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -106,6 +109,7 @@ console.log("SelectedDaterr", SelectedDaterr);
     fetchData();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   console.log("newDate, useEffect", newDate);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [newDate]);
 
   const formatData = (data: HouseKeepingItem[]): { [key: string]: DataItem[] } => {
@@ -117,55 +121,28 @@ console.log("SelectedDaterr", SelectedDaterr);
       '5': [],
     };
 
+
     data.forEach(item => {
-      if (item.category === 'Incoming') {
-        formattedData['2'].push({value: parseInt(item.amount),year: item.createDate });
-      } else if (item.category === 'savings') {
-        formattedData['3'].push({value: parseInt(item.amount), year: item.createDate,  });
-      }  
-      else if (item.category === 'Investment') {
-        formattedData['4'].push({ year: item.createDate, value: parseInt(item.amount) });
-      }
-      else {
-        formattedData['1'].push({ value: parseInt(item.amount), year: item.createDate});
+      if (item.category === 'expenditure') { // '지출' 카테고리일 때 '1'에 매핑합니다.
+        formattedData['1'].push({ value: parseInt(item.amount), year: item.createDate, category: item.category });
+      } else if (item.category === 'Incoming') { // '수입' 카테고리일 때 '2'에 매핑합니다.
+        formattedData['2'].push({ value: parseInt(item.amount), year: item.createDate , category: item.category });
+      } else if (item.category === 'savings') { // '저축' 카테고리일 때 '3'에 매핑합니다.
+        formattedData['3'].push({ value: parseInt(item.amount), year: item.createDate, category: item.category });
+      } else if (item.category === 'Investment') { // '투자' 카테고리일 때 '4'에 매핑합니다.
+        formattedData['4'].push({ value: parseInt(item.amount), year: item.createDate, category: item.category  });
+      } else { // 그 외의 경우 '나의 씀씀이 결과' 카테고리로 간주하여 '5'에 매핑합니다.
+        formattedData['5']
       }
     });
 
-    data.forEach(item => {
-  formattedData['5'].push({ value: parseInt(item.amount), year: item.createDate });
-});
 
-    console.log("formatData", formatData);
+    console.log("해당 fommaData", formattedData['5']);
 
     return formattedData;
   };
 
-  const config = {
-    dataMap,
-    height: 400,
-    xField: 'year',
-    yField: 'value',
-    point: {
-      size: 5,
-      shape: 'diamond | circule',
-    },
-    tooltip: {
-      formatter: (data : any) => {
-        return {
-          name: '',
-          value: any,
-        };
-      },
-      customContent: (name, data) =>
-        `<div>${data?.map((item) => {
-          return `<div class="tooltip-chart" >
-              <span class="tooltip-item-name">${item?.name}</span>
-              <span class="tooltip-item-value">${item?.value}</span>
-            </div>`;
-        })}</div>`,
-      position: 'right | left',
-    },
-  };
+
 
   return (
     <>
@@ -181,7 +158,7 @@ console.log("SelectedDaterr", SelectedDaterr);
       <Layout style={{ minHeight: '100vh'}}>
         <Sider collapsible>
           <div className="logo" />
-          <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline" selectedKeys={[selectedMenuKey]} onClick={handleMenuClick}>
+          <Menu theme="dark" defaultSelectedKeys={[]} mode="inline" selectedKeys={[selectedMenuKey]} onClick={handleMenuClick}>
             {[
               { key: '1', icon: <PieChartOutlined />, title: '지출' },
               { key: '2', icon: <DollarCircleOutlined />, title: '수입' },
@@ -226,19 +203,69 @@ console.log("SelectedDaterr", SelectedDaterr);
                     )}
             </div>
         </Sider>
-        <Layout className="site-layout">
+           <Layout className="site-layout">
           <Header className="site-layout-background" style={{ padding: 0 }} />
-            <Content style={{ margin: '0 16px' }}>
-              <div className="site-layout-background" style={{ padding: 24, minHeight: 360 }}>
-              
+          <Content style={{ margin: '0 16px' }}>
+            <div className="site-layout-background" style={{ padding: 24, minHeight: 360 }}>
+              {selectedMenuKey === '1' && (
                 <Bar
-                  data={dataMap[selectedMenuKey]}
+                data={[
+                  ...dataMap['1'].map(item => ({ ...item, category: '지출' })),
+                ]}
                   xField="value"
                   yField="year"
+                  colorField="category"
                   horizontal={true} // 그래프 방향을 세로로 변경
                 />
-              </div>
-            </Content>
+              )}
+              {selectedMenuKey === '2' && (
+                <Bar
+                data={[
+                  ...dataMap['2'].map(item => ({ ...item, category: '수입' })),
+                ]}
+                  xField="value"
+                  yField="year"
+                  colorField="category"
+                  color="#52c41a" // green color
+                />
+              )}
+              {selectedMenuKey === '3' && (
+                <Pie
+                data={[
+                  ...dataMap['3'].map(item => ({ ...item, category: '저축' })),
+                ]}
+                angleField="value"
+                colorField="category"
+                  radius={0.8}
+                />
+              )}
+              {selectedMenuKey === '4' && (
+                <Bar
+                  data={[
+                    ...dataMap['4'].map(item => ({ ...item, category: '투자' })),
+                  ]}
+                  xField="value"
+                  yField="year"
+                  colorField="category"
+                  color="#1890ff" // blue color
+                />
+              )}
+                    {selectedMenuKey === '5' && (
+              <Pie
+                data={[
+                  ...dataMap['1'].map(item => ({ ...item, category: '지출' })),
+                  ...dataMap['2'].map(item => ({ ...item, category: '수입' })),
+                  ...dataMap['3'].map(item => ({ ...item, category: '저축' })),
+                  ...dataMap['4'].map(item => ({ ...item, category: '투자' })),
+                ]}
+                angleField="value"
+                colorField="category"
+                radius={0.8}
+              />
+            )}
+
+            </div>
+          </Content>
           <Footer style={{ textAlign: 'center' }}>돈은 누군지도 묻지 않고, 그 소유자에게 권리를 준다.</Footer>
         </Layout>
       </Layout>
