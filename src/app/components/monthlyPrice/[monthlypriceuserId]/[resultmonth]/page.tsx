@@ -142,8 +142,34 @@ console.log("SelectedDaterr", SelectedDaterr);
     return formattedData;
   };
 
+  //나의 씀씀이 값의 결과 데이터
+  const getTotalValue = (category: string) => {
+    const sum = dataMap[category].reduce((acc, cur) => acc + cur.value, 0);
+    return sum
+  };
 
+  const compareTotalValues = () => {
+    // 각 항목의 총합을 가져옴
+    const expenditureTotal = getTotalValue('1');
+    const incomeTotal = getTotalValue('2');
+    const savingTotal = getTotalValue('3');
+    const investmentTotal = getTotalValue('4');
 
+    // 각 항목을 비교하여 메시지 반환
+    if (expenditureTotal > incomeTotal && expenditureTotal > savingTotal && expenditureTotal > investmentTotal) {
+      return '이번달은 지출이 많습니다. 경제적 자유를 얻기 위해 지출은 줄이는 것이 최우선입니다.';
+    } else if (incomeTotal > expenditureTotal && incomeTotal > savingTotal && incomeTotal > investmentTotal) {
+      return '이번달은 수입이 많습니다. 더 많은 수입을 얻기 위해 고민해보세요.';
+    } else if (savingTotal > expenditureTotal && savingTotal > incomeTotal && savingTotal > investmentTotal) {
+      return '이번달은 저축이 많습니다. 저축 하는 것도 중요하지만, 투자에 대한 공부가 필요한 시기입닌다.';
+    } else if (investmentTotal > expenditureTotal && investmentTotal > incomeTotal && investmentTotal > savingTotal) {
+      return '이번달은 투자 요금이 많습니다. 투자를 전략적으로 하기 위해 꾸준히 공부하고, 눈덩이처럼 굴려보세요.';
+    } else {
+      return '이번달의 지출, 수입, 저축, 투자는 비슷한 수준입니다.';
+    }
+  };
+
+  
   return (
     <>
       <header className='flex justify-between px-40 py-4 bg-sky-50'>
@@ -190,14 +216,14 @@ console.log("SelectedDaterr", SelectedDaterr);
                       showNeighboringMonth={false}
                       next2Label={null}
                       prev2Label={null}
-                      minDetail="month" // 월 단위로만 선택 가능하도록 설정
-                      tileClassName={({ date }) =>
-                        selectedRange.length > 1 &&
-                        date >= selectedRange[0] &&
-                        date <= selectedRange[selectedRange.length - 1]
-                          ? 'bg-blue-500 text-white'
-                          : ''
-                      }
+                      minDetail="year" // 월 단위로만 선택 가능하도록 설정
+                      // tileClassName={({ date }) =>
+                      //   selectedRange.length > 1 &&
+                      //   date >= selectedRange[0] &&
+                      //   date <= selectedRange[selectedRange.length - 1]
+                      //     ? 'bg-blue-500 text-white'
+                      //     : ''
+                      // }
                     />
                   </div>
                     )}
@@ -215,7 +241,6 @@ console.log("SelectedDaterr", SelectedDaterr);
                   xField="value"
                   yField="year"
                   colorField="category"
-                  horizontal={true} // 그래프 방향을 세로로 변경
                 />
               )}
               {selectedMenuKey === '2' && (
@@ -226,19 +251,19 @@ console.log("SelectedDaterr", SelectedDaterr);
                   xField="value"
                   yField="year"
                   colorField="category"
-                  color="#52c41a" // green color
                 />
               )}
-              {selectedMenuKey === '3' && (
-                <Pie
-                data={[
-                  ...dataMap['3'].map(item => ({ ...item, category: '저축' })),
-                ]}
-                angleField="value"
-                colorField="category"
-                  radius={0.8}
-                />
-              )}
+                  {selectedMenuKey === '3' && (
+                  <Line
+                    data={[
+                      ...dataMap['3'].map(item => ({ ...item, category: '저축' })),
+                    ]}
+                    xField="year"
+                    yField="value"
+                    seriesField="category"
+                  />
+                )}
+
               {selectedMenuKey === '4' && (
                 <Bar
                   data={[
@@ -247,21 +272,23 @@ console.log("SelectedDaterr", SelectedDaterr);
                   xField="value"
                   yField="year"
                   colorField="category"
-                  color="#1890ff" // blue color
                 />
               )}
-                    {selectedMenuKey === '5' && (
-              <Pie
-                data={[
-                  ...dataMap['1'].map(item => ({ ...item, category: '지출' })),
-                  ...dataMap['2'].map(item => ({ ...item, category: '수입' })),
-                  ...dataMap['3'].map(item => ({ ...item, category: '저축' })),
-                  ...dataMap['4'].map(item => ({ ...item, category: '투자' })),
-                ]}
-                angleField="value"
-                colorField="category"
-                radius={0.8}
-              />
+              {selectedMenuKey === '5' && (
+                <>
+                <Pie
+                  data={[
+                    { category: '지출', value: getTotalValue('1') },
+                    { category: '수입', value: getTotalValue('2') },
+                    { category: '저축', value: getTotalValue('3') },
+                    { category: '투자', value: getTotalValue('4') },
+                    // { category: '나의 씀씀이 결과', value: getTotalValue('5') },
+                  ]}
+                  angleField="value"
+                  colorField="category"
+                  radius={0.8} />
+                  <div className='text-xl'>{compareTotalValues()}</div>
+                  </>
             )}
 
             </div>

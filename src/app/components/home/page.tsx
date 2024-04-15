@@ -34,91 +34,73 @@ export default function HomePage() {
 
             {/* <section className='mb-4'>건강한 경제력을 키우는 돈 관리 프로젝트</section> */}
 
-            
-            <section className='py-4 px-28'>
-                <div className='flex gap-20 mt-4 text-lg'>
-                    <Image src={money}  alt='돈' className='w-1/5'/>
-                        <div className='flex items-center'>
-                            <div>
-                                <h2 className='mb-8 text-2xl notoSansKr'><strong>우리에게 돈이란?</strong></h2>
-                                <p className='text-xl leading-8'>
-                                돈은 교환 매체로 사용되는 통화나 가치를 나타내는 일반적인 용어입니다. 다양한 형태의 돈이 존재하지만, 주로 통용되는 것은 국가에서 발행한 화폐입니다.
-                                돈은 주로 다음과 같은 기능을 수행합니다:
-                                교환 매체: 돈은 상품이나 서비스와 교환할 때 사용되는 매체로 기능합니다. 사람들은 돈을 사용하여 물건을 사거나 서비스를 받습니다.
-                              
-                                </p>
-                            </div>
-                        </div>
+            <section className="relative flex flex-col items-center justify-center min-h-screen mt-4 bg-gray-100 bg-cover bg-whatMoney">
+                <div className="absolute inset-0 bg-black opacity-50 blur"></div>
+                <div className="z-10 flex flex-col items-center justify-center text-center text-white">
+                    <h2 className="mb-8 text-3xl font-bold notoSansKr">우리에게 돈이란?</h2>
+                    <p className="max-w-lg text-lg leading-8">
+                        돈은 교환 매체로 사용되는 통화나 가치를 나타내는 일반적인 용어입니다. 다양한 형태의 돈이 존재하지만, 주로 통용되는 것은 국가에서 발행한 화폐입니다. 돈은 주로 다음과 같은 기능을 수행합니다:
+                        교환 매체 - 돈은 상품이나 서비스와 교환할 때 사용되는 매체로 기능합니다. 사람들은 돈을 사용하여 물건을 사거나 서비스를 받습니다.
+                    </p>
+                    <a href="https://www.youtube.com/watch?v=2rO8_2gJKjc&t=1329s" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center mt-8">
+                        <img src="https://img.youtube.com/vi/2rO8_2gJKjc/maxresdefault.jpg" alt="YouTube 썸네일" className="w-24 h-16 rounded" />
+                        <span className="ml-2 text-red-600 ">돈의 원리를 알려줄게!!</span>
+                    </a>
                 </div>
             </section>
             
-            <section className='py-4 px-28'>
-                <div className='flex gap-20 mt-4 text-lg'>
-                    <Image src={saving02}  alt='가계부 로고' className='w-1/5'/>
-                        <div className='flex items-center'>
-                            <div>
-                                <h2 className='mb-8 text-2xl notoSansKr'><strong>돈 저축 * 가계부로 시작합시다.</strong></h2>
-                                <p className='text-xl leading-8'>
-                                가계부 정리 뭐 어디서 부터 시작해야되지..?<br />
-                                돈 모을라면 가계부 적어야 하나?<br />
-                                이러한 분들을 위해 가계부를 쉽게 적어보고, 남들과 함꼐 공유해요!
-                                </p>
-                            </div>
-                        </div>
-                </div>
-            </section>
-            
-            <section className='py-4 px-28'>
-                <div className='flex gap-20 mt-4 text-lg'>
-                    <Image src={growth}  alt='월급 로고' className='w-1/5'/>
-                    <div className='flex items-center'>
-                        <div>
-                            <h2 className='mb-8 text-2xl notoSansKr'><strong>1억을 모을 수 있을까~?</strong></h2>
-                            <p className='text-xl leading-8'>
-                            1억을 모으면 뭘 하지~?<br />
-                            모을 수 있는 방법은?<br />
-                            </p>
-                        </div>
-                    </div>
-                </div>
+           
+            <section className="relative flex flex-col items-center justify-center min-h-screen mt-4 bg-gray-100 bg-center bg-no-repeat bg-contain bg-savingpigmoney">
+                <div className="absolute inset-0 bg-black opacity-50 blur"></div>
+                <div className="z-10 flex flex-col items-center justify-center text-center text-white">
+                <h2 className="mb-8 text-3xl font-bold notoSansKr">저축은 필수입니다.</h2>
+                <p className="max-w-lg text-lg leading-8">
+                    저축이란 돈을 모으는 행위를 말합니다.<br />
+                    저축의 목적은 각자 다를 수 있지만, 부자가 되기 위한 가장 처음이 되는 단계입니다.
+                    저축은 한번 하는 것이 아니라, 매달 매년 일정 금액을 하는 것이 중요하며, 계획을 세워서 꾸준하게 하는 자가 곧!! 승리하는 싸움입니다.
+                    너무 적다고 생각하지말고, 저축은 미래를 위한 투자이며, 투자를 하기 위한 시드입니다.
+                    <br/>
+                    우리 모두 다 같이 저축을 즐거워하는 사람이 됩시다.
+                </p>
+                <a href="https://www.youtube.com/watch?v=c4CX3bQ0poU" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center mt-8">
+                    <img src="https://img.youtube.com/vi/c4CX3bQ0poU/maxresdefault.jpg" alt="YouTube 썸네일" className="w-24 h-16 rounded" />
+                    <span className="ml-2 text-red-600">저축이 부자가는 길에 기본입니다.</span>
+                </a>
+            </div>
             </section>
 
-            <section className='py-4 px-28'>
-                <div className='flex gap-20 mt-4 text-lg'>
-                <Image src={Passbook}  alt='통장 로고' className='w-1/5'/>
-                    <div className='flex items-center'>
-                        <div>
-                            <h2 className='mb-8 text-2xl notoSansKr'><strong>적금, 은행에 넣기</strong></h2>
-                            <p className='text-xl leading-8'>
-                                은행 적금과 예금<br />
-                                너무 많은 예/적금이 있는데 뭘 들어야 하지~?<br />
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </section>
             
-            <section className='py-4 px-28'>
-                <div className='flex gap-20 mt-4 text-lg'>
-                    <Image src={coin}  alt='재테크 로고' className='w-1/5'/>
-                    <div className='flex items-center'>
-                        <div>
-                            <h2 className='mb-8 text-2xl notoSansKr'><strong>돈만 생각하면 불안한 마음, 재테크 정보</strong></h2>
-                            <p className='text-xl leading-8'>
-                            재테크 공부..<br />
-                            주식, 부동산, 코인 뭐 부터 시작 해야 할까요?<br />
-                            같이 공유하고 공부합시다.<br />
-                            </p>
-                        </div>
-                    </div>
-                </div>
+            <section className="relative flex flex-col items-center justify-center min-h-screen mt-4 bg-gray-100 bg-center bg-no-repeat bg-contain bg-growth">
+                <div className="absolute inset-0 bg-black opacity-50 blur"></div>
+                <div className="z-10 flex flex-col items-center justify-center text-center text-white">
+                <h2 className="mb-8 text-3xl font-bold notoSansKr">우리는 통장에 1억을 모을 수 있을까?</h2>
+                <p className="max-w-lg text-lg leading-8">
+                    많은 사람들이 투자,펀드를 하기 전에 1억부터 모으라는 말을 많이 합니다.
+                    아마 이뜻은 본인의 절제력과 나는 과연 부자가 될 사람인가?? 하는 가장 처음이 되는 테스트라고 느낍니다.
+                </p>
+                <a href="https://www.youtube.com/watch?v=pp-Z44eXA-A" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center mt-8">
+                    <img src="https://img.youtube.com/vi/pp-Z44eXA-A/maxresdefault.jpg" alt="YouTube 썸네일" className="w-24 h-16 rounded" />
+                    <span className="ml-2 text-red-600">일단 1억부터 모으라고 합니다.</span>
+                </a>
+            </div>
             </section>
 
-
-            <section className='py-4 bg-gray-100'>1억을 모으면 그 다음은....</section>
-            <section className='py-4 bg-gray-100'>우리는 왜 돈을 모으지 못하는가?</section>
-            <section className='py-4 bg-gray-100'>대출을 무서워 하지 말자</section>
-            
+             <section className="relative flex flex-col items-center justify-center min-h-screen mt-4 bg-gray-100 bg-center bg-no-repeat bg-contain bg-coin">
+                <div className="absolute inset-0 bg-black opacity-50 blur"></div>
+                <div className="z-10 flex flex-col items-center justify-center text-center text-white">
+                <h2 className="mb-8 text-3xl font-bold notoSansKr">투자를 꼭 하셔야 합니다.</h2>
+                <p className="max-w-lg text-lg leading-8">
+                    요즘 시대 많은 사람들이 투자를 합니다.
+                    코인, 주식, 부동산, 채권 등등 다양하게 하지만, 무엇보다 본인한테 맞는 걸 찾고, 많은 공부와 테스트를 통해
+                    본인이 꾸준히 할 수 있는 방법을 선택하시면 됩니다.
+                    부자가 되기 위해선 월급만으로 인플레이션을 따라 갈 수 있기 때문에 필수입니다.
+                </p>
+                <a href="https://www.youtube.com/watch?v=C1HOggMJSS0" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center mt-8">
+                    <img src="https://img.youtube.com/vi/C1HOggMJSS0/maxresdefault.jpg" alt="YouTube 썸네일" className="w-24 h-16 rounded" />
+                    <span className="ml-2 text-red-600">투자 공부 많이 해야합니다.</span>
+                </a>
+            </div>
+            </section>
 
 
         </main>
