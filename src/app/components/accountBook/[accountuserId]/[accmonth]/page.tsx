@@ -136,6 +136,12 @@ const RecordMoneyFn = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    // 저장 버튼 클릭 시에만 빈 값 확인
+  if (!inputData.category || !inputData.amount || !inputData.description) {
+    alert("데이터를 정확히 입력하세요.");
+    return;
+  }
+
     setSelectedDate("");
     try {
 
@@ -162,21 +168,13 @@ const RecordMoneyFn = () => {
   };
 
       // const newTransaction: Transaction = { ...inputData, id: Date.now() };
-      const newTransaction: Transaction = { ...inputData, id: Date.now(), createDate: formattedSelectedDate };
+      // const newTransaction: Transaction = { ...inputData, id: Date.now(), createDate: formattedSelectedDate };
 
-      //데이터  생성 시 날짜 값 초기화(o),
-      // 예외처리 다시 정리
-
-      if(newTransaction.createDate === "") {
-        setShowCalendar(true);
-        alert("Please select a date");
-        return;
-      }
-      else if(newTransaction.category == "" || newTransaction.amount == "" || newTransaction.description == "") {
-        alert("데이터를 정확히 입력하세요.");
-        return;
-      }
-
+      const newTransaction: Transaction = { 
+        ...inputData, 
+        id: Date.now(), 
+        createDate: formattedSelectedDate || new Date().toISOString(), // 빈 문자열이면 현재 날짜로 초기화
+      };
 
       console.log("newTransaction", newTransaction);
 
@@ -235,7 +233,6 @@ const RecordMoneyFn = () => {
          //반드시 ReactQuery를 사용해 볼것!!!!!!!!!!!!!!!!!!
     const getResponse = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/getHouseKeeping/${userIdCookie}/${userMonthCookie}`);
 
-    console.log("생성 후 데이터", getResponse);
     const getdbExpenseData = getResponse.data.filter((item: { category: string }) => item.category === 'expenditure');
         console.log("getdbExpenseData", getdbExpenseData);
         setGetdbExpense(getdbExpenseData);
@@ -286,6 +283,8 @@ const RecordMoneyFn = () => {
         } catch (err) {
           console.error("api 확인해주세요.")
         }          
+
+        console.log("userIdCookieuserIdCookieuserIdCookie", userIdCookie);
       }
 
     };
@@ -377,8 +376,6 @@ const RecordMoneyFn = () => {
 
 
 
-
-
 // 수입 총액 계산
 // const totalIncome = onlyIncome.reduce((total, category) => {
 //   return total + calculateTotalByCategory(category.category, transactions);
@@ -440,50 +437,18 @@ console.log("가계부 데이터", selectedDatere );
   <div className="container p-10 mx-auto my-8 bg-purple-100">
         <div className='flex items-center justify-between gap-6 mb-10'>
           <h1 className="text-3xl font-bold ">가계부</h1>
-          <div className='p-2 border border-black'>
+          <div className='p-2 text-white border bg-sky-500'>
             <Link href={`/components/monthlyPrice/${getCookie('userId')}/${getCookie('month')}`}>
             한달 가계부 기록 확인하기
             </Link>
           </div>
-          <div className='p-2 border border-black'>ai에게 질문하기</div>
+          {/* <div className='p-2 border border-black'>ai에게 질문하기</div> */}
         </div>
-        {/* <p>Post: {router.query.accountuserId}</p> */}
 
-        {/* 거래 입력 폼 */}
-        <form onSubmit={handleSubmit} className="mb-4">
-          <div className="">
-            <div className="mb-4 ">
-              <div className='flex justify-between'>
-                <div className='flex flex-col'>
-                  <label htmlFor="addMoney" className="block mb-2 text-lg font-bold text-center text-gray-600">이달 총 수입</label>
-                    <span className='h-12 px-4 pt-2 text-center border-2 border-solid border-sky-500'>{
-                    totalAmountdbData
-                    }원
-                    </span>
-                </div>
-                <div className='flex flex-col'>
-                  <label htmlFor="allExpense" className="block mb-2 text-lg font-bold text-center text-gray-600">이달 총 지출</label>
-                  <span className='h-12 px-4 pt-2 text-center border-2 border-solid border-sky-500'>{
-                    totalConsumedbData
-                  }원</span>
-                </div>
 
-                <div className='flex flex-col'>
-                  <label htmlFor="allSave" className="block mb-2 text-lg font-bold text-center text-gray-600">이달 총 저축</label>
-                  <span className='h-12 px-4 pt-2 text-center border-2 border-solid border-sky-500'>{totalSavedbData}원</span>
-                </div>
-
-                <div className='flex flex-col'>
-                  <label htmlFor="remainPay" className="block mb-2 text-lg font-bold text-center text-gray-600">이달 남은 돈</label>
-                  <span className='h-12 px-4 pt-2 text-center border-2 border-solid border-sky-500 '>{`${remainingMoney}`}원</span>
-                </div>
-              </div>
-
-              <div className="flex justify-end gap-4 mb-4 mt-14">
-              <div className="relative">
-      <button
+    <button
         onClick={() => setShowCalendar(!showCalendar)}
-        className="px-4 py-2 text-white bg-blue-500 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-opacity-50"
+        className="px-4 py-2 text-white bg-blue-500  absolute right-[50%] top-[55%] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-opacity-50"
       >
         {selectedDate ? (Array.isArray(selectedDate) ? '날짜 선택됨' : formattedSelectedDate) :  "날짜선택"}
       </button>
@@ -518,12 +483,51 @@ console.log("가계부 데이터", selectedDatere );
                 ${date.getTime() < Date.now()  ? 'text-gray-200' : ''}
             `;
         }}
-        
-          
           />
         </div>
       )}
-</div>
+
+        {/* 거래 입력 폼 */}
+        <form onSubmit={handleSubmit} className="mb-4">
+          <div className="">
+            <div className="mb-4 ">
+              <div className='flex justify-between'>
+                <div className='flex flex-col'>
+                  <label htmlFor="addMoney" className="block mb-2 text-lg font-bold text-center text-gray-600">이달 총 수입</label>
+                    <span className='h-12 px-4 pt-2 text-center border-2 border-solid border-sky-500'>{
+                    totalAmountdbData
+                    }원
+                    </span>
+                </div>
+                <div className='flex flex-col'>
+                  <label htmlFor="allExpense" className="block mb-2 text-lg font-bold text-center text-gray-600">이달 총 지출</label>
+                  <span className='h-12 px-4 pt-2 text-center border-2 border-solid border-sky-500'>{
+                    totalConsumedbData
+                  }원</span>
+                </div>
+
+                <div className='flex flex-col'>
+                  <label htmlFor="allSave" className="block mb-2 text-lg font-bold text-center text-gray-600">이달 총 저축</label>
+                  <span className='h-12 px-4 pt-2 text-center border-2 border-solid border-sky-500'>{totalSavedbData}원</span>
+                </div>
+
+
+                {/* <div className='flex flex-col'>
+                  <label htmlFor="allSave" className="block mb-2 text-lg font-bold text-center text-gray-600">이달 총 </label>
+                  <span className='h-12 px-4 pt-2 text-center border-2 border-solid border-sky-500'>{totalSavedbData}원</span>
+                </div> */}
+
+                <div className='flex flex-col'>
+                  <label htmlFor="remainPay" className="block mb-2 text-lg font-bold text-center text-gray-600">이달 남은 돈</label>
+                  <span className='h-12 px-4 pt-2 text-center border-2 border-solid border-sky-500 '>{`${remainingMoney}`}원</span>
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-4 mb-4 mt-14">
+              <div className="relative">
+     
+  </div>
+
 
                 <label htmlFor="category" className="block text-lg font-bold text-gray-600">내역 카테고리</label>
                   <select
