@@ -45,7 +45,7 @@ export default function SideBar(){
         가계부
         </Link>
         <div> 돈 정보 게시판</div>
-        <div> 투자 성향 찾기</div>
+        {/* <div> 투자 성향 찾기</div> */}
     </div>
     <div className='flex items-center gap-10'>
         { username ? ( 

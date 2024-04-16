@@ -208,23 +208,16 @@ console.log("SelectedDaterr", SelectedDaterr);
                 <div className="absolute w-64 mt-2 top-full">
                   <Calendar
                       onChange={handleDateChange}
-                      value={new Date()} 
+                      value={selectedDate}
                       onClickMonth={(value: Date) => handleMonthChange(value)}
                       className="p-4 my-4 text-center border border-gray-300 rounded-md shadow-md bg-slate-100"
                       calendarType="US"
                       formatMonthYear={(locale, date) => moment(date).format('YYYY. MM')}
-                      showNeighboringMonth={false}
+                      showNeighboringMonth={false} // 이월된 월을 표시하지 않음
                       next2Label={null}
                       prev2Label={null}
-                      minDetail="year" // 월 단위로만 선택 가능하도록 설정
-                      // tileClassName={({ date }) =>
-                      //   selectedRange.length > 1 &&
-                      //   date >= selectedRange[0] &&
-                      //   date <= selectedRange[selectedRange.length - 1]
-                      //     ? 'bg-blue-500 text-white'
-                      //     : ''
-                      // }
-                    />
+                      minDetail="month" // 월 단위로만 선택 가능하도록 설정
+                  />
                   </div>
                     )}
             </div>
@@ -236,7 +229,8 @@ console.log("SelectedDaterr", SelectedDaterr);
               {selectedMenuKey === '1' && (
                 <Bar
                 data={[
-                  ...dataMap['1'].map(item => ({ ...item, category: '지출' })),
+                  ...dataMap['1'].map(item => ({ ...item, category: '지출' }))
+                  .sort((a, b) => new Date(b.year).getTime() - new Date(a.year).getTime())
                 ]}
                   xField="value"
                   yField="year"
@@ -246,7 +240,8 @@ console.log("SelectedDaterr", SelectedDaterr);
               {selectedMenuKey === '2' && (
                 <Bar
                 data={[
-                  ...dataMap['2'].map(item => ({ ...item, category: '수입' })),
+                  ...dataMap['2'].map(item => ({ ...item, category: '수입' }))
+                  .sort((a, b) => new Date(b.year).getTime() - new Date(a.year).getTime())
                 ]}
                   xField="value"
                   yField="year"
@@ -256,7 +251,8 @@ console.log("SelectedDaterr", SelectedDaterr);
                   {selectedMenuKey === '3' && (
                   <Line
                     data={[
-                      ...dataMap['3'].map(item => ({ ...item, category: '저축' })),
+                      ...dataMap['3'].map(item => ({ ...item, category: '저축' }))
+                      // .sort((a, b) => new Date(b.year).getTime() - new Date(a.year).getTime())
                     ]}
                     xField="year"
                     yField="value"
@@ -267,7 +263,8 @@ console.log("SelectedDaterr", SelectedDaterr);
               {selectedMenuKey === '4' && (
                 <Bar
                   data={[
-                    ...dataMap['4'].map(item => ({ ...item, category: '투자' })),
+                    ...dataMap['4'].map(item => ({ ...item, category: '투자' }))
+                    .sort((a, b) => new Date(b.year).getTime() - new Date(a.year).getTime())
                   ]}
                   xField="value"
                   yField="year"
@@ -282,7 +279,6 @@ console.log("SelectedDaterr", SelectedDaterr);
                     { category: '수입', value: getTotalValue('2') },
                     { category: '저축', value: getTotalValue('3') },
                     { category: '투자', value: getTotalValue('4') },
-                    // { category: '나의 씀씀이 결과', value: getTotalValue('5') },
                   ]}
                   angleField="value"
                   colorField="category"
