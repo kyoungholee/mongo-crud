@@ -314,78 +314,7 @@ const RecordMoneyFn = () => {
     return total + parseFloat(category.amount);
   }, 0);
   
-  // const calculateTotalIncome = (amountdbData: number) => { 
-  //   // onlyIncome 배열의 요소들을 합산
-  //   const totalIncome = onlyIncome.reduce((total, category) => {
-  //     return total + calculateTotal(category.category);
-  //   }, 0) + amountdbData;
   
-  //   return totalIncome;
-  // };
-
-  // const calculateTotalConsume = (consumedbData: number) => {
-  //   const totalExpense = onlyExpense.reduce((total, category) => {
-  //     return total + calculateTotal(category.category);
-  //   }, 0) + consumedbData
-    
-  //   return totalExpense;
-  // }
-
-
-  
-  // // 각 item의 amount 값을 숫자로 변환하여 calculateTotalIncome 함수에 전달하고, 반환값을 문자열이 아닌 숫자로 변환하여 반환
-  // const totalIncomeForEachItem = getdbData.map(item => {
-  //   if(item.category === "Incoming") {
-  //      return calculateTotalIncome(Number(item.amount))
-  //   }
-  // });
-
-  // const totalExpenseForEachItem = getdbData.map(item => {
-  //   if(item.category === 'expenditure') {
-  //     return calculateTotalConsume(Number(item.amount))
-  //   }
-  // });
-
-  
-  
-  // // 총합 계산
-  // const totalAmountdbData = totalIncomeForEachItem.reduce((total: number, amount: number | undefined) => {
-  //   if(amount === undefined) {
-  //     return total;
-  //   }
-  //   return total + amount;
-  // }, 0);
-
-  // const totalConsumedbData = totalExpenseForEachItem.reduce((total: number, consume: number | undefined) => {
-  //   if(consume === undefined) {
-  //     return total;
-  //   }
-  //   return total + consume;
-  // }, 0);
-
-// 카테고리별 총 금액을 계산하는 함수
-// const calculateTotalByCategory = (category: string, transactions: Transaction[]) => {
-
-//   console.log("calculateTotalByCategory", category, transactions);
-//   return transactions
-//     .filter(transaction => transaction.category === category)
-
-//     .reduce((total, transaction) => total + parseFloat(transaction.amount), 0);
-
-// };
-
-
-
-// 수입 총액 계산
-// const totalIncome = onlyIncome.reduce((total, category) => {
-//   return total + calculateTotalByCategory(category.category, transactions);
-// }, 0);
-
-// // 지출 총액 계산
-// const totalExpense = onlyExpense.reduce((total, category) => {
-//   return total + calculateTotalByCategory(category.category, transactions);
-// }, 0);
-
 // 각 항목의 수입 및 지출을 계산하여 배열로 반환
 const totalIncomeForEachItem = getdbData
   .filter(item => item.category === "Incoming")
