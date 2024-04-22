@@ -1,5 +1,5 @@
 
-'use client'
+// 'use client'
 import axios from 'axios';
 import { getCookie } from 'cookies-next';
 import { useRouter, useParams } from 'next/navigation';
@@ -53,7 +53,8 @@ const numberWithCommas = (calculateNumber : number | string) => {
   return calculateNumber.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 };
 
-const RecordMoneyFn = () => {
+const RecordMoneyFn = (getServerData: any) => {
+
   const [transactions, setTransactions] = useState<Transaction[]>([]);
 
   const [inputData, setInputData] = useState({
@@ -260,26 +261,26 @@ const RecordMoneyFn = () => {
       if(userIdCookie && userMonthCookie) {
         try {
        
-          const getResponse = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/getHouseKeeping/${userIdCookie}/${userMonthCookie}`);
-          console.log("getData", getResponse.data);
+          // const getResponse = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/getHouseKeeping/${userIdCookie}/${userMonthCookie}`);
+          // console.log("getData", getResponse.data);
     
           // 카테고리가 'expenditure'인 데이터만 필터링하여 getdbExpense에 설정
-          const getdbExpenseData = getResponse.data.filter((item: { category: string }) => item.category === 'expenditure');
+          const getdbExpenseData =  getServerData.filter((item: { category: string }) => item.category === 'expenditure');
           console.log("getdbExpenseData", getdbExpenseData);
           setGetdbExpense(getdbExpenseData);
   
-          const getdbIncomeData = getResponse.data.filter((item: { category: string }) => item.category === 'Incoming');
+          const getdbIncomeData = getServerData.filter((item: { category: string }) => item.category === 'Incoming');
           console.log("getdbExpenseData", getdbIncomeData);
           setGetdbIncome(getdbIncomeData);
   
-          const getdbSaveData = getResponse.data.filter((item: { category: string }) => item.category === 'savings');
+          const getdbSaveData = getServerData.filter((item: { category: string }) => item.category === 'savings');
           console.log("getdbExpenseData", getdbIncomeData);
           setGetdbSave(getdbSaveData);
   
     
     
           // 전체 데이터 설정
-          setGetdbData(getResponse.data);
+          setGetdbData(getServerData);
         } catch (err) {
           console.error("api 확인해주세요.")
         }          
@@ -592,3 +593,36 @@ console.log("가계부 데이터", selectedDatere );
 
 
 export default RecordMoneyFn;
+
+
+
+
+export const getServerSideProps = async (context: { req: { cookies: { userId: any; month: any; }; }}) => {
+
+
+  const userIdCookie = context.req.cookies.userId;
+  const userMonthCookie = context.req.cookies.month;
+
+  try {
+    // API 통신을 통해 데이터 가져오기
+    const getResponse = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/getHouseKeeping/${userIdCookie}/${userMonthCookie}`);
+    
+    // 가져온 데이터를 거래 목록으로 설정
+    const getServerData: Transaction[] = getResponse.data;
+
+    console.log("서버 사이드렌더링 데이터", getServerData);
+
+    return {
+      props: {
+        getServerData, // 거래 목록을 props로 전달
+      },
+    };
+  } catch (error) {
+    console.error("API 확인 해보세요");
+    return {
+      props: {
+        getServerData: [], // 에러 발생 시 빈 배열 반환
+      },
+    };
+  }
+}
