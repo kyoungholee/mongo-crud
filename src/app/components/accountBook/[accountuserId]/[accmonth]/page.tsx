@@ -1,5 +1,5 @@
 
-// 'use client'
+'use client'
 import axios from 'axios';
 import { getCookie } from 'cookies-next';
 import { useRouter, useParams } from 'next/navigation';
@@ -7,6 +7,7 @@ import React, { useEffect, useState } from 'react';
 import { categoryList } from 'utils/categorydata';
 import SideBar from '../../../sideBar/page';
 import Link from 'next/link';
+import { useQuery } from 'react-query';
 // import { CalendarPage } from '../../calendarPage/page';
 import Calendar from 'react-calendar';
 import moment from 'moment';
@@ -43,8 +44,8 @@ interface TotalCalculate {
 // const onlyIncome = countListPlus.filter((item) => item.category === 'Incoming');
 
 //쿠키 값
-const userIdCookie = getCookie('userId');
-const userMonthCookie = getCookie('month');
+const userIdCookie : any= getCookie('userId');
+const userMonthCookie : any = getCookie('month');
 
 
 
@@ -53,7 +54,7 @@ const numberWithCommas = (calculateNumber : number | string) => {
   return calculateNumber.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 };
 
-const RecordMoneyFn = (getServerData: any) => {
+const RecordMoneyFn = () => {
 
   const [transactions, setTransactions] = useState<Transaction[]>([]);
 
@@ -255,47 +256,33 @@ const RecordMoneyFn = (getServerData: any) => {
     }
   };
 
-  useEffect(() => {
-    const getMoneyData = async (userIdCookie : string , userMonthCookie : string) => {
+ // 기존의 useEffect 부분 대신 사용할 함수
+const fetchMoneyData = async (userId: string, month: string) => {
+  const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/getHouseKeeping/${userId}/${month}`);
+  return data;
+};
 
-      if(userIdCookie && userMonthCookie) {
-        try {
-       
-          // const getResponse = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/getHouseKeeping/${userIdCookie}/${userMonthCookie}`);
-          // console.log("getData", getResponse.data);
-    
-          // 카테고리가 'expenditure'인 데이터만 필터링하여 getdbExpense에 설정
-          const getdbExpenseData =  getServerData.filter((item: { category: string }) => item.category === 'expenditure');
-          console.log("getdbExpenseData", getdbExpenseData);
-          setGetdbExpense(getdbExpenseData);
-  
-          const getdbIncomeData = getServerData.filter((item: { category: string }) => item.category === 'Incoming');
-          console.log("getdbExpenseData", getdbIncomeData);
-          setGetdbIncome(getdbIncomeData);
-  
-          const getdbSaveData = getServerData.filter((item: { category: string }) => item.category === 'savings');
-          console.log("getdbExpenseData", getdbIncomeData);
-          setGetdbSave(getdbSaveData);
-  
-    
-    
-          // 전체 데이터 설정
-          setGetdbData(getServerData);
-        } catch (err) {
-          console.error("api 확인해주세요.")
-        }          
+// RecordMoneyFn 컴포넌트 안에서 사용하는 부분 대신 사용할 부분
+const { data: moneyData, isLoading, isError } = useQuery(['moneyData', userIdCookie, userMonthCookie], () => fetchMoneyData(userIdCookie, userMonthCookie));
 
-        console.log("userIdCookieuserIdCookieuserIdCookie", userIdCookie);
-      }
+// useEffect 부분 대신 사용할 부분
+useEffect(() => {
+  // 요청이 성공하고 데이터를 가져왔을 때 moneyData 상태 업데이트
+  if (moneyData) {
+      // 카테고리가 'expenditure'인 데이터만 필터링하여 getdbExpense에 설정
+      const getdbExpenseData = moneyData.filter((item: { category: string }) => item.category === 'expenditure');
+      setGetdbExpense(getdbExpenseData);
 
-    };
-  
-    if(userIdCookie != undefined && userMonthCookie != undefined) {
-      getMoneyData(userIdCookie, userMonthCookie);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userIdCookie, userMonthCookie]);
-  
+      const getdbIncomeData = moneyData.filter((item: { category: string }) => item.category === 'Incoming');
+      setGetdbIncome(getdbIncomeData);
+
+      const getdbSaveData = moneyData.filter((item: { category: string }) => item.category === 'savings');
+      setGetdbSave(getdbSaveData);
+
+      // 전체 데이터 설정
+      setGetdbData(moneyData);
+  }
+}, [moneyData]);
 
   const calculateTotal = (category: string) => {
     return transactions.reduce((total, transaction) => {
@@ -597,32 +584,32 @@ export default RecordMoneyFn;
 
 
 
-export const getServerSideProps = async (context: { req: { cookies: { userId: any; month: any; }; }}) => {
+// export const getServerSideProps = async (context: { req: { cookies: { userId: any; month: any; }; }}) => {
 
 
-  const userIdCookie = context.req.cookies.userId;
-  const userMonthCookie = context.req.cookies.month;
+//   const userIdCookie = context.req.cookies.userId;
+//   const userMonthCookie = context.req.cookies.month;
 
-  try {
-    // API 통신을 통해 데이터 가져오기
-    const getResponse = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/getHouseKeeping/${userIdCookie}/${userMonthCookie}`);
+//   try {
+//     // API 통신을 통해 데이터 가져오기
+//     const getResponse = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/getHouseKeeping/${userIdCookie}/${userMonthCookie}`);
     
-    // 가져온 데이터를 거래 목록으로 설정
-    const getServerData: Transaction[] = getResponse.data;
+//     // 가져온 데이터를 거래 목록으로 설정
+//     const getServerData: Transaction[] = getResponse.data;
 
-    console.log("서버 사이드렌더링 데이터", getServerData);
+//     console.log("서버 사이드렌더링 데이터", getServerData);
 
-    return {
-      props: {
-        getServerData, // 거래 목록을 props로 전달
-      },
-    };
-  } catch (error) {
-    console.error("API 확인 해보세요");
-    return {
-      props: {
-        getServerData: [], // 에러 발생 시 빈 배열 반환
-      },
-    };
-  }
-}
+//     return {
+//       props: {
+//         getServerData, // 거래 목록을 props로 전달
+//       },
+//     };
+//   } catch (error) {
+//     console.error("API 확인 해보세요");
+//     return {
+//       props: {
+//         getServerData: [], // 에러 발생 시 빈 배열 반환
+//       },
+//     };
+//   }
+// }
