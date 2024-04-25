@@ -44,8 +44,8 @@ interface TotalCalculate {
 // const onlyIncome = countListPlus.filter((item) => item.category === 'Incoming');
 
 //쿠키 값
-const userIdCookie : any= getCookie('userId');
-const userMonthCookie : any = getCookie('month');
+const userIdCookie : any | string= getCookie('userId');
+const userMonthCookie : any | string= getCookie('month');
 
 
 
@@ -179,15 +179,6 @@ const RecordMoneyFn = () => {
       };
 
       console.log("newTransaction", newTransaction);
-
-      // if(newTransaction.createDate === "") {
-      //   alert("Please select a date");
-      //   return;
-      // }
-      // else if(newTransaction.amount === '' || newTransaction.category === '' || newTransaction.description === "") {
-      //   alert("데이터를 정확히 입력하세요.");
-      //   return;
-      // }
      
 
       console.log(newTransaction.createDate);
@@ -256,7 +247,6 @@ const RecordMoneyFn = () => {
     }
   };
 
- // 기존의 useEffect 부분 대신 사용할 함수
 const fetchMoneyData = async (userId: string, month: string) => {
   const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/getHouseKeeping/${userId}/${month}`);
   return data;
@@ -265,7 +255,6 @@ const fetchMoneyData = async (userId: string, month: string) => {
 // RecordMoneyFn 컴포넌트 안에서 사용하는 부분 대신 사용할 부분
 const { data: moneyData, isLoading, isError } = useQuery(['moneyData', userIdCookie, userMonthCookie], () => fetchMoneyData(userIdCookie, userMonthCookie));
 
-// useEffect 부분 대신 사용할 부분
 useEffect(() => {
   // 요청이 성공하고 데이터를 가져왔을 때 moneyData 상태 업데이트
   if (moneyData) {

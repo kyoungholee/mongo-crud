@@ -58,7 +58,6 @@ export default function MonthlyPriceData() {
 const [showCalendar, setShowCalendar] = useState(false);
 const [selectedDate, setSelectedDate] = useState<Date | Date[] | any>();
 
-const [selectedRange, setSelectedRange] = useState<Date[]>([]);
 
 const [SelectedDaterr, setSelectedDaterr] = useSelectedDate();
 
