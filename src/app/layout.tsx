@@ -6,8 +6,12 @@ import SideBar from "./components/sideBar/page";
 import "./globals.css";
 import { Bonbon, Inter } from "next/font/google";
 import { ReactNode } from "react";
+import { QueryClient, QueryClientProvider } from "react-query"; 
 
 //이런 식으 문제가 해결되고 ~, 왜  ReactNode 값을 바로 넣게 되면 에러가 발생하지?
+
+const queryClient = new QueryClient()
+
 interface RootLayoutProps {
   children: ReactNode;
 }
@@ -22,10 +26,12 @@ const metadata = {
 function RootLayout ({ children } : {
   children: React.ReactNode
 }) {
+
   return (
     
     <html>
       <body>
+      <QueryClientProvider client={queryClient}>
         <RecoilRoot>
             {/* <header className='flex justify-between px-40 py-4 bg-white'>
                   <div className='flex items-center gap-4'>
@@ -38,6 +44,7 @@ function RootLayout ({ children } : {
                   <div>{children}</div>
               </div>
           </RecoilRoot>
+    </QueryClientProvider>
       </body>
     </html>
   );

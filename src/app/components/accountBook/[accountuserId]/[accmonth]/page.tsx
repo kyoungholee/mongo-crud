@@ -7,7 +7,7 @@ import React, { useEffect, useState } from 'react';
 import { categoryList } from 'utils/categorydata';
 import SideBar from '../../../sideBar/page';
 import Link from 'next/link';
-import { useQuery } from 'react-query';
+import { useQuery, useQueryClient, useMutation } from 'react-query';
 // import { CalendarPage } from '../../calendarPage/page';
 import Calendar from 'react-calendar';
 import moment from 'moment';
@@ -213,14 +213,45 @@ const RecordMoneyFn = () => {
 
 
   
-      const keepingData = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/houseKeeping`, newTransaction , {
-        headers: {
-          'Content-Type': 'application/json',
-          // 'Cookie': `userId=${userIdCookie}`,
-        },
-      })
+      // const keepingData = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/houseKeeping`, newTransaction , {
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //     // 'Cookie': `userId=${userIdCookie}`,
+      //   },
+      // })
 
-      console.log("keepingData", keepingData);
+      // console.log("keepingData", keepingData);
+
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const mutation = useMutation(
+        (newTransaction) => axios.post(`${process.env.NEXT_PUBLIC_API_URL}/houseKeeping`, newTransaction, {
+          headers: {
+            'Content-Type': 'application/json',
+            // 'Cookie': `userId=${userIdCookie}`,
+          },
+        }),
+        {
+          onSuccess: (data) => {
+            console.log("Transaction succeeded:", data);
+            // 여기에 성공했을 때 실행할 코드를 추가할 수 있습니다.
+          },
+          onError: (error) => {
+            console.error("Transaction failed:", error);
+            // 여기에 실패했을 때 실행할 코드를 추가할 수 있습니다.
+          },
+        }
+      );
+      
+      // 이후 사용할 때는 mutation.mutate()를 호출하여 mutation을 실행할 수 있습니다.
+      // 예를 들어, 폼을 제출할 때 사용할 수 있습니다.
+      const handleSubmit = async (formData : any) => {
+        try {
+          await mutation.mutate(formData);
+        } catch (error) {
+          console.error("Error occurred during transaction:", error);
+        }
+      };
+      
 
          // 서버에서 새로운 데이터 가져오기
          //반드시 ReactQuery를 사용해 볼것!!!!!!!!!!!!!!!!!!
@@ -253,8 +284,17 @@ const fetchMoneyData = async (userId: string, month: string) => {
 };
 
 // RecordMoneyFn 컴포넌트 안에서 사용하는 부분 대신 사용할 부분
-const { data: moneyData, isLoading, isError } = useQuery(['moneyData', userIdCookie, userMonthCookie], () => fetchMoneyData(userIdCookie, userMonthCookie));
-
+const { data: moneyData, isLoading, isError, refetch } = useQuery(
+  ['moneyData', userIdCookie, userMonthCookie],
+  () => fetchMoneyData(userIdCookie, userMonthCookie),
+  {
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
+    refetchOnReconnect: true,
+    staleTime: 0,
+    cacheTime: 300000 // 5분
+  }
+);
 useEffect(() => {
   // 요청이 성공하고 데이터를 가져왔을 때 moneyData 상태 업데이트
   if (moneyData) {
@@ -272,6 +312,11 @@ useEffect(() => {
       setGetdbData(moneyData);
   }
 }, [moneyData]);
+
+const queryClient = useQueryClient();
+
+const cachedData = queryClient.getQueryData(['moneyData', userIdCookie, userMonthCookie]);
+    console.log('Cached data:~~~~~~~~~~~', cachedData);
 
   const calculateTotal = (category: string) => {
     return transactions.reduce((total, transaction) => {
