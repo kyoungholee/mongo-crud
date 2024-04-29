@@ -9,6 +9,9 @@ if (mongoose.models && mongoose.models.savemoneydata) {
     RecordModel = mongoose.model<IRecord & Document>("savemoneydata");
 } else {
     const RecordMoneySchema = new Schema({
+        order : {
+            type : Number,
+        },
         category: {
             type: String,
         },

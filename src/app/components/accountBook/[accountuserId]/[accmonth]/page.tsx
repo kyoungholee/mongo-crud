@@ -42,6 +42,7 @@ const RecordMoneyFn = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
 
   const [inputData, setInputData] = useState({
+    order : "",
     category: '',
     amount: '',
     description: '',
@@ -57,26 +58,15 @@ const RecordMoneyFn = () => {
     }
   ]);
 
-  const [getdbExpense, setGetdbExpense] = useState([
-    {   category: '',
-        amount: '',
-        description: '',
-    }
-  ]);
-
-  const [getdbIncome, setGetdbIncome] = useState([
-    {   category: '',
-        amount: '',
-        description: '',
-    }
-  ]);
+  const initialTransaction = {
+    category: '',
+    amount: '',
+    description: '',
+  };
   
-  const [getdbSave, setGetdbSave] = useState([
-    {   category: '',
-        amount: '',
-        description: '',
-    }
-  ]);
+  const [getdbExpense, setGetdbExpense] = useState([initialTransaction]);
+  const [getdbIncome, setGetdbIncome] = useState([initialTransaction]);
+  const [getdbSave, setGetdbSave] = useState([initialTransaction]);
 
   const [showCalendar, setShowCalendar] = useState(false);
   let [selectedDate, setSelectedDate] = useState<Date | Date[] | any>();
@@ -171,7 +161,7 @@ const RecordMoneyFn = () => {
 
       setGetdbData(getResponse.data);
 
-      setInputData({ category: '', amount: '', description: '', userid: userIdCookie, createDate: ""});
+      setInputData({ order : 0 , category: '', amount: '', description: '', userid: userIdCookie, createDate: ""});
     } catch (err) {
       console.error("API 확인 해보세요");
     }
@@ -216,6 +206,27 @@ useEffect(() => {
 
 const cachedData = queryClient.getQueryData(['moneyData', userIdCookie, userMonthCookie]);
     console.log('Cached data:', cachedData);
+
+    const handleDelete = async (id :string | number) => {
+
+      console.log("해당 교유 키값", id)
+      // try {
+      //   // 서버로 삭제 요청을 보냅니다.
+      //   await axios.delete(`${process.env.NEXT_PUBmLIC_API_URL}/houseKeeping/${id}`, {
+      //     headers: {
+      //       'Content-Type': 'application/json',
+      //       // 필요하다면 토큰이나 인증 정보를 여기에 추가할 수 있습니다.
+      //     },
+      //   });
+    
+      //   // 삭제가 성공하면 해당 항목을 화면에서도 제거합니다.
+      //   // 이를 위한 로직은 해당 항목을 상태에서 삭제하는 방식으로 구현할 수 있습니다.
+      //   // 예를 들어, 상태에서 해당 id를 가진 항목을 제거하는 함수를 작성하여 호출합니다.
+      // } catch (error) {
+      //   console.error('삭제 실패:', error);
+      // }
+    };
+    
 
   const expenditureTotalAmount = getdbExpense.reduce((total, category) => {
     return total + parseFloat(category.amount);
@@ -420,7 +431,7 @@ console.log("가계부 데이터", selectedDatere );
                 <th className="px-6 py-4 text-center border-b">내역 카테고리</th>
                 <th className="px-4 py-4 text-center border-b">설명</th>
                 <th className="px-4 py-4 text-center border-b">금액</th>
-
+                <th className="px-4 py-4 text-center border-b">삭제여부</th>
               </tr>
             </thead>
           <tbody>
@@ -430,6 +441,10 @@ console.log("가계부 데이터", selectedDatere );
                   <td className="px-6 py-4 text-center border-b">{transaction.category}</td>
                   <td className="px-6 py-4 text-center border-b">{transaction.description}</td>
                   <td className="px-6 py-4 text-center border-b">{numberWithCommas(transaction.amount)}원</td>
+                  <td className="px-2 py-2 text-center text-red-500 border-b">
+                  <button onClick={() => handleDelete(index + 1)}>삭제</button>
+                  </td>
+
               </tr>
             ))}
           </tbody>
