@@ -7,16 +7,11 @@ import React, { useEffect, useState } from 'react';
 import { categoryList } from 'utils/categorydata';
 import SideBar from '../../../sideBar/page';
 import Link from 'next/link';
-import { useQuery, useQueryClient, useMutation } from 'react-query';
-// import { CalendarPage } from '../../calendarPage/page';
+import { useQuery, useQueryClient } from 'react-query';
 import Calendar from 'react-calendar';
 import moment from 'moment';
 import './accountbook.css'; // CSS 파일 import
-
-
 import { useSelectedDate } from '../../../../recoil/DateAtom';
-
-
 
 interface Transaction {
   id: number;
@@ -24,7 +19,6 @@ interface Transaction {
   amount: string;
   description: string;
   createDate: string;
-  // name: string;
 }
 
 //각 계산 총합의 ts를 설정
@@ -36,19 +30,8 @@ interface TotalCalculate {
   remainingMoney: number;
 }
 
-// interface RecordMoneyFnProps {
-//   formattedSelectedDate: string;
-// }
-// const onlyExpense = countListPlus.filter((item) => item.category === 'expenditure' || item.category === 'communicationExpense');
-// const onlySave = countListPlus.filter((item) => item.category === 'savings');
-// const onlyIncome = countListPlus.filter((item) => item.category === 'Incoming');
-
-//쿠키 값
 const userIdCookie : any | string= getCookie('userId');
 const userMonthCookie : any | string= getCookie('month');
-
-
-
 
 const numberWithCommas = (calculateNumber : number | string) => {
   return calculateNumber.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -108,20 +91,8 @@ const RecordMoneyFn = () => {
     saving: 0,
   });
 
-  interface Iquery {
-    id : string;
-    month : number
-  }
-
   const [selectedDatere] = useSelectedDate();
-
   
-  const router = useParams();
-  // const id = router.accountuserId;
-
-  // const { id, month } = router.query;
-
-
   const handleDateChange = (date: Date | any | Date[]) => {
     setSelectedDate(date);
     setShowCalendar(false);
@@ -146,54 +117,19 @@ const RecordMoneyFn = () => {
 
     setSelectedDate("");
     try {
-
-
-    const getTileClassName = ({ date }: { date: Date }) => {
-    const dateMilliseconds = date.getTime();
-    const selectedRangeMilliseconds = selectedRange.map((date) => date.getTime());
-  
-    // 선택한 기간 중 첫 날짜부터 마지막 날짜까지 파란색으로 칠해줌
-    if (
-      selectedRangeMilliseconds.length > 1 &&
-      dateMilliseconds >= Math.min(...selectedRangeMilliseconds) &&
-      dateMilliseconds <= Math.max(...selectedRangeMilliseconds)
-    ) {
-      return 'bg-blue-500 text-white';
-    }
-  
-    // 단일 선택한 날짜는 파란색으로 표시
-    if (selectedDate && dateMilliseconds === selectedDate.getTime()) {
-      return 'bg-blue-500 text-white';
-    }
-  
-    return '';
-  };
-
-      // const newTransaction: Transaction = { ...inputData, id: Date.now() };
-      // const newTransaction: Transaction = { ...inputData, id: Date.now(), createDate: formattedSelectedDate };
-
+      
       const newTransaction: Transaction = { 
         ...inputData, 
         id: Date.now(), 
         createDate: formattedSelectedDate || new Date().toISOString(), // 빈 문자열이면 현재 날짜로 초기화
       };
-
-      console.log("newTransaction", newTransaction);
-     
-
-      console.log(newTransaction.createDate);
   
       setTransactions((prevTransactions) => [newTransaction, ...prevTransactions]);
-
-
-     
 
       setTotalCalculate((prevData) => {
         const amount = parseInt(inputData.amount) || 0;      
         const updatedData = { ...prevData };
-
-          // updatedData.remainingMoney = updatedData.allIncome - updatedData.allExpense - updatedData.saving
-          
+                  
         if (inputData.category === 'Incoming') {
           // "수입"을 클릭한 경우에만 allIncome을 업데이트
           updatedData.allIncome += amount;
@@ -210,51 +146,14 @@ const RecordMoneyFn = () => {
 
         return updatedData;
       });
-
-
-  
-      // const keepingData = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/houseKeeping`, newTransaction , {
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //     // 'Cookie': `userId=${userIdCookie}`,
-      //   },
-      // })
-
-      // console.log("keepingData", keepingData);
-
-      // eslint-disable-next-line react-hooks/rules-of-hooks
-      const mutation = useMutation(
-        (newTransaction) => axios.post(`${process.env.NEXT_PUBLIC_API_URL}/houseKeeping`, newTransaction, {
-          headers: {
-            'Content-Type': 'application/json',
-            // 'Cookie': `userId=${userIdCookie}`,
-          },
-        }),
-        {
-          onSuccess: (data) => {
-            console.log("Transaction succeeded:", data);
-            // 여기에 성공했을 때 실행할 코드를 추가할 수 있습니다.
-          },
-          onError: (error) => {
-            console.error("Transaction failed:", error);
-            // 여기에 실패했을 때 실행할 코드를 추가할 수 있습니다.
-          },
-        }
-      );
       
-      // 이후 사용할 때는 mutation.mutate()를 호출하여 mutation을 실행할 수 있습니다.
-      // 예를 들어, 폼을 제출할 때 사용할 수 있습니다.
-      const handleSubmit = async (formData : any) => {
-        try {
-          await mutation.mutate(formData);
-        } catch (error) {
-          console.error("Error occurred during transaction:", error);
-        }
-      };
+      const keepingData = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/houseKeeping`, newTransaction , {
+        headers: {
+          'Content-Type': 'application/json',
+          // 'Cookie': `userId=${userIdCookie}`,
+        },
+      })
       
-
-         // 서버에서 새로운 데이터 가져오기
-         //반드시 ReactQuery를 사용해 볼것!!!!!!!!!!!!!!!!!!
     const getResponse = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/getHouseKeeping/${userIdCookie}/${userMonthCookie}`);
 
     const getdbExpenseData = getResponse.data.filter((item: { category: string }) => item.category === 'expenditure');
@@ -262,17 +161,17 @@ const RecordMoneyFn = () => {
         setGetdbExpense(getdbExpenseData);
 
     const getdbIncomeData = getResponse.data.filter((item: { category: string }) => item.category === 'Incoming');
-    console.log("getdbExpenseData", getdbIncomeData);
-    setGetdbIncome(getdbIncomeData);
+      console.log("getdbExpenseData", getdbIncomeData);
+      setGetdbIncome(getdbIncomeData);
 
 
     const getdbSaveData = getResponse.data.filter((item: { category: string }) => item.category === 'savings');
-    console.log("getdbExpenseData", getdbIncomeData);
-    setGetdbSave(getdbSaveData);
+      console.log("getdbExpenseData", getdbIncomeData);
+      setGetdbSave(getdbSaveData);
 
-    setGetdbData(getResponse.data);
+      setGetdbData(getResponse.data);
 
-    setInputData({ category: '', amount: '', description: '', userid: userIdCookie, createDate: ""});
+      setInputData({ category: '', amount: '', description: '', userid: userIdCookie, createDate: ""});
     } catch (err) {
       console.error("API 확인 해보세요");
     }
@@ -313,16 +212,10 @@ useEffect(() => {
   }
 }, [moneyData]);
 
-const queryClient = useQueryClient();
+  const queryClient = useQueryClient();
 
 const cachedData = queryClient.getQueryData(['moneyData', userIdCookie, userMonthCookie]);
-    console.log('Cached data:~~~~~~~~~~~', cachedData);
-
-  const calculateTotal = (category: string) => {
-    return transactions.reduce((total, transaction) => {
-      return transaction.category === category ? total + parseFloat(transaction.amount) : total;
-    }, 0);
-  };
+    console.log('Cached data:', cachedData);
 
   const expenditureTotalAmount = getdbExpense.reduce((total, category) => {
     return total + parseFloat(category.amount);
@@ -370,9 +263,6 @@ console.log("총합 계산기22", remainingMoney )
 
 const formattedSelectedDate = selectedDate instanceof Date ? moment(selectedDate).format('YYYY-MM-DD') : '';
 
-
-const newDate = selectedDatere ? moment(selectedDate).format('YYYY-MM') : getCookie('month');
-
 console.log("가계부 데이터", selectedDatere );
 
   return (
@@ -399,7 +289,7 @@ console.log("가계부 데이터", selectedDatere );
 
     <button
         onClick={() => setShowCalendar(!showCalendar)}
-        className="px-4 py-2 text-white bg-blue-500  absolute right-[50%] top-[55%] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-opacity-50"
+        className="px-4 py-2 text-white bg-blue-500  absolute right-[690px] top-[370px] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-opacity-50"
       >
         {selectedDate ? (Array.isArray(selectedDate) ? '날짜 선택됨' : formattedSelectedDate) :  "날짜선택"}
       </button>
@@ -408,7 +298,7 @@ console.log("가계부 데이터", selectedDatere );
           <Calendar
             onChange={handleDateChange}
             value={selectedDate}
-            className="p-4 my-4 text-center border border-gray-300 rounded-md shadow-md bg-slate-100"
+            className="p-4 my-4 absolute left-[360px] bottom-[35px] w-full  text-center border border-gray-300 rounded-md shadow-md bg-slate-100"
             calendarType="US"
             formatDay={(locale, date) => moment(date).format('D')}
             formatYear={(locale, date) => moment(date).format('YYYY')}
@@ -461,13 +351,7 @@ console.log("가계부 데이터", selectedDatere );
                   <label htmlFor="allSave" className="block mb-2 text-lg font-bold text-center text-gray-600">이달 총 저축</label>
                   <span className='h-12 px-4 pt-2 text-center border-2 border-solid border-sky-500'>{totalSavedbData}원</span>
                 </div>
-
-
-                {/* <div className='flex flex-col'>
-                  <label htmlFor="allSave" className="block mb-2 text-lg font-bold text-center text-gray-600">이달 총 </label>
-                  <span className='h-12 px-4 pt-2 text-center border-2 border-solid border-sky-500'>{totalSavedbData}원</span>
-                </div> */}
-
+                
                 <div className='flex flex-col'>
                   <label htmlFor="remainPay" className="block mb-2 text-lg font-bold text-center text-gray-600">이달 남은 돈</label>
                   <span className='h-12 px-4 pt-2 text-center border-2 border-solid border-sky-500 '>{`${remainingMoney}`}원</span>
@@ -612,38 +496,4 @@ console.log("가계부 데이터", selectedDatere );
   );
 };
 
-
 export default RecordMoneyFn;
-
-
-
-
-// export const getServerSideProps = async (context: { req: { cookies: { userId: any; month: any; }; }}) => {
-
-
-//   const userIdCookie = context.req.cookies.userId;
-//   const userMonthCookie = context.req.cookies.month;
-
-//   try {
-//     // API 통신을 통해 데이터 가져오기
-//     const getResponse = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/getHouseKeeping/${userIdCookie}/${userMonthCookie}`);
-    
-//     // 가져온 데이터를 거래 목록으로 설정
-//     const getServerData: Transaction[] = getResponse.data;
-
-//     console.log("서버 사이드렌더링 데이터", getServerData);
-
-//     return {
-//       props: {
-//         getServerData, // 거래 목록을 props로 전달
-//       },
-//     };
-//   } catch (error) {
-//     console.error("API 확인 해보세요");
-//     return {
-//       props: {
-//         getServerData: [], // 에러 발생 시 빈 배열 반환
-//       },
-//     };
-//   }
-// }
