@@ -215,24 +215,20 @@ useEffect(() => {
 const cachedData = queryClient.getQueryData(['moneyData', userIdCookie, userMonthCookie]);
     console.log('Cached data:', cachedData);
 
-    const handleDelete = async (id :string | number) => {
+    const handleDelete = async (id : number) => {
 
       console.log("해당 교유 키값", id)
-      // try {
-      //   // 서버로 삭제 요청을 보냅니다.
-      //   await axios.delete(`${process.env.NEXT_PUBmLIC_API_URL}/houseKeeping/${id}`, {
-      //     headers: {
-      //       'Content-Type': 'application/json',
-      //       // 필요하다면 토큰이나 인증 정보를 여기에 추가할 수 있습니다.
-      //     },
-      //   });
-    
-      //   // 삭제가 성공하면 해당 항목을 화면에서도 제거합니다.
-      //   // 이를 위한 로직은 해당 항목을 상태에서 삭제하는 방식으로 구현할 수 있습니다.
-      //   // 예를 들어, 상태에서 해당 id를 가진 항목을 제거하는 함수를 작성하여 호출합니다.
-      // } catch (error) {
-      //   console.error('삭제 실패:', error);
-      // }
+      try {
+        // 서버로 삭제 요청을 보냅니다.
+        await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/deleteMoney/${id}`, {
+          headers: {
+            'Content-Type': 'application/json',
+            // 필요하다면 토큰이나 인증 정보를 여기에 추가할 수 있습니다.
+          },
+        });    
+      } catch (error) {
+        console.error('삭제 실패:', error);
+      }
     };
     
 
