@@ -9,15 +9,15 @@ import { setCookie, getCookie } from 'cookies-next';
 
 export async function POST(req: any, res: any) {
   try {
-    const { category, amount, description, userid, createDate} = await req.json();
-    console.log("post로 들어온 데이터", category, amount, description , userid, createDate);
+    const { order, category, amount, description, userid, createDate} = await req.json();
+    console.log("post로 들어온 데이터", order,  category, amount, description , userid, createDate);
 
     // MongoDB 연결
     await connectMongoDB();
 
 
     // MongoDB에 데이터 저장 로직 추가
-    const newRecord = await recordMoney.create({ category, amount, description, userid, createDate});
+    const newRecord = await recordMoney.create({ order, category, amount, description, userid, createDate});
 
     return NextResponse.json(
       { message: "월급추!!~!!~~ 축하합니다." },

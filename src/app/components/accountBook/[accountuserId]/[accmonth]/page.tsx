@@ -15,6 +15,7 @@ import { useSelectedDate } from '../../../../recoil/DateAtom';
 
 interface Transaction {
   id: number;
+  order: number;
   category: string;
   amount: string;
   description: string;
@@ -37,12 +38,12 @@ const numberWithCommas = (calculateNumber : number | string) => {
   return calculateNumber.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 };
 
+
 const RecordMoneyFn = () => {
 
   const [transactions, setTransactions] = useState<Transaction[]>([]);
 
   const [inputData, setInputData] = useState({
-    order : "",
     category: '',
     amount: '',
     description: '',
@@ -71,6 +72,9 @@ const RecordMoneyFn = () => {
   const [showCalendar, setShowCalendar] = useState(false);
   let [selectedDate, setSelectedDate] = useState<Date | Date[] | any>();
   const [selectedRange, setSelectedRange] = useState<Date[]>([]);
+
+  //데이터 순서 데이터 
+  const [itemCount, setItemCount] = useState(1);
   
   //총 지출, 수입, 저축에 대한 값을 가져오기 위한 state값
   const [totalCalculate, setTotalCalculate] = useState<TotalCalculate>({
@@ -93,7 +97,8 @@ const RecordMoneyFn = () => {
     const { name, value } = e.target;
     
     // 이전 값을 가져온 뒤,  선택한 카테고리와 입력한 가격 , 상세내용의 데이터를 저장한다.
-      setInputData((prevData) => ({ ...prevData, [name]: value, createDate: formattedSelectedDate }));
+
+      setInputData((prevData) => ({ ...prevData, [name]: value,  createDate: formattedSelectedDate }));
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -111,6 +116,7 @@ const RecordMoneyFn = () => {
       const newTransaction: Transaction = { 
         ...inputData, 
         id: Date.now(), 
+        order : itemCount,
         createDate: formattedSelectedDate || new Date().toISOString(), // 빈 문자열이면 현재 날짜로 초기화
       };
   
@@ -143,6 +149,8 @@ const RecordMoneyFn = () => {
           // 'Cookie': `userId=${userIdCookie}`,
         },
       })
+
+      setItemCount(prevCount => prevCount + 1);
       
     const getResponse = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/getHouseKeeping/${userIdCookie}/${userMonthCookie}`);
 
@@ -161,7 +169,7 @@ const RecordMoneyFn = () => {
 
       setGetdbData(getResponse.data);
 
-      setInputData({ order : 0 , category: '', amount: '', description: '', userid: userIdCookie, createDate: ""});
+      setInputData({category: '', amount: '', description: '', userid: userIdCookie, createDate: ""});
     } catch (err) {
       console.error("API 확인 해보세요");
     }
