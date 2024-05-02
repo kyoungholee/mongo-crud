@@ -52,7 +52,9 @@ const RecordMoneyFn = () => {
   });
   
   const [getdbData, setGetdbData] = useState([
-    {   category: '',
+    {   
+        _id: '',
+        category: '',
         amount: '',
         description: '',
         createDate: ''
@@ -215,15 +217,15 @@ useEffect(() => {
 const cachedData = queryClient.getQueryData(['moneyData', userIdCookie, userMonthCookie]);
     console.log('Cached data:', cachedData);
 
-    const handleDelete = async (id : number) => {
+    const handleDelete = async (id : string) => {
 
-      console.log("해당 교유 키값", id)
+      console.log("handleDelete", id);
+
       try {
         // 서버로 삭제 요청을 보냅니다.
         await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/deleteMoney/${id}`, {
           headers: {
             'Content-Type': 'application/json',
-            // 필요하다면 토큰이나 인증 정보를 여기에 추가할 수 있습니다.
           },
         });    
       } catch (error) {
@@ -446,7 +448,7 @@ console.log("가계부 데이터", selectedDatere );
                   <td className="px-6 py-4 text-center border-b">{transaction.description}</td>
                   <td className="px-6 py-4 text-center border-b">{numberWithCommas(transaction.amount)}원</td>
                   <td className="px-2 py-2 text-center text-red-500 border-b">
-                  <button onClick={() => handleDelete(index + 1)}>삭제</button>
+                  <button onClick={() => handleDelete(transaction._id)}>삭제</button>
                   </td>
 
               </tr>

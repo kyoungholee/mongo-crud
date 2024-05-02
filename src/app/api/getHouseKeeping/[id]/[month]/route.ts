@@ -22,6 +22,7 @@ export async function GET(request: Request, { params }: any, res: Response) {
         });
         
         const responseData = filterDate.map(data => ({
+            _id: data._id,
             category: data.category,
             amount: data.amount,
             description: data.description,
