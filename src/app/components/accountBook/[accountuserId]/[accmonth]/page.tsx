@@ -15,7 +15,6 @@ import { useSelectedDate } from '../../../../recoil/DateAtom';
 
 interface Transaction {
   id: number;
-  order: number;
   category: string;
   amount: string;
   description: string;
@@ -103,6 +102,28 @@ const RecordMoneyFn = () => {
       setInputData((prevData) => ({ ...prevData, [name]: value,  createDate: formattedSelectedDate }));
   };
 
+  const getMoneyData = async() => {
+
+    const getResponse = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/getHouseKeeping/${userIdCookie}/${userMonthCookie}`);
+
+    const getdbExpenseData = getResponse.data.filter((item: { category: string }) => item.category === 'expenditure');
+        console.log("getdbExpenseData", getdbExpenseData);
+        setGetdbExpense(getdbExpenseData);
+
+    const getdbIncomeData = getResponse.data.filter((item: { category: string }) => item.category === 'Incoming');
+      console.log("getdbExpenseData", getdbIncomeData);
+      setGetdbIncome(getdbIncomeData);
+
+
+    const getdbSaveData = getResponse.data.filter((item: { category: string }) => item.category === 'savings');
+      console.log("getdbExpenseData", getdbIncomeData);
+      setGetdbSave(getdbSaveData);
+
+      setGetdbData(getResponse.data);
+
+      setInputData({category: '', amount: '', description: '', userid: userIdCookie, createDate: ""});
+  }
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -118,7 +139,6 @@ const RecordMoneyFn = () => {
       const newTransaction: Transaction = { 
         ...inputData, 
         id: Date.now(), 
-        order : itemCount,
         createDate: formattedSelectedDate || new Date().toISOString(), // 빈 문자열이면 현재 날짜로 초기화
       };
   
@@ -152,26 +172,7 @@ const RecordMoneyFn = () => {
         },
       })
 
-      setItemCount(prevCount => prevCount + 1);
-      
-    const getResponse = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/getHouseKeeping/${userIdCookie}/${userMonthCookie}`);
-
-    const getdbExpenseData = getResponse.data.filter((item: { category: string }) => item.category === 'expenditure');
-        console.log("getdbExpenseData", getdbExpenseData);
-        setGetdbExpense(getdbExpenseData);
-
-    const getdbIncomeData = getResponse.data.filter((item: { category: string }) => item.category === 'Incoming');
-      console.log("getdbExpenseData", getdbIncomeData);
-      setGetdbIncome(getdbIncomeData);
-
-
-    const getdbSaveData = getResponse.data.filter((item: { category: string }) => item.category === 'savings');
-      console.log("getdbExpenseData", getdbIncomeData);
-      setGetdbSave(getdbSaveData);
-
-      setGetdbData(getResponse.data);
-
-      setInputData({category: '', amount: '', description: '', userid: userIdCookie, createDate: ""});
+      getMoneyData();
     } catch (err) {
       console.error("API 확인 해보세요");
     }
@@ -228,9 +229,12 @@ const cachedData = queryClient.getQueryData(['moneyData', userIdCookie, userMont
             'Content-Type': 'application/json',
           },
         });    
+
+        getMoneyData();
       } catch (error) {
         console.error('삭제 실패:', error);
       }
+
     };
     
 
@@ -448,7 +452,7 @@ console.log("가계부 데이터", selectedDatere );
                   <td className="px-6 py-4 text-center border-b">{transaction.description}</td>
                   <td className="px-6 py-4 text-center border-b">{numberWithCommas(transaction.amount)}원</td>
                   <td className="px-2 py-2 text-center text-red-500 border-b">
-                  <button onClick={() => handleDelete(transaction._id)}>삭제</button>
+                  <button onClick={() => handleDelete(transaction._id)}>삭제🗑️</button>
                   </td>
 
               </tr>
