@@ -35,7 +35,7 @@ const ViewRegister: React.FC = () => {
       password: signform.password ? '' : '비밀번호를 입력하세요.',
       passwordcheck: signform.passwordcheck ? '' : '비밀번호를 한번 더 입력하세요.',
       gender: signform.gender ? '' : '비밀번호를 한번 더 입력하세요.',
-      want: signform.want ? '' : '비밀번호를 한번 더 입력하세요.',
+      want: signform.want ? '' : '이 사이트를 통해 얻어 가고싶은 것을 적어주세요.',
     };
 
     setErrors(newErrors);
@@ -54,9 +54,11 @@ const ViewRegister: React.FC = () => {
     event.preventDefault();
 
     if (!validateForm()) {
-      alert('입력값을 확인하세요.');
+      alert('입력값을 모두 적어주세요.');
       return;
-    }
+    };
+
+  
 
     try {
       const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/signup`, 
@@ -83,7 +85,7 @@ const ViewRegister: React.FC = () => {
         alert("다시 작성해주세요.")
       }
     } catch (error) {
-      alert("중복된 계정입니다. 다시 입력해주세요.")
+      alert("내용을 전부 적어주세요.")
       setSignform({
         name: '',
         koreaname: '',
