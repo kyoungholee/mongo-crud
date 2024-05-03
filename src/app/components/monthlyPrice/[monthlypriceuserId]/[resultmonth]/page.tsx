@@ -20,14 +20,8 @@ import Item from 'antd/es/descriptions/Item';
 import Calendar from 'react-calendar';
 import moment from 'moment';
 import './monthlyPrice.css'; // CSS 파일 import
-
+import { useQuery, useQueryClient } from 'react-query';
 import { useSelectedDate } from '../../../../recoil/DateAtom';
-
-
-
-interface CalendarPageProps {
-  formattedSelectedDate: string; // 프롭으로 전달할 formattedSelectedDate의 타입 정의
-}
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -72,12 +66,10 @@ const handleMonthChange = (value: Date) => {
   setShowCalendar(false);
 };
 
+//실제 달력의 날짜
 const formattedSelectedDate = selectedDate instanceof Date ? moment(selectedDate).format('YYYY-MM') : '';
 
-
-console.log("formattedSelectedDate", formattedSelectedDate);
-
-
+//파라미터에 쓰이는 값
 const newDate = SelectedDaterr ? moment(selectedDate).format('YYYY-MM') : getCookie('month');
 
 
@@ -86,30 +78,59 @@ console.log("달력에서 가져온 newDate", newDate);
 console.log("SelectedDaterr", SelectedDaterr);
 
 
+// 왼쪽 메뉴바 클릭
   const handleMenuClick = (e: { key: string }) => {
     setSelectedMenuKey(e.key);
     console.log("selectedMenuKey", selectedMenuKey);
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get<HouseKeepingItem[]>(`${process.env.NEXT_PUBLIC_API_URL}/getHouseKeeping/${userIdCookie}/${newDate}`);
-        const resultData = response.data;
-        console.log("resultData", resultData);
-        const formattedData = formatData(resultData);
-        console.log("api 통신에 formattedData" ,formattedData);
-        setDataMap(formattedData);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
+  // fetchData 함수를 따로 분리하여 재사용성을 높임
+const fetchData = async (userIdCookie : string | undefined, newDate : any) => {
+  const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/getHouseKeeping/${userIdCookie}/${newDate}`);
+  return response.data;
+};
 
-    fetchData();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  console.log("newDate, useEffect", newDate);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [newDate]);
+const { data: resultData, isLoading, isError } = useQuery(['houseKeepingData', userIdCookie, SelectedDaterr], () => fetchData(userIdCookie, newDate));
+
+  useEffect(() => {
+    // 에러 처리
+    if (isError) {
+      console.error('Error fetching data:', isError);
+    }
+  }, [isError]);
+
+  useEffect(() => {
+    // 데이터 로딩 시 로딩 상태 출력
+    if (isLoading) {
+      console.log('Loading data...');
+    }
+
+    // 데이터 로드 후 배열에 각 데이터 저장
+    if (resultData) {
+      const formattedData = formatData(resultData);
+      console.log("api 통신에 formattedData=======" ,formattedData);
+      setDataMap(formattedData);
+    }
+  }, [isLoading, resultData]);
+
+  //기존에 axios 
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const response = await axios.get<HouseKeepingItem[]>(`${process.env.NEXT_PUBLIC_API_URL}/getHouseKeeping/${userIdCookie}/${newDate}`);
+  //       const resultData = response.data;
+
+  //       const formattedData = formatData(resultData);
+  //       console.log("api 통신에 formattedData" ,formattedData);
+  //       setDataMap(formattedData);
+  //     } catch (error) {
+  //       console.error('Error fetching data:', error);
+  //     }
+  //   };
+
+  //   fetchData();
+  // // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [newDate]);
 
   const formatData = (data: HouseKeepingItem[]): { [key: string]: DataItem[] } => {
     const formattedData: { [key: string]: DataItem[] } = {
@@ -135,9 +156,7 @@ console.log("SelectedDaterr", SelectedDaterr);
       }
     });
 
-
     console.log("해당 fommaData", formattedData['5']);
-
     return formattedData;
   };
 
@@ -210,7 +229,7 @@ console.log("SelectedDaterr", SelectedDaterr);
                       value={selectedDate}
                       onClickMonth={(value: Date) => handleMonthChange(value)}
                       className="p-4 my-4 text-center border border-gray-300 rounded-md shadow-md bg-slate-100"
-                      calendarType="US"
+                      calendarType="gregory"
                       formatMonthYear={(locale, date) => moment(date).format('YYYY. MM')}
                       showNeighboringMonth={false} // 이월된 월을 표시하지 않음
                       next2Label={null}

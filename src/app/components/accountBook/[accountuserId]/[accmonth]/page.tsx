@@ -69,13 +69,10 @@ const RecordMoneyFn = () => {
   const [getdbExpense, setGetdbExpense] = useState([initialTransaction]);
   const [getdbIncome, setGetdbIncome] = useState([initialTransaction]);
   const [getdbSave, setGetdbSave] = useState([initialTransaction]);
-
   const [showCalendar, setShowCalendar] = useState(false);
-  let [selectedDate, setSelectedDate] = useState<Date | Date[] | any>();
   const [selectedRange, setSelectedRange] = useState<Date[]>([]);
 
-  //데이터 순서 데이터 
-  const [itemCount, setItemCount] = useState(1);
+  let [selectedDate, setSelectedDate] = useState<Date | Date[] | any>();
   
   //총 지출, 수입, 저축에 대한 값을 가져오기 위한 state값
   const [totalCalculate, setTotalCalculate] = useState<TotalCalculate>({
@@ -91,14 +88,12 @@ const RecordMoneyFn = () => {
   const handleDateChange = (date: Date | any | Date[]) => {
     setSelectedDate(date);
     setShowCalendar(false);
-
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     
     // 이전 값을 가져온 뒤,  선택한 카테고리와 입력한 가격 , 상세내용의 데이터를 저장한다.
-
       setInputData((prevData) => ({ ...prevData, [name]: value,  createDate: formattedSelectedDate }));
   };
 
@@ -272,19 +267,9 @@ const totalAmountdbData = numberWithCommas(totalIncomeForEachItem.reduce((total,
 const totalConsumedbData = numberWithCommas(totalExpenseForEachItem.reduce((total, consume) => total + consume, 0));
 const totalSavedbData = numberWithCommas(totalSaveForEachItem.reduce((total, save) => total + save, 0));
 
-
 const totalAmountAsNumber = parseInt(totalAmountdbData.replace(/,/g, ""), 10);
-
-console.log("총합 계산기", totalAmountAsNumber, totalConsumedbData, totalSavedbData )
-
 const remainingMoney = numberWithCommas(totalAmountAsNumber -  parseInt(totalSavedbData) - (parseInt(totalConsumedbData)));
-
-
-console.log("총합 계산기22", remainingMoney )
-
 const formattedSelectedDate = selectedDate instanceof Date ? moment(selectedDate).format('YYYY-MM-DD') : '';
-
-console.log("가계부 데이터", selectedDatere );
 
   return (
   <>
@@ -306,8 +291,7 @@ console.log("가계부 데이터", selectedDatere );
           </div>
           {/* <div className='p-2 border border-black'>ai에게 질문하기</div> */}
         </div>
-
-
+        
     <button
         onClick={() => setShowCalendar(!showCalendar)}
         className="px-4 py-2 text-white bg-blue-500  absolute right-[690px] top-[370px] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-opacity-50"
@@ -381,10 +365,8 @@ console.log("가계부 데이터", selectedDatere );
 
               <div className="flex justify-end gap-4 mb-4 mt-14">
               <div className="relative">
-     
-  </div>
 
-
+            </div>
                 <label htmlFor="category" className="block text-lg font-bold text-gray-600">내역 카테고리</label>
                   <select
                     id="category"
