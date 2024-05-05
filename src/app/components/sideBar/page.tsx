@@ -41,11 +41,11 @@ export default function SideBar(){
         <div className='flex items-center gap-6 mr-4'>
         {/* <div> 돈의 뉴스</div> */}
         <Link className="p-3" href={`/components/accountBook/${aa}/${aa22}`}>
-          
         가계부
         </Link>
-        <div> 돈 정보 게시판</div>
-        {/* <div> 투자 성향 찾기</div> */}
+        <Link className="p-3" href={`/components/boardTopic`}>
+        돈 정보 게시판
+        </Link>
     </div>
     <div className='flex items-center gap-10'>
         { username ? ( 
