@@ -3,11 +3,12 @@ import connectMongoDB from "server/libs/mongodb";
 import Topic from "server/models/topic";
 
 export async function POST(request : any) {
-    const { title, description } = await request.json();
+    const { title, content, writer, day } = await request.json();
+    //  const imageFile = request.files?.image; // 이미지 파일
 
     try {
         await connectMongoDB();
-        await Topic.create({ title, description });
+        await Topic.create({ title, content, writer, day });
         return NextResponse.json({ message: "Topic Created" }, { status: 201 });
 
     }catch(err) {
