@@ -1,5 +1,5 @@
 import EditTopicForm from "../../../api/boards/EditTopicForm";
-
+import React from 'react';
 interface Iparams {
     params : string;
 }
@@ -7,9 +7,10 @@ interface Iparams {
 // 이유는 ==> 동적으로 id에 값을 불러와 어떠한 게시판을 클릭해준지 알려준다.
 
 
-const getTopicById = async (id : string)=> {
+ const getTopicById = async ()=> {
+
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/topics/${id}`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/topics`, {
       cache: "no-store",
     });
 
@@ -23,9 +24,10 @@ const getTopicById = async (id : string)=> {
   }
 };
 
+
 export default async function EditTopic({ params }: Iparams) {
   const { id} : any = params;
-  const { topic } = await getTopicById(id);
+  const { topic } = await getTopicById();
   const { title, description } = topic;
   
   
