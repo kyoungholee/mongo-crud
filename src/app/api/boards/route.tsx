@@ -16,6 +16,21 @@ export async function POST(request : any) {
     }
 }
 
+export async function GET() {
+  try {
+    // MongoDB와 연결하여 모든 토픽을 가져옵니다.
+    await connectMongoDB();
+    const topics = await Topic.find();
+
+    // 토픽을 JSON 형식으로 반환합니다.
+    return NextResponse.json({ topics });
+  } catch (error) {
+    console.error('Failed to fetch topics:', error);
+    // 오류가 발생한 경우 빈 배열을 반환합니다.
+    return NextResponse.json({ topics: [] });
+  }
+}
+
 
 export async function DELETE(request : any) {
     const id = request.nextUrl.searchParams.get("id");
@@ -25,7 +40,6 @@ export async function DELETE(request : any) {
   }
 
   // 수정하기
-
 //   export async function PUT(request : any, { params } : any)  {
 //     const { id } = params;
 //     const { newTitle: title, newDescription: description } = await request.json();
