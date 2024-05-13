@@ -1,9 +1,11 @@
 import Link from 'next/link';
+import DeletePageDaa from './deleteTopic/page'
 
 
 const BoardTopicPage = async () => {
 
   let setBoardData = [];
+
   try {
     const getBoardData = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/boards`, {
       cache: 'no-store',
@@ -13,12 +15,13 @@ const BoardTopicPage = async () => {
 
     const getResultData = resultData.topics;
 
-    console.log(getResultData);
     setBoardData = getResultData;
 
   }catch(err) {
     console.log("api 를 확인해주세요.")
   }
+
+ 
 
 
   return (
@@ -33,12 +36,7 @@ const BoardTopicPage = async () => {
               <Link href={`/boards/${board._id}`}>{board.title}</Link>
               <p className="text-gray-500">{board.content}</p>
               <div className="mt-2">
-                {/* <button
-                  onClick={() => handleDelete(board._id)}
-                  className="px-4 py-1 mr-2 text-white bg-red-500 rounded hover:bg-red-600"
-                >
-                  삭제
-                </button> */}
+                  <DeletePageDaa />
                 <Link href={`/boards/${board._id}/edit`}>수정</Link>
               </div>
             </li>
