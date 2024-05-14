@@ -32,13 +32,6 @@ export async function GET() {
 }
 
 
-export async function DELETE(request : any) {
-    const id = request.nextUrl.searchParams.get("id");
-    await connectMongoDB();
-    await Topic.findByIdAndDelete(id);
-    return NextResponse.json({ message: "Topic deleted" }, { status: 200 });
-  }
-
   // 수정하기
 //   export async function PUT(request : any, { params } : any)  {
 //     const { id } = params;
