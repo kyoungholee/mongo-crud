@@ -1,7 +1,12 @@
 'use client'
-import React from 'react'
 
-export default function Page({id} :any) {
+import React, { useEffect } from 'react'
+import { useRouter } from 'next/navigation';
+
+export default function Page({id} :any, {onDelete} : any) {
+
+ const router = useRouter();
+
 
   const handleDelete = async (id: string) => {
     console.log("id", id);
@@ -13,16 +18,15 @@ export default function Page({id} :any) {
           'Content-Type': 'application/json',
         },
       });
-      return deleteBoardData;
-      // const resultDeleteData = await deleteBoardData.json();
+   
+      router.refresh();
+      
       // console.log(resultDeleteData);
     } catch (err) {
       console.log("게시판 삭제 api 확인 해보세요.");
     }
+  
   };
-
-  const _id = "some_id"; // 실제 ID를 이 부분에 넣어야 합니다.
-
   return (
     <button
       onClick={() => handleDelete(id)}
