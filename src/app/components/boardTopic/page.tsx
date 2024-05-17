@@ -3,7 +3,6 @@ import DeletePageDaa from './deleteTopic/page'
 
 
 const BoardTopicPage = async () => {
-
   let setBoardData = [];
 
   try {
@@ -12,19 +11,14 @@ const BoardTopicPage = async () => {
     });
     const resultData = await getBoardData.json();
 
-
+    
     const getResultData = resultData.topics;
 
-    console.log("getResultData=================", getResultData);
-
     setBoardData = getResultData;
-
+    
   }catch(err) {
     console.log("api 를 확인해주세요.")
   }
-
- 
-
 
   return (
     <div className="container mx-auto mt-8">
@@ -39,7 +33,7 @@ const BoardTopicPage = async () => {
               <p className="text-gray-500">{board.content}</p>
               <div className="mt-2">
                   <DeletePageDaa id={board._id}/>
-                <Link href={`/boards/${board._id}/edit`}>수정</Link>
+                <Link href={`/components/boardTopic/boardEdit/${board._id}`}>수정</Link>
               </div>
             </li>
           ))}
