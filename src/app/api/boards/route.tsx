@@ -33,10 +33,13 @@ export async function GET() {
 
 
   // 수정하기
-//   export async function PUT(request : any, { params } : any)  {
-//     const { id } = params;
-//     const { newTitle: title, newDescription: description } = await request.json();
-//     await connectMongoDB();
-//     await Topic.findByIdAndUpdate(id, { title, description });
-//     return NextResponse.json({ message: "Topic updated" }, { status: 200 });
-//   }
+  export async function PUT(request : any)  {
+    // const { id } = request.params;
+    // console.log("업데이트 치는 해당 id", {id});
+    const { title, content, writer, day ,aa } = await request.json();
+
+    console.log("해당 데이터 업데이트 칩니다.", { title, content, writer, day ,aa } );
+    await connectMongoDB();
+    await Topic.findByIdAndUpdate(aa.id, { title, content, writer, day});
+    return NextResponse.json({ Topic }, { status: 201 });
+  }

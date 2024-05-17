@@ -2,8 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useRouter } from "next/navigation";
-import { useParams } from 'next/navigation'
+import { useRouter, useParams } from "next/navigation";
 
 
 const BoardEdit: React.FC =  () => {
@@ -36,18 +35,19 @@ const BoardEdit: React.FC =  () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
 
     try {
       const response = await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/boards`, {
+        aa,
         title,
         content,
         writer,
         day: new Date().toLocaleDateString()
       });
 
+
       if (response.status === 201) {
-      console.log("데이터 전송 성공  ", response.data);
+      console.log("데이터 업데이트 !!!!! 전송 성공  ", response.data);
         router.push('/components/boardTopic'); // 성공 시 게시판 목록 페이지로 이동
       } else {
         console.error('Failed to create post:', response.data);
