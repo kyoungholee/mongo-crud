@@ -1,24 +1,21 @@
+'use client';
+
 import Link from 'next/link';
 import DeletePageDaa from './deleteTopic/page'
+import axios from 'axios';
+import { useEffect, useRef, useState } from 'react';
+import { useQuery } from 'react-query';
 
+const BoardTopicPage = () => {
+  const [boardData, setBoardData] = useState([]);
+  const { data } = useQuery({
+    queryKey: ['topic'],
+    queryFn: () => axios.get(`${process.env.NEXT_PUBLIC_API_URL}/boards`).then((res: any) => res.data.topics),
+  });
 
-const BoardTopicPage = async () => {
-  let setBoardData = [];
-
-  try {
-    const getBoardData = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/boards`, {
-      cache: 'no-store',
-    });
-    const resultData = await getBoardData.json();
-
-    
-    const getResultData = resultData.topics;
-
-    setBoardData = getResultData;
-    
-  }catch(err) {
-    console.log("api 를 확인해주세요.")
-  }
+  useEffect(() => {
+      setBoardData(data);
+  }, [data]);
 
   return (
     <div className="container mx-auto mt-8">
@@ -27,7 +24,7 @@ const BoardTopicPage = async () => {
         <Link href="/components/boardCreate">게시글 생성</Link>
       </div>
         <ul className="divide-y divide-gray-200">
-          {setBoardData?.map((board: any, index : number) => ( // 이 부분에서 에러가 발생할 수 있습니다.
+          {boardData?.map((board: any, index : number) => ( // 이 부분에서 에러가 발생할 수 있습니다.
             <li key={board._id} className="py-4">
               <Link href={`/boards/${board._id}`}>{board.title}</Link>
               <p className="text-gray-500">{board.content}</p>
