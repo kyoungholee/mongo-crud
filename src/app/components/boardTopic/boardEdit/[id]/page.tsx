@@ -12,18 +12,16 @@ const BoardEdit: React.FC =  () => {
   const [day, setDay] = useState('');
   const router = useRouter();
 
-  const aa = useParams();
+  const urlParam = useParams();
 
-  console.log("aaaaaa",aa);
 
   useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_API_URL}/boards`,{
       method: 'GET',
     }).then(res => res.json())
-    .then((data) : any => {
-     data.topics.filter((item : any)=> {
-        if(item._id === aa.id) {
-          console.log("이것으로 데이터", item._id);
+    .then((data)  => {
+     data.topics.filter((item  : any)=> {
+        if(item._id === urlParam.id) {
           setTitle(item.title);
           setContent(item.content);
           setWriter(item.writer);
@@ -38,7 +36,7 @@ const BoardEdit: React.FC =  () => {
 
     try {
       const response = await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/boards`, {
-        aa,
+        urlParam,
         title,
         content,
         writer,

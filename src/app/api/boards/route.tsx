@@ -34,12 +34,10 @@ export async function GET() {
 
   // 수정하기
   export async function PUT(request : any)  {
-    // const { id } = request.params;
-    // console.log("업데이트 치는 해당 id", {id});
-    const { title, content, writer, day ,aa } = await request.json();
+    const { title, content, writer, day ,urlParam } = await request.json();
 
-    console.log("해당 데이터 업데이트 칩니다.", { title, content, writer, day ,aa } );
+    console.log("해당 데이터 업데이트 칩니다.", { title, content, writer, day ,urlParam } );
     await connectMongoDB();
-    await Topic.findByIdAndUpdate(aa.id, { title, content, writer, day});
+    await Topic.findByIdAndUpdate(urlParam.id, { title, content, writer, day});
     return NextResponse.json({ Topic }, { status: 201 });
   }
