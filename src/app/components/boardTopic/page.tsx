@@ -36,7 +36,7 @@ const BoardTopicPage = () => {
         <ul className="divide-y divide-gray-200">
           {boardData?.map((board: any, index : number) => ( // 이 부분에서 에러가 발생할 수 있습니다.
             <li key={board._id} className="py-4">
-              <Link href={`/boards/${board._id}`}>{board.title}</Link>
+              <Link href={`/components/boardTopic/boardEdit/${board._id}`}>{board.title}</Link>
               <p className="text-gray-500">{board.content}</p>
               <div className="mt-2">
                   <DeletePageDaa id={board._id}/>
