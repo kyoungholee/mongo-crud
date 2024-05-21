@@ -1,38 +1,44 @@
-'use client'
+'use client';
 
-import React, { useEffect } from 'react'
+import React from 'react';
 import { useRouter } from 'next/navigation';
+import { useMutation } from 'react-query';
 
-export default function Page({id} :any, {onDelete} : any) {
+const deleteBoardData = async (id: any) => {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/deleteBoards/${id}`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
 
- const router = useRouter();
+  if (!response.ok) {
+    throw new Error('Network response was not ok');
+  }
 
+  return response.json();
+};
 
-  const handleDelete = async (id: string) => {
-    console.log("id", id);
+export default function Page({ id } : any) {
+  const router = useRouter();
 
-    try {
-      const deleteBoardData = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/deleteBoards/${id}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-   
+  const mutation = useMutation(() => deleteBoardData(id), {
+    onSuccess: () => {
+      alert('정말로 삭제 하시겠습니까?');
       router.refresh();
-      
-      // console.log(resultDeleteData);
-    } catch (err) {
-      console.log("게시판 삭제 api 확인 해보세요.");
-    }
-  
-  };
+    },
+    onError: () => {
+      console.log('게시판 삭제 api 확인 해보세요.');
+    },
+  });
+
   return (
     <button
-      onClick={() => handleDelete(id)}
+      onClick={() => mutation.mutate()}
       className="px-4 py-1 mr-2 text-white bg-red-500 rounded hover:bg-red-600"
+      disabled={mutation.isLoading}
     >
-      삭제
+      {mutation.isLoading ? '삭제 중...' : '삭제'}
     </button>
   );
 }
