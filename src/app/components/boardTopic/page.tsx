@@ -5,6 +5,7 @@ import DeletePageDaa from './deleteTopic/page'
 import axios from 'axios';
 import { useEffect, useRef, useState } from 'react';
 import { useQuery } from 'react-query';
+import SideBar from '../sideBar/page';
 
 const BoardTopicPage = () => {
   const [boardData, setBoardData] = useState([]);
@@ -18,10 +19,19 @@ const BoardTopicPage = () => {
   }, [data]);
 
   return (
+    <>
+        <header className='flex justify-between px-40 py-4 bg-sky-50'>
+      <div className='flex items-center gap-4'>
+        <Link className="p-3" href={`/components/home`}>
+            ALIVE-MONEY
+        </Link>
+      </div>
+      <SideBar/>
+    </header> 
     <div className="container mx-auto mt-8">
       <div className="flex items-start justify-between">
         <h1 className="mb-4 text-3xl font-bold">게시글 목록</h1>
-        <Link href="/components/boardCreate">게시글 생성</Link>
+        <Link href="/components/boardCreate" className='p-2 text-white border bg-sky-500'>게시글 생성</Link>
       </div>
         <ul className="divide-y divide-gray-200">
           {boardData?.map((board: any, index : number) => ( // 이 부분에서 에러가 발생할 수 있습니다.
@@ -36,6 +46,7 @@ const BoardTopicPage = () => {
           ))}
         </ul>
     </div>
+    </>
   );
 };
 
