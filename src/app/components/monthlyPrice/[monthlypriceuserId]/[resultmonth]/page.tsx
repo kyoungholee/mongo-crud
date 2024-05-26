@@ -85,7 +85,7 @@ console.log("SelectedDaterr", SelectedDaterr);
   };
 
   // fetchData 함수를 따로 분리하여 재사용성을 높임
-const fetchData = async (userIdCookie : string | undefined, newDate : any) => {
+const fetchData = async (userIdCookie: string | undefined, newDate : any) => {
   const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/getHouseKeeping/${userIdCookie}/${newDate}`);
   return response.data;
 };
@@ -113,7 +113,7 @@ const { data: resultData, isLoading, isError } = useQuery(['houseKeepingData', u
     }
   }, [isLoading, resultData]);
 
-  //기존에 axios 
+  //기존에 axios
   // useEffect(() => {
   //   const fetchData = async () => {
   //     try {
@@ -187,7 +187,7 @@ const { data: resultData, isLoading, isError } = useQuery(['houseKeepingData', u
     }
   };
 
-  
+
   return (
     <>
       <header className='flex justify-between px-40 py-4 bg-sky-50'>
