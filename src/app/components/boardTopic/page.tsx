@@ -11,7 +11,7 @@ const BoardTopicPage = () => {
   const [boardData, setBoardData] = useState([]);
   const { data } = useQuery({
     queryKey: ['topic'],
-    queryFn: () => axios.get(`${process.env.NEXT_PUBLIC_API_URL}/boards`).then((res: any) => res.data.topics),
+    queryFn: () => fetch(`${process.env.NEXT_PUBLIC_API_URL}/boards`).then(res => res.json()).then((res: any) => res.data.topics),
   });
 
   useEffect(() => {
@@ -27,7 +27,7 @@ const BoardTopicPage = () => {
         </Link>
       </div>
       <SideBar/>
-    </header> 
+    </header>
     <div className="container mx-auto mt-8">
       <div className="flex items-start justify-between">
         <h1 className="mb-4 text-3xl font-bold">게시글 목록</h1>

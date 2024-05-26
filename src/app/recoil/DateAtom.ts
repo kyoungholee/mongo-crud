@@ -1,9 +1,7 @@
-import { atom, selector, useRecoilState } from 'recoil';
+import { atom, useAtom } from 'jotai';
 
-export const selectedDateState = atom({
-  key: 'selectedDateState',
-  default: [],
-});
+export const selectedDateState = atom([]);
+selectedDateState.debugLabel = 'selectedDateState'
 
 console.log("selectedDateState", selectedDateState);
 
@@ -13,4 +11,4 @@ console.log("selectedDateState", selectedDateState);
 //   set: ({set}, newValue) => set(atom, newValue),
 // });
 
-export const useSelectedDate = () => useRecoilState(selectedDateState);
+export const useSelectedDate = () => useAtom(selectedDateState);

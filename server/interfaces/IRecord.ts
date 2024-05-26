@@ -1,4 +1,4 @@
-export interface IRecord {
+export type IRecord = {
     // id : number;
     category : string;
     amount : string;

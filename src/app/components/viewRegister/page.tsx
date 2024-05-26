@@ -58,18 +58,17 @@ const ViewRegister: React.FC = () => {
       return;
     };
 
-  
+
 
     try {
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/signup`, 
-      //페이로드
-      signform, {
-
-        //헤더 값
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/signup`, {
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
+        body: JSON.stringify(signform),
       });
+
 
       console.log("해당 값", response);
 
@@ -80,7 +79,7 @@ const ViewRegister: React.FC = () => {
       }
       else if( response.status === 400) {
         alert("이미 가입된 사용자 입니다.");
-      } 
+      }
       else {
         alert("다시 작성해주세요.")
       }

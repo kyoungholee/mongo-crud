@@ -3,11 +3,7 @@ import Login from "./components/login/page";
 
 function Home() {
 
-  return (
-    <>
-        <Login />
-    </>
-  );
+  return <Login />;
 }
 
 export default Home;
