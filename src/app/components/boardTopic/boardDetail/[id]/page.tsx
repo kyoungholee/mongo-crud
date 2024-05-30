@@ -19,6 +19,7 @@ interface Comment {
   content: string;
   writer: string;
   day: string;
+  postId: string | string[];
 }
 
 const BoardDetailPage: React.FC = () => {
@@ -41,16 +42,17 @@ const BoardDetailPage: React.FC = () => {
 
   const fetchData = useCallback(async () => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/commentApi`);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/commentApi?postId=${id}`);
       const data = await response.json();
+      console.log("get Data", data);
       const comments = data.comments;
       setComments(comments);
 
-      console.log("useEffect fetchData", comments );
+      console.log("useEffect fetchData", comments);
     } catch (error) {
       console.error('Error fetching comments:', error);
     }
-  }, []);
+  }, [id]);
 
   const addCommentMutation = useMutation(
     (newComment: Comment) => 
@@ -96,6 +98,7 @@ const BoardDetailPage: React.FC = () => {
       content: commentContent,
       writer: answeruser || 'Anonymous', // 로그인 기능이 있다면 사용자 정보를 넣을 수 있습니다.
       day: new Date().toLocaleDateString(),
+      postId: id // 댓글을 작성한 게시글의 ID를 추가
     };
 
     addCommentMutation.mutate(newComment);
