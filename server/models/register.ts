@@ -1,6 +1,6 @@
 import mongoose, {Schema} from "mongoose";
 
-const RegisterSchema = new Schema({
+const registerSchema = new Schema({
     name: {
         type: String,
         index : true,
@@ -41,4 +41,4 @@ export interface IUser {
 
 }
 
-export default mongoose.model<IUser & mongoose.Document>("RegisterMoneyUser", RegisterSchema); // 모델 이름과 컬렉션 이름을 일치시킴
+export default mongoose.models.registermoneyuser || mongoose.model('registermoneyuser', registerSchema);
