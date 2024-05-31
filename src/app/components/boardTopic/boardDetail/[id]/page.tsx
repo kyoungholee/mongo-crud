@@ -16,6 +16,7 @@ interface Topic {
 }
 
 interface Comment {
+  _id: string; // 댓글 ID 추가
   content: string;
   writer: string;
   day: string;
@@ -44,7 +45,6 @@ const BoardDetailPage: React.FC = () => {
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/commentApi?postId=${id}`);
       const data = await response.json();
-      console.log("get Data", data);
       const comments = data.comments;
       setComments(comments);
 
@@ -95,6 +95,7 @@ const BoardDetailPage: React.FC = () => {
     e.preventDefault();
 
     const newComment: Comment = {
+      _id: '', // 초기 값으로 빈 문자열 추가
       content: commentContent,
       writer: answeruser || 'Anonymous', // 로그인 기능이 있다면 사용자 정보를 넣을 수 있습니다.
       day: new Date().toLocaleDateString(),
@@ -102,6 +103,22 @@ const BoardDetailPage: React.FC = () => {
     };
 
     addCommentMutation.mutate(newComment);
+  };
+
+  const handleDelete = async (_id: string) => {
+    console.log("삭제 데이터", _id);
+    try {
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/commentApi/delete/${_id}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      // 댓글 삭제 후 데이터 다시 가져오기
+      fetchData();
+    } catch (error) {
+      console.error("댓글 삭제 api를 확인하세요.", error);
+    }
   };
 
   if (isLoading) return <div>Loading...</div>;
@@ -118,10 +135,11 @@ const BoardDetailPage: React.FC = () => {
       <div className="p-6 mt-8 bg-white rounded shadow-md">
         <h2 className="mb-4 text-2xl font-bold">댓글</h2>
         {Array.isArray(comments) && comments.length > 0 ? (
-          comments.map((comment, index) => (
-            <div key={index} className="pt-4 mt-4 border-t border-gray-200">
+          comments.map((comment) => (
+            <div key={comment._id} className="pt-4 mt-4 border-t border-gray-200">
               <p className="text-gray-700">{comment.content}</p>
               <div className="text-sm text-gray-500">작성자: {comment.writer} | 작성일: {comment.day}</div>
+              <button className="px-2 py-2 mt-4 text-center text-white bg-red-600 border border-b rounded-md" onClick={() => handleDelete(comment._id)}>삭제</button>
             </div>
           ))
         ) : (
