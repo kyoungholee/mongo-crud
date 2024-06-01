@@ -1,8 +1,6 @@
 'use client'
 
 import { RecoilRoot } from "recoil";
-import Navbar from "./api/boards/Navbar";
-import SideBar from "./components/sideBar/page";
 import "./globals.css";
 import { Bonbon, Inter } from "next/font/google";
 import { ReactNode } from "react";
