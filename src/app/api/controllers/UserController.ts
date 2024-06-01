@@ -5,7 +5,7 @@ import errorGenerator from "../../errors/errorGenerator";
 import gravatar from 'gravatar';
 import { check, validationResult } from "express-validator";
 import { IUserInputDTO } from "../../../../server/interfaces/IUser"
-import { UserService } from "../../services/pages";
+import { createUser, findEmail } from "../../services/pages";
 import { nextTick } from "process";
 import * as dotenv from "dotenv";
 
@@ -23,7 +23,7 @@ export const RegisterJWT = async (req: Request, res: Response, next: NextFunctio
             return res.status(400).json({ errors: errors.array() });
         }
 
-        const foundUser = await UserService.findEmail({ email });
+        const foundUser = await findEmail({ email });
         if(foundUser)   errorGenerator({ statusCode: 409 });  // 이미 가입한 유저
 
         const avatar = gravatar.url(email, {
@@ -35,7 +35,7 @@ export const RegisterJWT = async (req: Request, res: Response, next: NextFunctio
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
-        const createdUser = await UserService.createUser({ name, email, password: hashedPassword, avatar: avatar });
+        const createdUser = await createUser({ name, email, password: hashedPassword, avatar: avatar });
 
         const payload = {
             user: {
