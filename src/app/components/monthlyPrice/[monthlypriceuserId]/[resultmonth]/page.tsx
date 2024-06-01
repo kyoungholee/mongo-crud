@@ -19,7 +19,7 @@ import Item from 'antd/es/descriptions/Item';
 
 import Calendar from 'react-calendar';
 import moment from 'moment';
-import './monthlyPrice.css'; // CSS 파일 import
+import './monthlyprice.css'; // CSS 파일 import
 import { useQuery, useQueryClient } from 'react-query';
 import { useSelectedDate } from '../../../../recoil/DateAtom';
 
