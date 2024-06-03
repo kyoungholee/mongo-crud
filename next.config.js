@@ -11,5 +11,10 @@ const nextConfig = {
         config.cache = false; 
         return config; 
       },
+      env: {
+        API_KEY: NEXT_PUBLIC_API_URL,
+      },
 }
+
+
 
