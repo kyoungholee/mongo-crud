@@ -4,15 +4,12 @@ import Comment from "server/models/comment";
 
 export async function GET(request: any) {
   try {
-    // MongoDB와 연결
     await connectMongoDB();
 
     // 요청에서 postId 쿼리 파라미터 추출
     const { searchParams } = new URL(request.url);
     const postId = searchParams.get('postId');
-
-    console.log("postId=========", postId);
-
+    
     // 특정 게시글에 대한 댓글만 찾기
     const comments = await Comment.find({ postId });
 

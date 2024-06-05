@@ -268,8 +268,17 @@ const totalConsumedbData = numberWithCommas(totalExpenseForEachItem.reduce((tota
 const totalSavedbData = numberWithCommas(totalSaveForEachItem.reduce((total, save) => total + save, 0));
 
 const totalAmountAsNumber = parseInt(totalAmountdbData.replace(/,/g, ""), 10);
-const remainingMoney = numberWithCommas(totalAmountAsNumber -  parseInt(totalSavedbData) - (parseInt(totalConsumedbData)));
+const totalAmountAsNumbersss = parseInt(totalConsumedbData.replace(/,/g, ""), 10);
+
+const totalAmountAsNumberse  = parseInt(totalSavedbData.replace(/,/g, ""), 10);
+
+const remainingMoney = numberWithCommas(totalAmountAsNumber - (totalAmountAsNumbersss + totalAmountAsNumberse));
 const formattedSelectedDate = selectedDate instanceof Date ? moment(selectedDate).format('YYYY-MM-DD') : '';
+
+
+if (!userIdCookie || !userMonthCookie) {
+  return <div>Loading...</div>; // 쿠키 값을 불러올 때까지 로딩 상태 표시
+}
 
   return (
   <>
