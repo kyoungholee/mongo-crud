@@ -2,6 +2,14 @@
     "buildCommand": "next build",
     "outputDirectory": ".next",
 
+      "builds": [
+        { "src": "package.json", "use": "@vercel/node" }
+      ],
+      "rewrites": [
+        { "source": "/api/(.*)", "destination": "/api/$1" }
+      ],
+    
+
     "headers": [
       {
         "source": "/(.*)",
