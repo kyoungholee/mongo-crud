@@ -1,5 +1,6 @@
 import bcrypt from "bcrypt";
 import express, { Response } from "express";
+import cors from 'cors'
 import jwt from "jsonwebtoken";
 import { check, validationResult } from "express-validator";
 import * as dotenv from "dotenv";
@@ -10,6 +11,9 @@ import { NextResponse } from "next/server";
 export async function POST(req: any, res: Response) {
   const { name, koreaname, password, email, gender, want} = await req.json();
   const YOUR_SECRET_KEY: any = process.env.SECRET_KEY;
+
+  const app = express();
+  app.use(cors()); // 모든 출처에서의 요청을 허용
 
   dotenv.config();
 

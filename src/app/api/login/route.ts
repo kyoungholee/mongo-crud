@@ -1,11 +1,19 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import express from 'express';
+import cors from 'cors'
 import { NextResponse } from "next/server";
 import connectMongoDB from "../../../../server/libs/mongodb";
 import Register from "../../../../server/models/register";
 
 export async function POST(req: Request) {
+  
+  const app = express();
+  app.use(cors()); // 모든 출처에서의 요청을 허용
+
   try {
+
+
     // Parse JSON body from the request
     const { username, password } = await req.json();
     const YOUR_SECRET_KEY :any = process.env.SECRET_KEY;
