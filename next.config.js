@@ -2,8 +2,6 @@
 const nextConfig = {
   reactStrictMode: true,
     eslint: {
-        // Warning: This allows production builds to successfully complete even if
-        // your project has ESLint errors.
         ignoreDuringBuilds: true,
       },
       webpack5: true, 
@@ -11,9 +9,6 @@ const nextConfig = {
         config.cache = false; 
         return config; 
       },
-      // env: {
-      //   API_KEY: NEXT_PUBLIC_API_URL,
-      // },
 }
 
 
