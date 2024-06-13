@@ -297,7 +297,7 @@ if (!userIdCookie || !userMonthCookie) {
             <Link href={`/components/monthlyPrice/${getCookie('userId')}/${getCookie('month')}`}>
             한달 가계부 기록 확인하기
             </Link>
-            <Link href={`/components/monthlyPrice/${getCookie('userId')}/${getCookie('month')}`}>
+            <Link href={`/components/payments/complete}`}>
             모의투자 해보기
             </Link>
           </div>
