@@ -21,16 +21,16 @@ const stocks = [
 export default function SimulatedInvestmentPage() {
   const [portfolio, setPortfolio] = useState<IStock[]>([]);
 
-  const handleClick = async() => {
+  const buyStock = async(stock: IStock) => {
     const tossPayments = await loadTossPayments(`process.env.PUBLIC_CLIENT_TOSS_PAYMONT_KEY`);
 
-    // tossPayments.requestPayment('카드' ,{
-
-    // })
-  }
-
-  const buyStock = (stock: IStock) => {
-    setPortfolio([...portfolio, stock]);
+    tossPayments.requestPayment('카드' ,{
+        amount: 5000,
+        orderId: Math.random().toString(36).slice(2),
+        orderName: "마이크로소프트",
+        successUrl : `${window.location.origin}/api/payments`,
+        failUrl : `${window.location.origin}/api/payments/fail`,
+    });
   };
 
   const sellStock = (stock:any) => {
