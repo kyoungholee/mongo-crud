@@ -294,13 +294,16 @@ if (!userIdCookie || !userMonthCookie) {
         <div className='flex items-center justify-between gap-6 mb-10'>
           <h1 className="text-3xl font-bold ">가계부</h1>
           <div className='p-2 text-white border bg-sky-500'>
-            <Link href={`/components/monthlyPrice/${getCookie('userId')}/${getCookie('month')}`}>
-            한달 가계부 기록 확인하기
-            </Link>
-            <Link href={`/components/payments/complete}`}>
+          <Link href={`/components/payments`}>
             모의투자 해보기
             </Link>
           </div>
+          <div className='p-2 text-white border bg-sky-500'>
+            <Link href={`/components/monthlyPrice/${getCookie('userId')}/${getCookie('month')}`}>
+            한달 가계부 기록 확인하기
+            </Link>
+          </div>
+
           {/* <div className='p-2 border border-black'>ai에게 질문하기</div> */}
         </div>
         
