@@ -25,7 +25,7 @@ export default function SimulatedInvestmentPage() {
     const tossPayments = await loadTossPayments(`process.env.PUBLIC_CLIENT_TOSS_PAYMONT_KEY`);
 
     tossPayments.requestPayment('카드' ,{
-        amount: 5000,
+        amount: 606000,
         orderId: Math.random().toString(36).slice(2),
         orderName: "마이크로소프트",
         successUrl : `${window.location.origin}/api/payments`,
