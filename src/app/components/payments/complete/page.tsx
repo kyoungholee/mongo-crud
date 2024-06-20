@@ -1,29 +1,27 @@
+import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 
-// Base64 인코딩 함수
-const toBase64 = (str: string): string => {
-  return btoa(str);
-};
-
-export default function PayCompletePage() {
+export default function PaymentCompletePage() {
+  const router = useRouter();
   const [payments, setPayments] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchPayments = async () => {
       try {
-        const clientKey = process.env.NEXT_PUBLIC_CLIENT_TOSS_PAYMONT_KEY|| "";
+        const clientKey = process.env.NEXT_PUBLIC_TOSS_PAYMENT_KEY || "";
         const secretKey = process.env.NEXT_PUBLIC_CLIENT_TOSS_SECRET_KEY || "";
-        const basicToken = toBase64(`${clientKey}:${secretKey}`);
+        const basicToken = btoa(`${clientKey}:${secretKey}`);
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const orderId = urlParams.get('orderId');
+        const orderId = router.query.orderId as string;
+        const paymentKey = router.query.paymentKey as string;
+        const amount = router.query.amount as string;
         if (!orderId) {
           setError('Order ID가 URL에 없습니다.');
           return;
         }
 
-        const url = `https://api.tosspayments.com/v1/payments/orders/${orderId}`;
+        const url = `https://api.tosspayments.com/v1/payments/orders/orderId=${orderId}&paymentKey=${orderId}&amount=${amount}`;
 
         const response = await fetch(url, {
           headers: {
@@ -43,8 +41,10 @@ export default function PayCompletePage() {
       }
     };
 
-    fetchPayments();
-  }, []);
+    if (router.isReady) {
+      fetchPayments();
+    }
+  }, [router]);
 
   if (error) {
     return <div>오류: {error}</div>;
@@ -56,7 +56,7 @@ export default function PayCompletePage() {
 
   return (
     <>
-      <div>결제가 완료 되었습니다.</div>
+      <div>결제가 완료되었습니다.</div>
       <ul>
         <li>결제 상품: {payments.orderName}</li>
         <li>주문번호: {payments.orderId}</li>
