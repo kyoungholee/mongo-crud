@@ -50,7 +50,7 @@ export default async function Handler(req: NextApiRequest, res: NextApiResponse)
         console.log("Toss Payments API response:", result);
 
         // Redirect to the complete page with orderId
-        res.redirect(303, `src/app/components/payments/complete`);
+        res.redirect(`payments/complete?orderId=${orderId}`);
     } catch (error) {
         // Catch any fetch errors
         console.error("Fetch error:", error);
