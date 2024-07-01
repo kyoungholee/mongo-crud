@@ -31,7 +31,7 @@ export default function SimulatedInvestmentPage() {
         amount: Number(stock.price.replace(/,/g, '')), // price를 숫자로 변환
         orderId: Math.random().toString(36).slice(2), //임의의 문자열 생성
         orderName: stock.name,
-        successUrl: `${window.location.origin}/api/payments`,
+        successUrl: `${window.location.origin}/components/pay`,
         failUrl: `${window.location.origin}/api/payments/fail`,
       });
     } catch (error) {

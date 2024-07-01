@@ -1,16 +1,16 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 
-export default async function Handler(req: NextApiRequest, res: NextApiResponse) {
-    const { orderId, paymentKey, amount } = req.query;
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+    const {orderId : orderId, paymentKey : paymentKey, amount : amount } = req.query;
 
     // Logging the incoming request parameters
     console.log("API request parameters:", { orderId, paymentKey, amount });
 
     // Ensure environment variable is defined
-    const secretKey = process.env.NEXT_PUBLIC_CLIENT_TOSS_SECRET_KEY ;
+    const secretKey = process.env.NEXT_PUBLIC_CLIENT_TOSS_SECRET_KEY;
     
     if (!secretKey) {
-        console.error("TOSS_SECRET_KEY is not defined in environment variables");
+        console.error("NEXT_PUBLIC_CLIENT_TOSS_SECRET_KEY is not defined in environment variables");
         res.status(500).json({ error: 'Internal Server Error' });
         return;
     }
@@ -26,7 +26,7 @@ export default async function Handler(req: NextApiRequest, res: NextApiResponse)
         const response = await fetch(url, {
             method: 'POST',
             body: JSON.stringify({
-                amount,
+                amount: Number(amount), // Ensure amount is a number
                 orderId,
                 paymentKey,
             }),
@@ -50,7 +50,7 @@ export default async function Handler(req: NextApiRequest, res: NextApiResponse)
         console.log("Toss Payments API response:", result);
 
         // Redirect to the complete page with orderId
-        res.redirect(`payments/complete?orderId=${orderId}`);
+        res.redirect(`/payments/complete?orderId=${orderId}`);
     } catch (error) {
         // Catch any fetch errors
         console.error("Fetch error:", error);
