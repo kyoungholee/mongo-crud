@@ -24,14 +24,14 @@ export default function SimulatedInvestmentPage() {
   const buyStock = async (stock: IStock) => {
     try {
       //토스의 클라이언트 키를 활용해 데이터 통신함
-      const tossPayments = await loadTossPayments(`${process.env.NEXT_PUBLIC_CLIENT_TOSS_PAYMONT_KEY}`);
+      const tossPayments = await loadTossPayments(`${process.env.NEXT_PUBLIC_TOSS_PAYMENTS_CLIENT_KEY}`);
 
 
       tossPayments.requestPayment('카드', {
         amount: Number(stock.price.replace(/,/g, '')), // price를 숫자로 변환
         orderId: Math.random().toString(36).slice(2), //임의의 문자열 생성
         orderName: stock.name,
-        successUrl: `${window.location.origin}/components/pay`,
+        successUrl: `${window.location.origin}/api/createpayment`,
         failUrl: `${window.location.origin}/api/payments/fail`,
       });
     } catch (error) {
