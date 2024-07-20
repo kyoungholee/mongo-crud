@@ -85,7 +85,7 @@ const ViewRegister: React.FC = () => {
         alert("다시 작성해주세요.")
       }
     } catch (error) {
-      alert("내용을 전부 적어주세요.")
+      alert("내용을 전부 적어주세요.~~~~")
       setSignform({
         name: '',
         koreaname: '',
